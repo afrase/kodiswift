@@ -189,7 +189,7 @@ class XBMCMixin(object):
 
         :param key: The id of the setting defined in settings.xml.
         :param converter: (Optional) Choices are str, unicode, bool and int.
-        :param converter: (Optional) Choices are instances of list or tuple.
+        :param choices: (Optional) Choices are instances of list or tuple.
 
         Examples:
             * ``plugin.get_setting('per_page', int)``
@@ -296,8 +296,9 @@ class XBMCMixin(object):
             log.warning('Empty message for notification dialog')
         if title is None:
             title = self.addon.getAddonInfo('name')
-        xbmc.executebuiltin('XBMC.Notification("%s", "%s", "%s", "%s")' %
-                            (msg, title, delay, image))
+        cmd = 'XBMC.Notification("{header}", "{message}", "{time}", "{image}")'.format(
+            header=title, message=msg, time=delay, image=image)
+        xbmc.executebuiltin(cmd)
 
     def _listitemify(self, item):
         '''Creates an xbmcswift2.ListItem if the provided value for item is a
