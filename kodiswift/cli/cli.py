@@ -1,4 +1,4 @@
-'''
+"""
     kodiswift.cli.cli
     ------------------
 
@@ -7,7 +7,7 @@
 
     :copyright: (c) 2012 by Jonathan Beluch
     :license: GPLv3, see LICENSE for more details.
-'''
+"""
 import sys
 from optparse import OptionParser
 
@@ -23,7 +23,7 @@ COMMANDS = {
 
 
 # TODO: Make this usage dynamic based on COMMANDS dict
-USAGE = '''%prog <command>
+USAGE = """%prog <command>
 
 Commands:
     create
@@ -34,17 +34,17 @@ Commands:
 
 Help:
     To see options for a command, run `kodiswift <command> -h`
-'''
+"""
 
 
 def main():
-    '''The entry point for the console script kodiswift.
+    """The entry point for the console script kodiswift.
 
     The 'xbcmswift2' script is command bassed, so the second argument is always
     the command to execute. Each command has its own parser options and usages.
     If no command is provided or the -h flag is used without any other
     commands, the general help message is shown.
-    '''
+    """
     parser = OptionParser()
     if len(sys.argv) == 1:
         parser.set_usage(USAGE)

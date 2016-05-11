@@ -78,23 +78,23 @@ class TestTimedStorage(TestCase):
     def test_pickle(self):
         filename = '/tmp/testdict.pickle'
         remove(filename)
-        storage = TimedStorage(filename, file_format='pickle', TTL=timedelta(hours=1))
+        storage = TimedStorage(filename, file_format='pickle', ttl=timedelta(hours=1))
         storage['name'] = 'jon'
         storage.update({'answer': 42})
         storage.close()
 
         # Reopen
-        storage2 = TimedStorage(filename, file_format='pickle', TTL=timedelta(hours=1))
+        storage2 = TimedStorage(filename, file_format='pickle', ttl=timedelta(hours=1))
         self.assertEqual(sorted(storage.items()), sorted(storage2.items()))
 
         # Reopen again but with a one second TTL which will be expired
         time.sleep(2)
-        storage3 = TimedStorage(filename, file_format='pickle', TTL=timedelta(seconds=1))
+        storage3 = TimedStorage(filename, file_format='pickle', ttl=timedelta(seconds=1))
         self.assertEqual([], sorted(storage3.items()))
         storage3.close()
 
         # Ensure the expired dict was synced
-        storage4 = TimedStorage(filename, file_format='pickle', TTL=timedelta(hours=1))
+        storage4 = TimedStorage(filename, file_format='pickle', ttl=timedelta(hours=1))
         self.assertEqual(sorted(storage3.items()), sorted(storage4.items()))
 
 

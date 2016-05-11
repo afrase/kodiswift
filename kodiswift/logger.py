@@ -1,4 +1,4 @@
-'''
+"""
     kodiswift.log
     --------------
 
@@ -7,25 +7,25 @@
 
     :copyright: (c) 2012 by Jonathan Beluch
     :license: GPLv3, see LICENSE for more details.
-'''
+"""
 import logging
 from kodiswift import CLI_MODE
 
 
 # TODO: Add logging to a file as well when on CLI with lowest threshold
 #       possible
-#fh = logging.FileHandler('log_filename.txt')
-#fh.setLevel(logging.DEBUG)
-#fh.setFormatter(formatter)
-#log.addHandler(fh)
+# fh = logging.FileHandler('log_filename.txt')
+# fh.setLevel(logging.DEBUG)
+# fh.setFormatter(formatter)
+# log.addHandler(fh)
 # TODO: Allow a global flag to set logging level when dealing with Kodi
 # TODO: Add -q and -v flags to CLI to quiet or enabel more verbose logging
 
 
 class XBMCFilter(object):
-    '''A logging filter that streams to STDOUT or to the xbmc log if
+    """A logging filter that streams to STDOUT or to the xbmc log if
     running inside Kodi.
-    '''
+    """
     python_to_xbmc = {
         'DEBUG': 'LOGDEBUG',
         'INFO': 'LOGNOTICE',
@@ -49,12 +49,12 @@ class XBMCFilter(object):
         self.prefix = prefix
 
     def filter(self, record):
-        '''Returns True for all records if running in the CLI, else returns
+        """Returns True for all records if running in the CLI, else returns
         True.
 
         When running inside Kodi it calls the xbmc.log() method and prevents
         the message from being double printed to STDOUT.
-        '''
+        """
 
         # When running in Kodi, any logged statements will be double printed
         # since we are calling xbmc.log() explicitly. Therefore we return False
@@ -78,11 +78,11 @@ else:
 
 
 def setup_log(name):
-    '''Returns a logging instance for the provided name. The returned
+    """Returns a logging instance for the provided name. The returned
     object is an instance of logging.Logger. Logged messages will be
     printed to stderr when running in the CLI, or forwarded to Kodi's
     log when running in Kodi mode.
-    '''
+    """
     _log = logging.getLogger(name)
     _log.setLevel(GLOBAL_LOG_LEVEL)
     handler = logging.StreamHandler()

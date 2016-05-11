@@ -1,24 +1,17 @@
 import os
-import sys
 import time
-import shelve
-import urllib
 from datetime import timedelta
 from functools import wraps
 
 import kodiswift
-from kodiswift import xbmc, xbmcaddon, xbmcplugin, xbmcgui
-from kodiswift.storage import TimedStorage
-from kodiswift.logger import log
+from kodiswift import xbmc, xbmcplugin, xbmcgui
 from kodiswift.constants import VIEW_MODES, SortMethod
-from common import Modes, DEBUG_MODES
-from request import Request
-
-
+from kodiswift.logger import log
+from kodiswift.storage import TimedStorage
 
 
 class XBMCMixin(object):
-    '''A mixin to add Kodi helper methods. In order to use this mixin,
+    """A mixin to add Kodi helper methods. In order to use this mixin,
     the child class must implement the following methods and
     properties:
 
@@ -43,12 +36,12 @@ class XBMCMixin(object):
     _memoized_storage = None
     _unsynced_storages = None
     # TODO: Ensure above is implemented
-    '''
+    """
 
     _function_cache_name = '.functions'
 
     def cached(self, TTL=60 * 24):
-        '''A decorator that will cache the output of the wrapped function. The
+        """A decorator that will cache the output of the wrapped function. The
         key used for the cache is the function name as well as the `*args` and
         `**kwargs` passed to the function.
 
@@ -56,16 +49,18 @@ class XBMCMixin(object):
 
         .. note:: For route caching, you should use
                   :meth:`kodiswift.Plugin.cached_route`.
-        '''
+        """
+
         def decorating_function(function):
             # TODO test this method
-            storage = self.get_storage(self._function_cache_name, file_format='pickle',
+            storage = self.get_storage(self._function_cache_name,
+                                       file_format='pickle',
                                        TTL=TTL)
             kwd_mark = 'f35c2d973e1bbbc61ca60fc6d7ae4eb3'
 
             @wraps(function)
             def wrapper(*args, **kwargs):
-                key = (function.__name__, kwd_mark,) + args
+                key = (function.__name__, kwd_mark) + args
                 if kwargs:
                     key += (kwd_mark,) + tuple(sorted(kwargs.items()))
 
@@ -82,27 +77,29 @@ class XBMCMixin(object):
                     storage[key] = result
                     storage.sync()
                 return result
+
             return wrapper
+
         return decorating_function
 
     def clear_function_cache(self):
-        '''Clears the storage that caches results when using
+        """Clears the storage that caches results when using
         :meth:`kodiswift.Plugin.cached_route` or
         :meth:`kodiswift.Plugin.cached`.
-        '''
+        """
         self.get_storage(self._function_cache_name).clear()
 
     def list_storages(self):
-        '''Returns a list of existing stores. The returned names can then be
+        """Returns a list of existing stores. The returned names can then be
         used to call get_storage().
-        '''
+        """
         # Filter out any storages used by kodiswift so caller doesn't corrupt
         # them.
         return [name for name in os.listdir(self.storage_path)
                 if not name.startswith('.')]
 
     def get_storage(self, name='main', file_format='pickle', TTL=None):
-        '''Returns a storage for the given name. The returned storage is a
+        """Returns a storage for the given name. The returned storage is a
         fully functioning python dictionary and is designed to be used that
         way. It is usually not necessary for the caller to load or save the
         storage manually. If the storage does not already exist, it will be
@@ -123,7 +120,7 @@ class XBMCMixin(object):
                     storage is loaded form disk, it is possible to call
                     get_storage() with a different TTL than when the storage was
                     created. The currently specified TTL is always honored.
-        '''
+        """
 
         if not hasattr(self, '_unsynced_storages'):
             self._unsynced_storages = {}
@@ -158,9 +155,9 @@ class XBMCMixin(object):
         return os.path.join(xbmc.translatePath('special://temp/'), path)
 
     def get_string(self, stringid):
-        '''Returns the localized string from strings.xml for the given
+        """Returns the localized string from strings.xml for the given
         stringid.
-        '''
+        """
         stringid = int(stringid)
         if not hasattr(self, '_strings'):
             self._strings = {}
@@ -169,17 +166,17 @@ class XBMCMixin(object):
         return self._strings[stringid]
 
     def set_content(self, content):
-        '''Sets the content type for the plugin.'''
+        """Sets the content type for the plugin."""
         # TODO: Change to a warning instead of an assert. Otherwise will have
         # to keep this list in sync with
         #       any Kodi changes.
-        #contents = ['files', 'songs', 'artists', 'albums', 'movies',
-        #'tvshows', 'episodes', 'musicvideos']
-        #assert content in contents, 'Content type "%s" is not valid' % content
+        # contents = ['files', 'songs', 'artists', 'albums', 'movies',
+        # 'tvshows', 'episodes', 'musicvideos']
+        # assert content in contents, 'Content type "%s" is not valid' % content
         xbmcplugin.setContent(self.handle, content)
 
     def get_setting(self, key, converter=None, choices=None):
-        '''Returns the settings value for the provided key.
+        """Returns the settings value for the provided key.
         If converter is str, unicode, bool or int the settings value will be
         returned converted to the provided type.
         If choices is an instance of list or tuple its item at position of the
@@ -196,8 +193,8 @@ class XBMCMixin(object):
             * ``plugin.get_setting('password', unicode)``
             * ``plugin.get_setting('force_viewmode', bool)``
             * ``plugin.get_setting('content', choices=('videos', 'movies'))``
-        '''
-        #TODO: allow pickling of settings items?
+        """
+        # TODO: allow pickling of settings items?
         # TODO: STUB THIS OUT ON CLI
         value = self.addon.getSetting(id=key)
         if converter is str:
@@ -224,13 +221,13 @@ class XBMCMixin(object):
         return self.addon.setSetting(id=key, value=val)
 
     def open_settings(self):
-        '''Opens the settings dialog within Kodi'''
+        """Opens the settings dialog within Kodi"""
         self.addon.openSettings()
 
     def add_to_playlist(self, items, playlist='video'):
-        '''Adds the provided list of items to the specified playlist.
+        """Adds the provided list of items to the specified playlist.
         Available playlists include *video* and *music*.
-        '''
+        """
         playlists = {'music': 0, 'video': 1}
         assert playlist in playlists.keys(), ('Playlist "%s" is invalid.' %
                                               playlist)
@@ -251,23 +248,23 @@ class XBMCMixin(object):
         return _items
 
     def get_view_mode_id(self, view_mode):
-        '''Attempts to return a view_mode_id for a given view_mode
+        """Attempts to return a view_mode_id for a given view_mode
         taking into account the current skin. If not view_mode_id can
         be found, None is returned. 'thumbnail' is currently the only
         suppported view_mode.
-        '''
+        """
         view_mode_ids = VIEW_MODES.get(view_mode.lower())
         if view_mode_ids:
             return view_mode_ids.get(xbmc.getSkinDir())
         return None
 
     def set_view_mode(self, view_mode_id):
-        '''Calls Kodi's Container.SetViewMode. Requires an integer
-        view_mode_id'''
+        """Calls Kodi's Container.SetViewMode. Requires an integer
+        view_mode_id"""
         xbmc.executebuiltin('Container.SetViewMode(%d)' % view_mode_id)
 
     def keyboard(self, default=None, heading=None, hidden=False):
-        '''Displays the keyboard input window to the user. If the user does not
+        """Displays the keyboard input window to the user. If the user does not
         cancel the modal, the value entered by the user will be returned.
 
         :param default: The placeholder text used to prepopulate the input field.
@@ -276,7 +273,7 @@ class XBMCMixin(object):
                         empty string.
         :param hidden: Whether or not the input field should be masked with
                        stars, e.g. a password field.
-        '''
+        """
         if heading is None:
             heading = self.addon.getAddonInfo('name')
         if default is None:
@@ -287,11 +284,11 @@ class XBMCMixin(object):
             return keyboard.getText()
 
     def notify(self, msg='', title=None, delay=5000, image=''):
-        '''Displays a temporary notification message to the user. If
+        """Displays a temporary notification message to the user. If
         title is not provided, the plugin name will be used. To have a
         blank title, pass '' for the title argument. The delay argument
         is in milliseconds.
-        '''
+        """
         if not msg:
             log.warning('Empty message for notification dialog')
         if title is None:
@@ -300,10 +297,10 @@ class XBMCMixin(object):
                             (msg, title, delay, image))
 
     def _listitemify(self, item):
-        '''Creates an kodiswift.ListItem if the provided value for item is a
+        """Creates an kodiswift.ListItem if the provided value for item is a
         dict. If item is already a valid kodiswift.ListItem, the item is
         returned unmodified.
-        '''
+        """
         info_type = self.info_type if hasattr(self, 'info_type') else 'video'
 
         # Create ListItems for anything that is not already an instance of
@@ -315,14 +312,14 @@ class XBMCMixin(object):
         return item
 
     def _add_subtitles(self, subtitles):
-        '''Adds subtitles to playing video.
+        """Adds subtitles to playing video.
 
         :param subtitles: A URL to a remote subtitles file or a local filename
                           for a subtitles file.
 
         .. warning:: You must start playing a video before calling this method
                      or it will loop for an indefinite length.
-        '''
+        """
         # This method is named with an underscore to suggest that callers pass
         # the subtitles argument to set_resolved_url instead of calling this
         # method directly. This is to ensure a video is played before calling
@@ -338,7 +335,7 @@ class XBMCMixin(object):
         player.setSubtitles(subtitles)
 
     def set_resolved_url(self, item=None, subtitles=None):
-        '''Takes a url or a listitem to be played. Used in conjunction with a
+        """Takes a url or a listitem to be played. Used in conjunction with a
         playable list item with a path that calls back into your addon.
 
         :param item: A playable list item or url. Pass None to alert Kodi of a
@@ -352,7 +349,7 @@ class XBMCMixin(object):
         :param subtitles: A URL to a remote subtitles file or a local filename
                           for a subtitles file to be played along with the
                           item.
-        '''
+        """
         if self._end_of_directory:
             raise Exception('Current Kodi handle has been removed. Either '
                             'set_resolved_url(), end_of_directory(), or '
@@ -396,7 +393,7 @@ class XBMCMixin(object):
         return [item]
 
     def add_items(self, items):
-        '''Adds ListItems to the Kodi interface. Each item in the
+        """Adds ListItems to the Kodi interface. Each item in the
         provided list should either be instances of kodiswift.ListItem,
         or regular dictionaries that will be passed to
         kodiswift.ListItem.from_dict. Returns the list of ListItems.
@@ -405,7 +402,7 @@ class XBMCMixin(object):
                       dictionary with keys/values suitable for passing to
                       :meth:`kodiswift.ListItem.from_dict` or an instance of
                       :class:`kodiswift.ListItem`.
-        '''
+        """
         _items = [self._listitemify(item) for item in items]
         tuples = [item.as_tuple() for item in _items]
         xbmcplugin.addDirectoryItems(self.handle, tuples, len(tuples))
@@ -419,12 +416,12 @@ class XBMCMixin(object):
 
     def end_of_directory(self, succeeded=True, update_listing=False,
                          cache_to_disc=True):
-        '''Wrapper for xbmcplugin.endOfDirectory. Records state in
+        """Wrapper for xbmcplugin.endOfDirectory. Records state in
         self._end_of_directory.
 
         Typically it is not necessary to call this method directly, as
         calling :meth:`~kodiswift.Plugin.finish` will call this method.
-        '''
+        """
         self._update_listing = update_listing
         if not self._end_of_directory:
             self._end_of_directory = True
@@ -434,7 +431,7 @@ class XBMCMixin(object):
         assert False, 'Already called endOfDirectory.'
 
     def add_sort_method(self, sort_method, label2_mask=None):
-        '''A wrapper for `xbmcplugin.addSortMethod()
+        """A wrapper for `xbmcplugin.addSortMethod()
         <http://mirrors.xbmc.org/docs/python-docs/xbmcplugin.html#-addSortMethod>`_.
         You can use ``dir(kodiswift.SortMethod)`` to list all available sort
         methods.
@@ -451,7 +448,7 @@ class XBMCMixin(object):
                             documentation
                             <http://mirrors.xbmc.org/docs/python-docs/xbmcplugin.html#-addSortMethod>`_
                             for more information.
-        '''
+        """
         try:
             # Assume it's a string and we need to get the actual int value
             sort_method = SortMethod.from_string(sort_method)
@@ -466,7 +463,7 @@ class XBMCMixin(object):
 
     def finish(self, items=None, sort_methods=None, succeeded=True,
                update_listing=False, cache_to_disc=True, view_mode=None):
-        '''Adds the provided items to the Kodi interface.
+        """Adds the provided items to the Kodi interface.
 
         :param items: an iterable of items where each item is either a
             dictionary with keys/values suitable for passing to
@@ -487,13 +484,14 @@ class XBMCMixin(object):
             string) corresponding to a view_mode or the name of a type of view.
             Currrently the only view type supported is 'thumbnail'.
         :returns: a list of all ListItems added to the Kodi interface.
-        '''
+        """
         # If we have any items, add them. Items are optional here.
         if items:
             self.add_items(items)
         if sort_methods:
             for sort_method in sort_methods:
-                if not isinstance(sort_method, basestring) and hasattr(sort_method, '__len__'):
+                if not isinstance(sort_method, basestring) and hasattr(
+                        sort_method, '__len__'):
                     self.add_sort_method(*sort_method)
                 else:
                     self.add_sort_method(sort_method)

@@ -1,5 +1,6 @@
 from unittest import TestCase
-from kodiswift.common import xbmc_url, enum, clean_dict, pickle_dict, unpickle_dict, unhex
+from kodiswift.common import (kodi_url, clean_dict, pickle_dict, unpickle_dict,
+                              unhex)
 
 
 class TestXBMCUrl(TestCase):
@@ -13,46 +14,14 @@ class TestXBMCUrl(TestCase):
             ('url', {'symbol': '=', 'c': 'd'}, 'url|symbol=%3D&c=d'),
         )
         for url, options, expected in known_values:
-            self.assertEqual(expected, xbmc_url(url, **options))
+            self.assertEqual(expected, kodi_url(url, **options))
 
-class TestEnum(TestCase):
-    def test_kwargs_enum(self):
-        States = enum(NJ='New Jersey', NY='New York')
-        self.assertEqual(States.NJ, 'New Jersey')
-        self.assertEqual(States.NY, 'New York')
-        self.assertEqual(sorted(States._fields), sorted(['NJ', 'NY']))
-
-    def test_args_enum(self):
-        States = enum('NEW_JERSEY', 'NEW_YORK')
-        self.assertEqual(States.NEW_YORK, 'NEW_YORK')
-        self.assertEqual(States.NEW_JERSEY, 'NEW_JERSEY')
-        self.assertEqual(sorted(States._fields), sorted(['NEW_YORK', 'NEW_JERSEY']))
-
-    def test_mixed_enum(self):
-        States = enum('NEW_JERSEY', NY='NEW_YORK')
-        self.assertEqual(States.NY, 'NEW_YORK')
-        self.assertEqual(States.NEW_JERSEY, 'NEW_JERSEY')
-        self.assertEqual(sorted(States._fields), sorted(['NY', 'NEW_JERSEY']))
-
-#class TestUrlParse(TestCase):
-    #def test_url_parse(self):
-        ## supposed to return scheme, netloc and path
-        #known_values = (
-            ## url, scheme, netloc, path
-            #('plugin://my.plugin.id/path/', 'plugin', 'my.plugin.id', '/path/'),
-            #('plugin://my.plugin.id:8080/path/', 'plugin', 'my.plugin.id:8080', '/path/'),
-            #('plugin://my.plugin.id:8080/', 'plugin', 'my.plugin.id:8080', '/'),
-            #('http://my.plugin.id/path?foo=bar', 'http', 'my.plugin.id', '/path?foo=bar'),
-            #('http://example.com/path/to/video', 'http', 'example.com', '/path/to/video'),
-        #)
-        #for url, netloc, scheme, path in known_values:
-            #self.assertEqual(urlparse(url), (netloc, scheme, path))
 
 class TestCleanDict(TestCase):
     def test_clean_dict(self):
-       items = { 'foo': 'foo', 'bar': None, 'baz': False, 'age': 0, }
-       expected = { 'foo': 'foo', 'baz': False, 'age': 0, }
-       self.assertEqual(expected, clean_dict(items))
+        items = {'foo': 'foo', 'bar': None, 'baz': False, 'age': 0,}
+        expected = {'foo': 'foo', 'baz': False, 'age': 0,}
+        self.assertEqual(expected, clean_dict(items))
 
 
 class TestPickleDict(TestCase):
@@ -74,7 +43,6 @@ class TestPickleDict(TestCase):
             ('list', "(lp1\nS'a'\naS'b'\na.",),
             ('dict', "(dp1\nS'foo'\np2\nS'bar'\np3\ns."),
         )
-
 
         self.assertEqual(len(pickled.items()), 7)
         for key, val in expected:

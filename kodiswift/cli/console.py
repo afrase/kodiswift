@@ -1,4 +1,4 @@
-'''
+"""
     kodiswift.cli.console
     ----------------------
 
@@ -6,11 +6,12 @@
 
     :copyright: (c) 2012 by Jonathan Beluch
     :license: GPLv3, see LICENSE for more details.
-'''
+"""
+from __future__ import print_function
 
 
 def get_max_len(items):
-    '''Returns the max of the lengths for the provided items'''
+    """Returns the max of the lengths for the provided items"""
     try:
         return max(len(item) for item in items)
     except ValueError:
@@ -18,11 +19,10 @@ def get_max_len(items):
 
 
 def display_listitems(items, url):
-    '''Displays a list of items along with the index to enable a user
+    """Displays a list of items along with the index to enable a user
     to select an item.
-    '''
-    if (len(items) == 2 and items[0].get_label() == '..'
-        and items[1].get_played()):
+    """
+    if len(items) == 2 and items[0].get_label() == '..' and items[1].get_played():
         display_video(items)
     else:
         label_width = get_max_len(item.get_label() for item in items)
@@ -46,13 +46,13 @@ def display_listitems(items, url):
                             'Label'.ljust(label_width)),
             '-' * line_width,
         ]
-        print '\n'.join(header + output)
+        print('\n'.join(header + output))
 
 
 def display_video(items):
-    '''Prints a message for a playing video and displays the parent
+    """Prints a message for a playing video and displays the parent
     listitem.
-    '''
+    """
     parent_item, played_item = items
 
     title_line = 'Playing Media %s (%s)' % (played_item.get_label(),
@@ -67,13 +67,13 @@ def display_video(items):
         '-' * line_width,
         parent_line,
     ]
-    print '\n'.join(output)
+    print('\n'.join(output))
 
 
 def get_user_choice(items):
-    '''Returns the selected item from provided items or None if 'q' was
+    """Returns the selected item from provided items or None if 'q' was
     entered for quit.
-    '''
+    """
     choice = raw_input('Choose an item or "q" to quit: ')
     while choice != 'q':
         try:
@@ -92,7 +92,7 @@ def get_user_choice(items):
 
 
 def continue_or_quit():
-    '''Prints an exit message and returns False if the user wants to
+    """Prints an exit message and returns False if the user wants to
     quit.
-    '''
+    """
     return raw_input('Enter to continue or "q" to quit') != 'q'

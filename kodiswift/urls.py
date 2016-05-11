@@ -1,4 +1,4 @@
-'''
+"""
     kodiswift.urls
     ---------------
 
@@ -6,7 +6,7 @@
 
     :copyright: (c) 2012 by Jonathan Beluch
     :license: GPLv3, see LICENSE for more details.
-'''
+"""
 import re
 from urllib import urlencode, unquote_plus, quote_plus
 from kodiswift.common import pickle_dict, unpickle_dict
@@ -22,7 +22,7 @@ class NotFoundException(Exception):
 
 
 class UrlRule(object):
-    '''This object stores the various properties related to a routing URL rule.
+    """This object stores the various properties related to a routing URL rule.
     It also provides a few methods to create URLs from the rule or to match a
     given URL against a rule.
 
@@ -37,16 +37,16 @@ class UrlRule(object):
     :param name: The name of the url rule. This is used in the reverse process
                  of creating urls for a given rule.
     :param options: A dict containing any default values for the url rule.
-    '''
+    """
 
     def __init__(self, url_rule, view_func, name, options):
         self._name = name
         self._url_rule = url_rule
         self._view_func = view_func
         self._options = options or {}
-        self._keywords = re.findall(r'\<(.+?)\>', url_rule)
+        self._keywords = re.findall(r'<(.+?)>', url_rule)
 
-        #change <> to {} for use with str.format()
+        # change <> to {} for use with str.format()
         self._url_format = self._url_rule.replace('<', '{').replace('>', '}')
 
         # Make a regex pattern for matching incoming URLs
@@ -58,10 +58,10 @@ class UrlRule(object):
 
         try:
             self._regex = re.compile('^' + p + '$')
-        except re.error, e:
-            raise ValueError, ('There was a problem creating this URL rule. '
-                               'Ensure you do not have any unpaired angle '
-                               'brackets: "<" or ">"')
+        except re.error:
+            raise ValueError('There was a problem creating this URL rule. '
+                             'Ensure you do not have any unpaired angle '
+                             'brackets: "<" or ">"')
 
     def __eq__(self, other):
         return (
@@ -73,14 +73,14 @@ class UrlRule(object):
         return not self.__eq__(other)
 
     def match(self, path):
-        '''Attempts to match a url to the given path. If successful, a tuple is
+        """Attempts to match a url to the given path. If successful, a tuple is
         returned. The first item is the matchd function and the second item is
         a dictionary containing items to be passed to the function parsed from
         the provided path.
 
         If the provided path does not match this url rule then a
         NotFoundException is raised.
-        '''
+        """
         m = self._regex.search(path)
         if not m:
             raise NotFoundException
@@ -98,11 +98,11 @@ class UrlRule(object):
         return self._view_func, items
 
     def _make_path(self, items):
-        '''Returns a relative path for the given dictionary of items.
+        """Returns a relative path for the given dictionary of items.
 
         Uses this url rule's url pattern and replaces instances of <var_name>
         with the appropriate value from the items dict.
-        '''
+        """
         for key, val in items.items():
             if not isinstance(val, basestring):
                 raise TypeError, ('Value "%s" for key "%s" must be an instance'
@@ -119,14 +119,14 @@ class UrlRule(object):
         return path
 
     def _make_qs(self, items):
-        '''Returns a query string for the given dictionary of items. All keys
+        """Returns a query string for the given dictionary of items. All keys
         and values in the provided items will be urlencoded. If necessary, any
         python objects will be pickled before being urlencoded.
-        '''
+        """
         return urlencode(pickle_dict(items))
 
     def make_path_qs(self, items):
-        '''Returns a relative path complete with query string for the given
+        """Returns a relative path complete with query string for the given
         dictionary of items.
 
         Any items with keys matching this rule's url pattern will be inserted
@@ -142,7 +142,7 @@ class UrlRule(object):
                      URL to get very lengthy (and unreadable) and Kodi has a
                      hard limit on URL length. See the caching section if you
                      need to persist a large amount of data between requests.
-        '''
+        """
         # Convert any ints and longs to strings
         for key, val in items.items():
             if isinstance(val, (int, long)):
@@ -170,25 +170,25 @@ class UrlRule(object):
 
     @property
     def regex(self):
-        '''The regex for matching paths against this url rule.'''
+        """The regex for matching paths against this url rule."""
         return self._regex
 
     @property
     def view_func(self):
-        '''The bound function'''
+        """The bound function"""
         return self._view_func
 
     @property
     def url_format(self):
-        '''The url pattern'''
+        """The url pattern"""
         return self._url_format
 
     @property
     def name(self):
-        '''The name of this url rule.'''
+        """The name of this url rule."""
         return self._name
 
     @property
     def keywords(self):
-        '''The list of path keywords for this url rule.'''
+        """The list of path keywords for this url rule."""
         return self._keywords

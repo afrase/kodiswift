@@ -1,4 +1,4 @@
-'''
+"""
     kodiswift.request
     ------------------
 
@@ -7,7 +7,7 @@
 
     :copyright: (c) 2012 by Jonathan Beluch
     :license: GPLv3, see LICENSE for more details.
-'''
+"""
 from kodiswift.common import unpickle_args
 import urlparse
 try:
@@ -17,7 +17,7 @@ except ImportError:
 
 
 class Request(object):
-    '''The request objects contains all the arguments passed to the plugin via
+    """The request objects contains all the arguments passed to the plugin via
     the command line.
 
     :param url: The complete plugin URL being requested. Since Kodi typically
@@ -25,7 +25,7 @@ class Request(object):
                 base URL, they must be joined into a single string before being
                 provided.
     :param handle: The handle associated with the current request.
-    '''
+    """
 
     def __init__(self, url, handle):
         #: The entire request url.

@@ -9,9 +9,9 @@ log.info('Using temp directory %s', TEMP_DIR)
 
 
 def _create_dir(path):
-    '''Creates necessary directories for the given path or does nothing
+    """Creates necessary directories for the given path or does nothing
     if the directories already exist.
-    '''
+    """
     try:
         os.makedirs(path)
     except OSError, exc:
@@ -35,10 +35,10 @@ def log(msg, level=0):
     #print '%s - %s' % (levels[level], msg)
 
 def translatePath(path):
-    '''Creates folders in the OS's temp directory. Doesn't touch any
+    """Creates folders in the OS's temp directory. Doesn't touch any
     possible Kodi installation on the machine. Attempting to do as
     little work as possible to enable this function to work seamlessly.
-    '''
+    """
     valid_dirs = ['xbmc', 'home', 'temp', 'masterprofile', 'profile',
         'subtitles', 'userdata', 'database', 'thumbnails', 'recordings',
         'screenshots', 'musicplaylists', 'videoplaylists', 'cdrips', 'skin',

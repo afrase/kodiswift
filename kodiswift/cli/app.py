@@ -1,4 +1,4 @@
-'''
+"""
     kodiswift.cli.app
     ----------------
 
@@ -6,24 +6,24 @@
 
     :copyright: (c) 2012 by Jonathan Beluch
     :license: GPLv3, see LICENSE for more details.
-'''
+"""
 import os
 import sys
 import logging
-from xml.etree import ElementTree as ET
+from xml.etree import ElementTree as Et
 
 from kodiswift import Plugin, ListItem, logger
 from kodiswift.common import Modes
 from kodiswift.cli import Option
 from kodiswift.cli.console import (display_listitems, continue_or_quit,
-    get_user_choice)
+                                   get_user_choice)
 
 
 class RunCommand(object):
-    '''A CLI command to run a plugin.'''
+    """A CLI command to run a plugin."""
 
     command = 'run'
-    usage = ('%prog run [once|interactive|crawl] [url]')
+    usage = '%prog run [once|interactive|crawl] [url]'
     option_list = (
         Option('-q', '--quiet', action='store_true',
                help='set logging level to quiet'),
@@ -33,9 +33,9 @@ class RunCommand(object):
 
     @staticmethod
     def run(opts, args):
-        '''The run method for the 'run' command. Executes a plugin from the
+        """The run method for the 'run' command. Executes a plugin from the
         command line.
-        '''
+        """
         setup_options(opts)
 
         mode = Modes.ONCE
@@ -48,12 +48,12 @@ class RunCommand(object):
             # A url was specified
             url = args.pop(0)
 
-        plugin_mgr = PluginManager.load_plugin_from_addonxml(mode, url)
+        plugin_mgr = PluginManager.load_plugin_from_addon_xml(mode, url)
         plugin_mgr.run()
 
 
 def setup_options(opts):
-    '''Takes any actions necessary based on command line options'''
+    """Takes any actions necessary based on command line options"""
     if opts.quiet:
         logger.log.setLevel(logging.WARNING)
         logger.GLOBAL_LOG_LEVEL = logging.WARNING
@@ -63,13 +63,13 @@ def setup_options(opts):
         logger.GLOBAL_LOG_LEVEL = logging.DEBUG
 
 
-def get_addon_module_name(addonxml_filename):
-    '''Attempts to extract a module name for the given addon's addon.xml file.
+def get_addon_module_name(addon_xml_filename):
+    """Attempts to extract a module name for the given addon's addon.xml file.
     Looks for the 'xbmc.python.pluginsource' extension node and returns the
     addon's filename without the .py suffix.
-    '''
+    """
     try:
-        xml = ET.parse(addonxml_filename).getroot()
+        xml = Et.parse(addon_xml_filename).getroot()
     except IOError:
         sys.exit('Cannot find an addon.xml file in the current working '
                  'directory. Please run this command from the root directory '
@@ -85,16 +85,16 @@ def get_addon_module_name(addonxml_filename):
 
 
 class PluginManager(object):
-    '''A class to handle running a plugin in CLI mode. Handles setup state
+    """A class to handle running a plugin in CLI mode. Handles setup state
     before calling plugin.run().
-    '''
+    """
 
     @classmethod
-    def load_plugin_from_addonxml(cls, mode, url):
-        '''Attempts to import a plugin's source code and find an instance of
-        :class:`~xbmcswif2.Plugin`. Returns an instance of PluginManager if
-        succesful.
-        '''
+    def load_plugin_from_addon_xml(cls, mode, url):
+        """Attempts to import a plugin's source code and find an instance of
+        :class:`~kodiswift.Plugin`. Returns an instance of PluginManager if
+        successful.
+        """
         cwd = os.getcwd()
         sys.path.insert(0, cwd)
         module_name = get_addon_module_name(os.path.join(cwd, 'addon.xml'))
@@ -105,7 +105,7 @@ class PluginManager(object):
             plugin = (attr_value for attr_value in vars(addon).values()
                       if isinstance(attr_value, Plugin)).next()
         except StopIteration:
-            sys.exit('Could\'t find a Plugin instance in %s.py' % module_name)
+            sys.exit('Could not find a Plugin instance in %s.py' % module_name)
 
         return cls(plugin, mode, url)
 
@@ -115,14 +115,14 @@ class PluginManager(object):
         self.url = url
 
     def run(self):
-        '''This method runs the the plugin in the appropriate mode parsed from
+        """This method runs the the plugin in the appropriate mode parsed from
         the command line options.
-        '''
+        """
         handle = 0
         handlers = {
-           Modes.ONCE: once,
-           Modes.CRAWL: crawl,
-           Modes.INTERACTIVE: interactive,
+            Modes.ONCE: once,
+            Modes.CRAWL: crawl,
+            Modes.INTERACTIVE: interactive,
         }
         handler = handlers[self.mode]
         patch_sysargv(self.url or 'plugin://%s/' % self.plugin.id, handle)
@@ -130,14 +130,14 @@ class PluginManager(object):
 
 
 def patch_sysargv(*args):
-    '''Patches sys.argv with the provided args'''
+    """Patches sys.argv with the provided args"""
     sys.argv = args[:]
 
 
 def patch_plugin(plugin, path, handle=None):
-    '''Patches a few attributes of a plugin instance to enable a new call to
+    """Patches a few attributes of a plugin instance to enable a new call to
     plugin.run()
-    '''
+    """
     if handle is None:
         handle = plugin.request.handle
     patch_sysargv(path, handle)
@@ -145,7 +145,7 @@ def patch_plugin(plugin, path, handle=None):
 
 
 def once(plugin, parent_stack=None):
-    '''A run mode for the CLI that runs the plugin once and exits.'''
+    """A run mode for the CLI that runs the plugin once and exits."""
     plugin.clear_added_items()
     items = plugin.run()
 
@@ -163,9 +163,9 @@ def once(plugin, parent_stack=None):
 
 
 def interactive(plugin):
-    '''A run mode for the CLI that runs the plugin in a loop based on user
+    """A run mode for the CLI that runs the plugin in a loop based on user
     input.
-    '''
+    """
     items = [item for item in once(plugin) if not item.get_played()]
     parent_stack = []  # Keep track of parents so we can have a '..' option
 
@@ -186,11 +186,11 @@ def interactive(plugin):
 
 
 def crawl(plugin):
-    '''Performs a breadth-first crawl of all possible routes from the
+    """Performs a breadth-first crawl of all possible routes from the
     starting path. Will only visit a URL once, even if it is referenced
     multiple times in a plugin. Requires user interaction in between each
     fetch.
-    '''
+    """
     # TODO: use OrderedSet?
     paths_visited = set()
     paths_to_visit = set(item.get_path() for item in once(plugin))
