@@ -30,7 +30,7 @@ class SortMethod(object):
         """
         return getattr(cls, sort_method.upper())
 
-
+# TODO(Sinap): Explicit is better than implicit.
 PREFIX = 'SORT_METHOD_'
 for attr_name, attr_value in xbmcplugin.__dict__.items():
     if attr_name.startswith(PREFIX):

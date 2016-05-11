@@ -1,5 +1,7 @@
+# noinspection PyPep8Naming,PyUnusedLocal
 class ListItem(object):
-    def __init__(self, label=None, label2=None, iconImage=None, thumbnailImage=None, path=None):
+    def __init__(self, label=None, label2=None, iconImage=None,
+                 thumbnailImage=None, path=None):
         self.label = label
         self.label2 = label2
         self.iconImage = iconImage
@@ -7,7 +9,9 @@ class ListItem(object):
         self.path = path
         self.properties = {}
         self.stream_info = {}
+        self.art = {}
         self.selected = False
+        self.context_menu_items = None
         self.infolabels = {}
 
     def addContextMenuItems(self, items, replaceItems=False):
@@ -31,8 +35,8 @@ class ListItem(object):
     def setIconImage(self, icon):
         self.iconImage = icon
 
-    def setInfo(self, type, infoLabels):
-        assert type in ['video', 'music', 'pictures']
+    def setInfo(self, info_type, infoLabels):
+        assert info_type in ['video', 'music', 'pictures']
         self.infolabels.update(infoLabels)
 
     def setLabel(self, label):
@@ -52,6 +56,6 @@ class ListItem(object):
 
     def setThumbnailImage(self, thumb):
         self.thumbnailImage = thumb
-        
 
-
+    def setArt(self, values):
+        self.art = values

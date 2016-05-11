@@ -10,6 +10,10 @@ from kodiswift.logger import log
 from kodiswift.storage import TimedStorage
 
 
+# TODO(Sinap): Need to either break the single mixin into multiple or just use
+#              a parent class.
+
+
 class XBMCMixin(object):
     """A mixin to add Kodi helper methods. In order to use this mixin,
     the child class must implement the following methods and
@@ -491,7 +495,7 @@ class XBMCMixin(object):
         if sort_methods:
             for sort_method in sort_methods:
                 if not isinstance(sort_method, basestring) and hasattr(
-                        sort_method, '__len__'):
+                    sort_method, '__len__'):
                     self.add_sort_method(*sort_method)
                 else:
                     self.add_sort_method(sort_method)

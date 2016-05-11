@@ -12,16 +12,23 @@
 def background(url):
     """This action will run an addon in the background for the provided URL.
 
-    See 'Kodi.RunPlugin()' at
-    http://wiki.xbmc.org/index.php?title=List_of_built-in_functions.
+    See 'RunPlugin()' at
+    http://kodi.wiki/view/List_of_built-in_functions
+
+    Args:
+        url (str): Full path must be specified.
+            Does not work for folder plugins.
+
+    Returns:
+        str: String of the builtin command
     """
-    return 'Kodi.RunPlugin(%s)' % url
+    return 'RunPlugin(%s)' % url
 
 
 def update_view(url):
     """This action will update the current container view with provided url.
 
-    See 'Kodi.Container.Update()' at
-    http://wiki.xbmc.org/index.php?title=List_of_built-in_functions.
+    See 'Container.Update()' at
+    http://kodi.wiki/view/List_of_built-in_functions
     """
-    return 'Kodi.Container.Update(%s)' % url
+    return 'Container.Update(%s)' % url

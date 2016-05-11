@@ -20,7 +20,7 @@ class Modes(object):
     ONCE = 'ONCE'
     CRAWL = 'CRAWL'
     INTERACTIVE = 'INTERACTIVE'
-
+# TODO(Sinap): This doesn't appear to be used for anything
 DEBUG_MODES = [Modes.ONCE, Modes.CRAWL, Modes.INTERACTIVE]
 
 
@@ -28,42 +28,68 @@ def kodi_url(url, **options):
     """Appends key/val pairs to the end of a URL. Useful for passing arbitrary
     HTTP headers to Kodi to be used when fetching a media resource, e.g.
     cookies.
+
+    Args:
+        url (str):
+        **options (dict):
+
+    Returns:
+        str:
     """
-    optionstring = urllib.urlencode(options)
-    if optionstring:
-        return url + '|' + optionstring
+    options = urllib.urlencode(options)
+    if options:
+        return url + '|' + options
     return url
 
 
-def clean_dict(dct):
-    """Returns a dict where items with a None value are removed"""
-    return dict((key, val) for key, val in dct.items() if val is not None)
+def clean_dict(data):
+    """Remove keys with a value of None
+
+    Args:
+        data (dict):
+
+    Returns:
+        dict:
+    """
+    return {k: v for k, v in data.items() if v is not None}
 
 
 def pickle_dict(items):
-    """Returns a new dictionary where values which aren't instances of
-    basestring are pickled. Also, a new key '_pickled' contains a comma
-    separated list of keys corresponding to the pickled values.
+    """Convert `items` values into pickled values.
+
+    Args:
+        items (dict): A dictionary
+
+    Returns:
+        dict: Values which aren't instances of basestring are pickled. Also,
+            a new key '_pickled' contains a comma separated list of keys
+            corresponding to the pickled values.
     """
     ret = {}
     pickled_keys = []
-    for key, val in items.items():
-        if isinstance(val, basestring):
-            ret[key] = val
+    for k, v in items.items():
+        if isinstance(v, basestring):
+            ret[k] = v
         else:
-            pickled_keys.append(key)
-            ret[key] = pickle.dumps(val)
+            pickled_keys.append(k)
+            ret[k] = pickle.dumps(v)
     if pickled_keys:
         ret['_pickled'] = ','.join(pickled_keys)
     return ret
 
 
 def unpickle_args(items):
-    """Takes a dict and unpickles values whose keys are found in
-    '_pickled' key.
+    """Takes a dict and un-pickles values whose keys are found in a '_pickled'
+    key.
 
-    >>> unpickle_args({'_pickled': ['foo']. 'foo': ['I3%0A.']})
+    >>> unpickle_args({'_pickled': ['foo'], 'foo': ['I3%0A.']})
     {'foo': 3}
+
+    Args:
+        items (dict): A pickled dictionary.
+
+    Returns:
+        dict: Dict with values un-pickled.
     """
     # Technically there can be more than one _pickled value. At this point
     # we'll just use the first one
@@ -73,48 +99,46 @@ def unpickle_args(items):
 
     pickled_keys = pickled[0].split(',')
     ret = {}
-    for key, vals in items.items():
-        if key in pickled_keys:
-            ret[key] = [pickle.loads(val) for val in vals]
+    for k, v in items.items():
+        if k in pickled_keys:
+            ret[k] = [pickle.loads(val) for val in v]
         else:
-            ret[key] = vals
+            ret[k] = v
     return ret
 
 
 def unpickle_dict(items):
-    """Returns a dict pickled with pickle_dict"""
+    """un-pickles a dictionary that was pickled with `pickle_dict`.
+
+    Args:
+        items (dict): A pickled dictionary.
+
+    Returns:
+        dict: An un-pickled dictionary.
+    """
     pickled_keys = items.pop('_pickled', '').split(',')
     ret = {}
-    for key, val in items.items():
-        if key in pickled_keys:
-            ret[key] = pickle.loads(val)
+    for k, v in items.items():
+        if k in pickled_keys:
+            ret[k] = pickle.loads(v)
         else:
-            ret[key] = val
+            ret[k] = v
     return ret
 
 
 def download_page(url, data=None):
     """Returns the response for the given url. The optional data argument is
-    passed directly to urlopen."""
+    passed directly to urlopen.
+
+    Args:
+        url (str): The URL to read.
+        data (Optional[any]): If given, a POST request will be made with
+            :param:`data` as the POST body.
+
+    Returns:
+        str: The results of requesting the URL.
+    """
     conn = urllib2.urlopen(url, data)
     resp = conn.read()
     conn.close()
     return resp
-
-
-_hextochr = dict(('%02x' % i, chr(i)) for i in range(256))
-_hextochr.update(('%02X' % i, chr(i)) for i in range(256))
-
-
-def unhex(inp):
-    """unquote(r'abc\x20def') -> 'abc def'."""
-    res = inp.split(r'\x')
-    for i in xrange(1, len(res)):
-        item = res[i]
-        try:
-            res[i] = _hextochr[item[:2]] + item[2:]
-        except KeyError:
-            res[i] = '%' + item
-        except UnicodeDecodeError:
-            res[i] = unichr(int(item[:2], 16)) + item[2:]
-    return ''.join(res)

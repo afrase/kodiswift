@@ -8,6 +8,8 @@
     :copyright: (c) 2012 by Jonathan Beluch
     :license: GPLv3, see LICENSE for more details.
 """
+import warnings
+
 from kodiswift import xbmcgui
 
 
@@ -15,36 +17,29 @@ class ListItem(object):
     """A wrapper for the xbmcgui.ListItem class. The class keeps track
     of any set properties that xbmcgui doesn't expose getters for.
     """
+
     def __init__(self, label=None, label2=None, icon=None, thumbnail=None,
                  path=None):
         """Defaults are an emtpy string since xbmcgui.ListItem will not
         accept None.
         """
-        kwargs = {
-            'label': label,
-            'label2': label2,
-            'iconImage': icon,
-            'thumbnailImage': thumbnail,
-            'path': path,
-        }
-        kwargs = dict((key, val) for key, val in kwargs.items()
-                      if val is not None)
-        self._listitem = xbmcgui.ListItem(**kwargs)
+        # kwargs = {
+        #     'label': label,
+        #     'label2': label2,
+        #     'path': path,
+        # }
+        # kwargs = {k: v for k, v in kwargs.items() if v is not None}
+        self._listitem = xbmcgui.ListItem(label, label2, path)
 
         # kodi doesn't make getters available for these properties so we'll
         # keep track on our own
+        self._art = {}
         self._icon = icon
         self._path = path
         self._thumbnail = thumbnail
         self._context_menu_items = []
         self.is_folder = True
         self._played = False
-
-    def __repr__(self):
-        return ("<ListItem '%s'>" % self.label).encode('utf-8')
-
-    def __str__(self):
-        return ('%s (%s)' % (self.label, self.path)).encode('utf-8')
 
     def get_context_menu_items(self):
         """Returns the list of currently set context_menu items."""
@@ -62,37 +57,59 @@ class ListItem(object):
         self._context_menu_items.extend(items)
         self._listitem.addContextMenuItems(items, replace_items)
 
-    def get_label(self):
-        """Sets the listitem's label"""
+    @property
+    def label(self):
         return self._listitem.getLabel()
 
-    def set_label(self, label):
-        """Returns the listitem's label"""
-        return self._listitem.setLabel(label)
+    @label.setter
+    def label(self, value):
+        self._listitem.setLabel(value)
 
-    label = property(get_label, set_label)
+    def get_label(self):
+        warnings.warn('get_label is deprecated, use label property',
+                      DeprecationWarning)
+        return self.label
 
-    def get_label2(self):
-        """Returns the listitem's label2"""
+    def set_label(self, value):
+        warnings.warn('set_label is deprecated, use label property',
+                      DeprecationWarning)
+        return self._listitem.setLabel(value)
+
+    @property
+    def label2(self):
         return self._listitem.getLabel2()
 
-    def set_label2(self, label):
-        """Sets the listitem's label2"""
-        return self._listitem.setLabel2(label)
+    @label2.setter
+    def label2(self, value):
+        self._listitem.setLabel2(value)
 
-    label2 = property(get_label2, set_label2)
+    def get_label2(self):
+        warnings.warn('get_label2 is deprecated, use label2 property',
+                      DeprecationWarning)
+        return self.label2
+
+    def set_label2(self, value):
+        warnings.warn('set_label2 is deprecated, use label2 property',
+                      DeprecationWarning)
+        return self._listitem.setLabel2(value)
+
+    @property
+    def selected(self):
+        return self._listitem.isSelected()
+
+    @selected.setter
+    def selected(self, value):
+        self._listitem.select(value)
 
     def is_selected(self):
-        """Returns True if the listitem is selected."""
+        warnings.warn('is_selected is deprecated, use selected property',
+                      DeprecationWarning)
         return self._listitem.isSelected()
 
     def select(self, selected_status=True):
-        """Sets the listitems selected status to the provided value.
-        Defaults to True.
-        """
+        warnings.warn('select is deprecated, use selected property',
+                      DeprecationWarning)
         return self._listitem.select(selected_status)
-
-    selected = property(is_selected, select)
 
     def set_info(self, info_type, info_labels):
         """Sets the listitems info"""
@@ -110,65 +127,124 @@ class ListItem(object):
         """Adds stream details"""
         return self._listitem.addStreamInfo(stream_type, stream_values)
 
+    @property
+    def icon(self):
+        return self._art.get('icon')
+
+    @icon.setter
+    def icon(self, value):
+        self._art['icon'] = value
+        self._listitem.setArt(self._art)
+
     def get_icon(self):
-        """Returns the listitem's icon image"""
+        warnings.warn('get_icon is deprecated, use icon property',
+                      DeprecationWarning)
         return self._icon
 
     def set_icon(self, icon):
-        """Sets the listitem's icon image"""
+        warnings.warn('set_icon is deprecated, use icon property',
+                      DeprecationWarning)
         self._icon = icon
         return self._listitem.setIconImage(icon)
 
-    icon = property(get_icon, set_icon)
+    @property
+    def thumbnail(self):
+        return self._art.get('thumbnail')
+
+    @thumbnail.setter
+    def thumbnail(self, value):
+        self._art['thumbnail'] = value
+        self._listitem.setArt(self._art)
 
     def get_thumbnail(self):
-        """Returns the listitem's thumbnail image"""
+        warnings.warn('get_thumbnail is deprecated, use thumbnail property',
+                      DeprecationWarning)
         return self._thumbnail
 
     def set_thumbnail(self, thumbnail):
-        """Sets the listitem's thumbnail image"""
+        warnings.warn('set_thumbnail is deprecated, use thumbnail property',
+                      DeprecationWarning)
         self._thumbnail = thumbnail
         return self._listitem.setThumbnailImage(thumbnail)
 
-    thumbnail = property(get_thumbnail, set_thumbnail)
+    @property
+    def path(self):
+        return self._path
+
+    @path.setter
+    def path(self, value):
+        self._path = value
+        self._listitem.setPath(value)
 
     def get_path(self):
-        """Returns the listitem's path"""
+        warnings.warn('get_path is deprecated, use path property',
+                      DeprecationWarning)
         return self._path
 
     def set_path(self, path):
-        """Sets the listitem's path"""
+        warnings.warn('set_path is deprecated, use path property',
+                      DeprecationWarning)
         self._path = path
         return self._listitem.setPath(path)
 
-    path = property(get_path, set_path)
+    @property
+    def playable(self):
+        return not self.is_folder
+
+    @playable.setter
+    def playable(self, value):
+        self.is_folder = not value
+        is_playable = 'true' if value else 'false'
+        self.set_property('isPlayable', is_playable)
 
     def get_is_playable(self):
-        """Returns True if the listitem is playable, False if it is a
-        directory
-        """
+        warnings.warn('get_is_playable is deprecated, use playable property',
+                      DeprecationWarning)
         return not self.is_folder
 
     def set_is_playable(self, is_playable):
-        """Sets the listitem's playable flag"""
+        warnings.warn('set_is_playable is deprecated, use playable property',
+                      DeprecationWarning)
         value = 'false'
         if is_playable:
             value = 'true'
         self.set_property('isPlayable', value)
         self.is_folder = not is_playable
 
-    playable = property(get_is_playable, set_is_playable)
+    @property
+    def played(self):
+        return self._played
+
+    @played.setter
+    def played(self, value):
+        self._played = value
 
     def set_played(self, was_played):
         """Sets the played status of the listitem. Used to
         differentiate between a resolved video versus a playable item.
         Has no effect on Kodi, it is strictly used for kodiswift.
         """
+        warnings.warn('set_played is deprecated, use played property',
+                      DeprecationWarning)
         self._played = was_played
 
     def get_played(self):
-        """Returns True if the video was played."""
+        warnings.warn('get_played is deprecated, use played property',
+                      DeprecationWarning)
         return self._played
+
+    @property
+    def art(self):
+        return self._art
+
+    @art.setter
+    def art(self, value):
+        self._art = value
+        self._listitem.setArt(value)
+
+    def set_art(self, value):
+        self._art = value
+        self._listitem.setArt(value)
 
     def as_tuple(self):
         """Returns a tuple of list item properties:
@@ -217,3 +293,9 @@ class ListItem(object):
             listitem.add_context_menu_items(context_menu, replace_context_menu)
 
         return listitem
+
+    def __str__(self):
+        return ('%s (%s)' % (self.label, self.path)).encode('utf-8')
+
+    def __repr__(self):
+        return ("<ListItem '%s'>" % self.label).encode('utf-8')

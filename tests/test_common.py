@@ -1,6 +1,5 @@
 from unittest import TestCase
-from kodiswift.common import (kodi_url, clean_dict, pickle_dict, unpickle_dict,
-                              unhex)
+from kodiswift.common import kodi_url, clean_dict, pickle_dict, unpickle_dict
 
 
 class TestXBMCUrl(TestCase):
@@ -56,15 +55,3 @@ class TestPickleDict(TestCase):
 class TestDownloadPage(TestCase):
     def test_download_page(self):
         pass
-
-
-class TestUnhex(TestCase):
-    def test_unhex(self):
-        known_values = (
-            ('\x20', ' '),
-            ('\x3d\x20', '= '),
-            ('\x3D\x20', '= '),
-        )
-
-        for hexed, unhexed in known_values:
-            self.assertEqual(unhexed, unhex(hexed))
