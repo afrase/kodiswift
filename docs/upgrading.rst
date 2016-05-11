@@ -1,26 +1,26 @@
 .. _upgrading:
 
-Upgrading from xbmcswift
+Upgrading from kodiswift
 ========================
 
-While the API for xbmcswift2 is very similar to xbmcswift, there are a few
+While the API for kodiswift is very similar to kodiswift, there are a few
 backwards incompatible changes. The following list highlights the biggest
 changes:
 
-* Update all imports to use ``xbmcswift2`` instead of ``xbmcswift``. This
+* Update all imports to use ``kodiswift`` instead of ``kodiswift``. This
   includes the dependency in your addon.xml file.
 
 * In list item dictionaries, the ``url`` keyword has been changed to ``path``.
 
-* In xbmcswift views, the proper way to return from a view was
-  ``return plugin.add_items(items)``. In xbmcswift2 you can either ``return
+* In kodiswift views, the proper way to return from a view was
+  ``return plugin.add_items(items)``. In kodiswift you can either ``return
   plugin.finish(items)`` or more simply ``return items``.
     .. sourcecode:: python
 
-        # xbmcswift
+        # kodiswift
         return plugin.add_items(items)
 
-        # xbmcswift2
+        # kodiswift
         return plugin.finish(items)
         # (or)
         return items
@@ -31,10 +31,10 @@ changes:
 
 .. sourcecode:: python
 
-    # xbmcswift
+    # kodiswift
     plugin.route('/', page='1')
 
-    # xbmcswift2
+    # kodiswift
     plugin.route('/', options={'page': '1'})
 
 * In list item dictionaries, the ``is_folder`` keyword is no longer necessary.

@@ -4,11 +4,11 @@
 The ListItem
 ============
 
-xbmcswift2 prefers to represent XBMC list items as plain python dictionaries as
+kodiswift prefers to represent Kodi list items as plain python dictionaries as
 much as possible. Views return lists of dictionaries, where each dict
-represents an XBMC listitem. The list of valid keys in an item dict can always
+represents an Kodi listitem. The list of valid keys in an item dict can always
 be validated by reviewing the available arguments to
-:meth:`xbmcswift2.ListItem.from_dict`. However, we'll go into more detail here.
+:meth:`kodiswift.ListItem.from_dict`. However, we'll go into more detail here.
 
 Valid keys in an item dict are:
 
@@ -57,7 +57,7 @@ A required string.
 
 For non-playable items, this is typically a URL for a different path in the
 same addon. To derive URLs for other views within your addon, use
-:meth:`xbmcswift2.Plugin.url_for`.
+:meth:`kodiswift.Plugin.url_for`.
 
 For playable items, this is typically a URL to a remote media file. (One
 exception, is if you are using the set_resolved_url pattern, the URL will be
@@ -74,10 +74,10 @@ info
 ----
 
 A dictionary of key/values of metadata information about the item. See the
-`XBMC docs
+`Kodi docs
 <http://mirrors.xbmc.org/docs/python-docs/xbmcgui.html#ListItem-setInfo>`_ for
 a list of valid info items. Keys are always strings but values should be the
-correct type required by XBMC.
+correct type required by Kodi.
 
 Also, see the related `info_type`_ key.
 
@@ -94,8 +94,8 @@ context_menu
 ------------
 
 A list of tuples, where each tuple is of length 2. The tuple should be (label,
-action) where action is a string representing a built-in XBMC function. See the
-`XBMC documentation
+action) where action is a string representing a built-in Kodi function. See the
+`Kodi documentation
 <http://mirrors.xbmc.org/docs/python-docs/xbmcgui.html#ListItem-addContextMenuItems>`_
 for more details and `Using the Context Menu` for some example code.
 

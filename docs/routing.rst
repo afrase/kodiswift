@@ -23,14 +23,14 @@ would look like so:
     def show_category(category_id):
         pass
 
-xbmcswift2 will attempt to match any incoming URLs against that pattern, so all
+kodiswift will attempt to match any incoming URLs against that pattern, so all
 of the following URLs would match:
 
     * ``/categories/123``
     * ``/categories/apples``
     * ``/categories/apples%3Dpears``
 
-xbmcswift2 will then extract the part of the URL that machtes a pattern withing
+kodiswift will then extract the part of the URL that machtes a pattern withing
 the angle brackets and will call your view with those variables (variables will
 always be strings). So if you have one pattern in your URL, your view function
 should take at least one argument.
@@ -104,10 +104,10 @@ URL Encoding and Pickling
 Currently all keyword arguments to ``url_for`` that match variable names in the
 URL pattern must be instances of basestring. This means ints must be converted
 first using ``str()``. Arguments will then be urlencoded/urlunencoded by
-xbmcswift2.
+kodiswift.
 
 Any extra arguments that will end up in the query string, will be pickled and
 urlencoded automatically. This can be advantageous, if you want to store a
 simple list or something. However, pickling and urlencoding a python object can
-result in a very large URL and XBMC will only handle a finite length, so use
+result in a very large URL and Kodi will only handle a finite length, so use
 this feature judiciously.

@@ -1,16 +1,16 @@
 import os
 import tempfile
-import xbmcswift2
+import kodiswift
 from unittest import TestCase
 from mock import Mock, patch, call
 from nose.plugins.skip import SkipTest
-from xbmcswift2.xbmcmixin import XBMCMixin
-from xbmcswift2 import xbmc
-from xbmcswift2.plugin import Plugin
-from xbmcswift2.common import Modes
-from xbmcswift2.listitem import ListItem
-from xbmcswift2.mockxbmc.xbmcaddon import Addon
-from xbmcswift2 import SortMethod
+from kodiswift.xbmcmixin import XBMCMixin
+from kodiswift import xbmc
+from kodiswift.plugin import Plugin
+from kodiswift.common import Modes
+from kodiswift.listitem import ListItem
+from kodiswift.mockxbmc.xbmcaddon import Addon
+from kodiswift import SortMethod
 
 
 TEST_STRINGS_FN = os.path.join(os.path.dirname(__file__), 'data', 'strings.xml')
@@ -55,15 +55,15 @@ class TestXBMCMixin(TestCase):
         self.assertEqual(cache['dog'], 'woof')
 
     def test_get_string(self):
-        self.m.addon.getLocalizedString.return_value = 'Hello XBMC'
-        self.assertEqual('Hello XBMC', self.m.get_string('30000'))
+        self.m.addon.getLocalizedString.return_value = 'Hello Kodi'
+        self.assertEqual('Hello Kodi', self.m.get_string('30000'))
         # check if the string comes from cache
         self.m.addon.getLocalizedString.return_value = ''
-        self.assertEqual('Hello XBMC', self.m.get_string('30000'))
+        self.assertEqual('Hello Kodi', self.m.get_string('30000'))
         # check if retrieval by int and str returns same (and comes from cache)
-        self.assertEqual('Hello XBMC', self.m.get_string(30000))
+        self.assertEqual('Hello Kodi', self.m.get_string(30000))
 
-    @patch('xbmcswift2.xbmcplugin')
+    @patch('kodiswift.xbmcplugin')
     def test_set_content(self, mock_xbmcplugin):
         self.m.set_content('movies')
         assert mock_xbmcplugin.setContent.called_with(0, 'movies')
@@ -104,19 +104,19 @@ class TestXBMCMixin(TestCase):
         url = 'http://www.example.com/video.mp4'
         ret = self.m.set_resolved_url(url)
         item = ret[0]
-        self.assertIsInstance(item, xbmcswift2.ListItem)
+        self.assertIsInstance(item, kodiswift.ListItem)
         self.assertTrue(item.get_played())
 
     def test_set_resolved_url2(self):
         item = {'path': 'http://www.example.com/video.mp4'}
         ret = self.m.set_resolved_url(item=item)
         item = ret[0]
-        self.assertIsInstance(item, xbmcswift2.ListItem)
+        self.assertIsInstance(item, kodiswift.ListItem)
         self.assertTrue(item.get_played())
 
 
     @patch.object(xbmc, 'Player')
-    @patch('xbmcswift2.ListItem', wraps=xbmcswift2.ListItem)
+    @patch('kodiswift.ListItem', wraps=kodiswift.ListItem)
     def test_play_video_dict(self, WrappedListItem, MockPlayer):
         plugin = MixedIn(storage_path=tempfile.mkdtemp(),
                          addon=Mock(),
@@ -138,9 +138,9 @@ class TestXBMCMixin(TestCase):
         self.assertTrue(MockPlayer().play.called)
 
         # Check that the second arg to play was an instance of xbmc listitem
-        # and not xbmcswift2.ListItem
+        # and not kodiswift.ListItem
         item_arg = MockPlayer().play.call_args[0][1]
-        self.assertTrue(isinstance(item_arg, xbmcswift2.xbmcgui.ListItem))
+        self.assertTrue(isinstance(item_arg, kodiswift.xbmcgui.ListItem))
 
         # TODO: Implement ListItem.__eq__
         #MockPlayer().play.assert_called_with('http://example.com/video.mp4', ListItem.from_dict(**item))
@@ -151,7 +151,7 @@ class TestXBMCMixin(TestCase):
     def test_end_of_directory(self):
         raise SkipTest('Test not implemented.')
 
-    @patch('xbmcswift2.xbmcplugin.addSortMethod')
+    @patch('kodiswift.xbmcplugin.addSortMethod')
     def test_add_sort_method(self, addSortMethod):
         plugin = TestMixedIn()
 
@@ -170,7 +170,7 @@ class TestXBMCMixin(TestCase):
             plugin.add_sort_method(*args)
             addSortMethod.assert_called_with(*call_args_to_verify)
 
-    @patch('xbmcswift2.xbmcplugin.addSortMethod')
+    @patch('kodiswift.xbmcplugin.addSortMethod')
     def test_finish(self, mockAddSortMethod):
         # TODO: Add more asserts to this test
         items = [
@@ -189,25 +189,25 @@ class TestXBMCMixin(TestCase):
         mockAddSortMethod.assert_has_calls(calls)
 
 
-    @patch('xbmcswift2.xbmc.executebuiltin')
+    @patch('kodiswift.xbmc.executebuiltin')
     def test_notify_defalt_name(self, mockExecutebuiltin):
         plugin = TestMixedIn()
         with patch.object(plugin.addon, 'getAddonInfo', return_value='Academic Earth') as mockGetAddonInfo:
             plugin.notify('Hello World!')
         mockExecutebuiltin.assert_called_with(
-            'XBMC.Notification("Hello World!", "Academic Earth", "5000", "")'
+            'Kodi.Notification("Hello World!", "Academic Earth", "5000", "")'
         )
 
-    @patch('xbmcswift2.xbmc.executebuiltin')
+    @patch('kodiswift.xbmc.executebuiltin')
     def test_notify(self, mockExecutebuiltin):
         plugin = TestMixedIn()
         with patch.object(plugin.addon, 'getAddonInfo', return_value='Academic Earth') as mockGetAddonInfo:
             plugin.notify('Hello World!', 'My Title', 3000, 'http://example.com/image.png')
         mockExecutebuiltin.assert_called_with(
-                'XBMC.Notification("Hello World!", "My Title", "3000", "http://example.com/image.png")'
+                'Kodi.Notification("Hello World!", "My Title", "3000", "http://example.com/image.png")'
         )
 
-    @patch('xbmcswift2.xbmc.Keyboard')
+    @patch('kodiswift.xbmc.Keyboard')
     def test_keyboard(self, mockKeyboard):
         plugin = TestMixedIn()
         with patch.object(plugin.addon, 'getAddonInfo', return_value='Academic Earth') as mockGetAddonInfo:
@@ -237,8 +237,8 @@ class TestXBMCMixin(TestCase):
 
 class TestAddItems(TestCase):
 
-    @patch('xbmcswift2.ListItem.from_dict')
-    @patch('xbmcswift2.xbmcplugin.addDirectoryItems')
+    @patch('kodiswift.ListItem.from_dict')
+    @patch('kodiswift.xbmcplugin.addDirectoryItems')
     def test_add_items(self, addDirectoryItems, fromDict):
         plugin = MixedIn(storage_path=tempfile.mkdtemp(),
                          addon=Mock(),
@@ -265,8 +265,8 @@ class TestAddItems(TestCase):
         #list_items = [ListItem.from_dict(**item) for item in items]
         #self.assertEqual(returned, list_items)
 
-    @patch('xbmcswift2.ListItem.from_dict')
-    @patch('xbmcswift2.xbmcplugin.addDirectoryItems')
+    @patch('kodiswift.ListItem.from_dict')
+    @patch('kodiswift.xbmcplugin.addDirectoryItems')
     def test_add_items_no_info_type(self, addDirectoryItems, fromDict):
         plugin = MixedIn(storage_path=tempfile.mkdtemp(),
                          addon=Mock(),
@@ -290,8 +290,8 @@ class TestAddItems(TestCase):
         #list_items = [ListItem.from_dict(**item) for item in items]
         #self.assertEqual(returned, list_items)
 
-    @patch('xbmcswift2.ListItem.from_dict')
-    @patch('xbmcswift2.xbmcplugin.addDirectoryItems')
+    @patch('kodiswift.ListItem.from_dict')
+    @patch('kodiswift.xbmcplugin.addDirectoryItems')
     def test_add_items_item_specific_info_type(self, addDirectoryItems, fromDict):
         plugin = MixedIn(storage_path=tempfile.mkdtemp(),
                          addon=Mock(),
@@ -319,7 +319,7 @@ class TestAddItems(TestCase):
 
 
 class TestAddToPlaylist(TestCase):
-    @patch('xbmcswift2.xbmc.Playlist')
+    @patch('kodiswift.xbmc.Playlist')
     def setUp(self, mock_Playlist):
         self.m = TestMixedIn()
 
@@ -338,7 +338,7 @@ class TestAddToPlaylist(TestCase):
         self.m.add_to_playlist([], 'video')
         self.m.add_to_playlist([], 'music')
 
-    @patch('xbmcswift2.ListItem', wraps=ListItem)
+    @patch('kodiswift.ListItem', wraps=ListItem)
     def test_return_values(self, MockListItem):
         # Verify dicts are transformed into listitems
         dict_items = [
@@ -428,7 +428,7 @@ class TestAddToPlaylist(TestCase):
         for item, call_args in zip(items, self.mock_playlist.add.call_args_list):
             self.assertEqual((item.get_path(), item.as_xbmc_listitem(), 0), call_args)
 
-    @patch('xbmcswift2.xbmcmixin.xbmc')
+    @patch('kodiswift.xbmcmixin.xbmc')
     def test_get_view_mode_id(self, _xbmc):
         _xbmc.getSkinDir.return_value = 'skin.confluence'
         self.assertEqual(self.m.get_view_mode_id('thumbnail'), 500)
@@ -438,7 +438,7 @@ class TestAddToPlaylist(TestCase):
         self.assertEqual(self.m.get_view_mode_id('thumbnail'), None)
         self.assertEqual(self.m.get_view_mode_id('unknown'), None)
 
-    @patch('xbmcswift2.xbmcmixin.xbmc')
+    @patch('kodiswift.xbmcmixin.xbmc')
     def test_set_view_mode(self, _xbmc):
         self.m.set_view_mode(500)
         _xbmc.executebuiltin.assertCalledWith('Container.SetViewMode(500)')

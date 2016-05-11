@@ -1,7 +1,7 @@
 import os
 import sys
 from unittest import TestCase
-from xbmcswift2 import Module, Plugin, NotFoundException
+from kodiswift import Module, Plugin, NotFoundException
 from utils import preserve_cwd
 
 
@@ -13,7 +13,7 @@ def create_plugin_module():
         sys.argv = ['./addon.py']
         path = os.path.join(os.path.dirname(__file__), 'data', 'plugin', 'addon.py')
         with preserve_cwd(os.path.dirname(path)):
-            plugin = Plugin('Hello XBMC', 'plugin.video.helloxbmc', path)
+            plugin = Plugin('Hello Kodi', 'plugin.video.helloxbmc', path)
         return plugin, module
 
 
@@ -49,7 +49,7 @@ class TestRoute(TestCase):
     #def setUp(self):
         #self.module = Module('my.module.namespace')
         #sys.argv = ['./addon.py']
-        #self.plugin = Plugin('Hello XBMC', 'plugin.video.helloxbmc', __file__, TEST_STRINGS_FN)
+        #self.plugin = Plugin('Hello Kodi', 'plugin.video.helloxbmc', __file__, TEST_STRINGS_FN)
 
     def test_route(self):
         plugin, module = create_plugin_module()

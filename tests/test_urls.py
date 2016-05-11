@@ -1,5 +1,5 @@
 import unittest
-from xbmcswift2 import UrlRule
+from kodiswift import UrlRule
 
 
 class TestUrls(unittest.TestCase):

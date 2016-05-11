@@ -16,9 +16,9 @@ Here are a few guidelines to help you on your way:
 5. Push to your fork and submit a pull request.
 
 
-To test your changes to xbmcswift2 within XBMC, you can use `fab
-local_release:eden`. This will create a local copy of XBMC specific
-distribution of xbmcswift2. You can then copy this folder into your
+To test your changes to kodiswift within Kodi, you can use `fab
+local_release:eden`. This will create a local copy of Kodi specific
+distribution of kodiswift. You can then copy this folder into your
 ~/.xbmc/addons folder.
 
 Syntax should follow pep8 guidelines wherever possible.

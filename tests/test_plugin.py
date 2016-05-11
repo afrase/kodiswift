@@ -6,9 +6,9 @@ from unittest import TestCase
 
 from mock import Mock, patch
 
-from xbmcswift2.mockxbmc.xbmc import TEMP_DIR
-from xbmcswift2 import Plugin
-import xbmcswift2
+from kodiswift.mockxbmc.xbmc import TEMP_DIR
+from kodiswift import Plugin
+import kodiswift
 
 from utils import preserve_cli_mode, preserve_cwd
 
@@ -25,7 +25,7 @@ except OSError:
 class TestInit(TestCase):
 
     def test_init_cli_mode(self):
-        name = 'Hello XBMC'
+        name = 'Hello Kodi'
         plugin_id = 'plugin.video.helloxbmc'
         path = os.path.join(os.path.dirname(__file__), 'data', 'plugin', 'addon.py')
         with preserve_cwd(os.path.dirname(path)):
@@ -40,7 +40,7 @@ class TestInit(TestCase):
         self.assertRaises(Exception, getattr, plugin, 'request')
 
     def test_init_cli_mode_default_args(self):
-        name = 'Hello XBMC'
+        name = 'Hello Kodi'
         with preserve_cwd(os.path.join(os.path.dirname(__file__), 'data', 'plugin')):
             plugin = Plugin()
 
@@ -52,7 +52,7 @@ class TestInit(TestCase):
         self.assertRaises(Exception, getattr, plugin, 'request')
 
     def test_init_not_cli_mode(self):
-        name = 'Hello XBMC'
+        name = 'Hello Kodi'
         plugin_id = 'plugin.video.helloxbmc'
         path = os.path.join(os.path.dirname(__file__), 'data', 'plugin', 'addon.py')
         with preserve_cwd(os.path.dirname(path)):
@@ -67,7 +67,7 @@ class TestInit(TestCase):
         self.assertRaises(Exception, getattr, plugin, 'request')
 
     def test_init_not_cli_mode_default_args(self):
-        name = 'Hello XBMC'
+        name = 'Hello Kodi'
         path = os.path.join(os.path.dirname(__file__), 'data', 'plugin', 'addon.py')
         with preserve_cli_mode(cli_mode=False):
             with preserve_cwd(os.path.join(os.path.dirname(__file__), 'data', 'plugin')):
@@ -81,7 +81,7 @@ class TestInit(TestCase):
         self.assertRaises(Exception, getattr, plugin, 'request')
 
     def test_info_types(self):
-        name = 'Hello XBMC'
+        name = 'Hello Kodi'
         path = __file__
 
         # can't parse from id, default to video
@@ -108,41 +108,41 @@ class TestInit(TestCase):
 class TestParseRequest(TestCase):
 
     def setUp(self):
-        name = 'Hello XBMC'
+        name = 'Hello Kodi'
         plugin_id = 'plugin.video.helloxbmc'
         path = os.path.join(os.path.dirname(__file__), 'data', 'plugin', 'addon.py')
         with preserve_cwd(os.path.dirname(path)):
             self.plugin = Plugin(name, plugin_id, path)
 
     def test_parse_request(self):
-        with patch('xbmcswift2.plugin.Request') as MockRequest:
+        with patch('kodiswift.plugin.Request') as MockRequest:
             sys.argv = ['plugin://plugin.video.helloxbmc', '0', '?']
             self.plugin._parse_request()
             MockRequest.assert_called_with('plugin://plugin.video.helloxbmc?', '0')
 
     def test_parse_request_no_qs(self):
-        with patch('xbmcswift2.plugin.Request') as MockRequest:
+        with patch('kodiswift.plugin.Request') as MockRequest:
             sys.argv = ['plugin://plugin.video.helloxbmc', '0']
             self.plugin._parse_request()
             MockRequest.assert_called_with('plugin://plugin.video.helloxbmc', '0')
 
     def test_parse_request_path_in_arg0(self):
         # Older versions of xbmc sometimes pass path in arg0
-        with patch('xbmcswift2.plugin.Request') as MockRequest:
+        with patch('kodiswift.plugin.Request') as MockRequest:
             sys.argv = ['plugin://plugin.video.helloxbmc/videos/', '0', '?foo=bar']
             self.plugin._parse_request()
             MockRequest.assert_called_with('plugin://plugin.video.helloxbmc/videos/?foo=bar', '0')
 
     def test_parse_request_path_in_arg2(self):
         # Older versions of xbmc sometimes pass path in arg2
-        with patch('xbmcswift2.plugin.Request') as MockRequest:
+        with patch('kodiswift.plugin.Request') as MockRequest:
             sys.argv = ['plugin://plugin.video.helloxbmc', '0', '/videos/?foo=bar']
             self.plugin._parse_request()
             MockRequest.assert_called_with('plugin://plugin.video.helloxbmc/videos/?foo=bar', '0')
 
 
 def NewPlugin():
-    name = 'Hello XBMC'
+    name = 'Hello Kodi'
     plugin_id = 'plugin.video.helloxbmc'
     path = os.path.join(os.path.dirname(__file__), 'data', 'plugin', 'addon.py')
     with preserve_cwd(os.path.dirname(path)):
@@ -165,7 +165,7 @@ class TestBasicRouting(TestCase):
         plugin = NewPlugin()
         @plugin.route('/', name='another_name')
         def main_menu():
-            return [{'label': 'Hello XBMC'}]
+            return [{'label': 'Hello Kodi'}]
         self.assertEqual(plugin.url_for(main_menu), 'plugin://plugin.video.helloxbmc/')
         self.assertEqual(plugin.url_for(main_menu, foo='bar'), 'plugin://plugin.video.helloxbmc/?foo=bar')
         self.assertEqual(plugin.url_for(main_menu, foo=3), 'plugin://plugin.video.helloxbmc/?foo=3')
@@ -174,7 +174,7 @@ class TestBasicRouting(TestCase):
         plugin = NewPlugin()
         @plugin.route('/')
         def main_menu():
-            return [{'label': 'Hello XBMC'}]
+            return [{'label': 'Hello Kodi'}]
         self.assertEqual(plugin.url_for('main_menu'), 'plugin://plugin.video.helloxbmc/')
         self.assertEqual(plugin.url_for('main_menu', foo='bar'), 'plugin://plugin.video.helloxbmc/?foo=bar')
         self.assertEqual(plugin.url_for('main_menu', foo=3), 'plugin://plugin.video.helloxbmc/?foo=3')
@@ -184,7 +184,7 @@ class TestBasicRouting(TestCase):
         @plugin.route('/')
         @plugin.route('/videos/', name='videos')
         def main_menu():
-            return [{'label': 'Hello XBMC'}]
+            return [{'label': 'Hello Kodi'}]
         self.assertEqual(plugin.url_for('main_menu'), 'plugin://plugin.video.helloxbmc/')
         self.assertEqual(plugin.url_for('main_menu', foo='bar'), 'plugin://plugin.video.helloxbmc/?foo=bar')
         self.assertEqual(plugin.url_for('main_menu', foo=3), 'plugin://plugin.video.helloxbmc/?foo=3')
@@ -202,11 +202,11 @@ class TestBasicRouting(TestCase):
         plugin = NewPlugin()
         @plugin.route('/')
         def main_menu():
-            return [{'label': 'Hello XBMC'}]
+            return [{'label': 'Hello Kodi'}]
         with preserve_cli_mode(cli_mode=False):
             test_run = _TestPluginRunner(plugin)
             resp = test_run('/')
-            self.assertEqual('Hello XBMC', resp[0].get_label())
+            self.assertEqual('Hello Kodi', resp[0].get_label())
 
     def test_options_routing(self):
         plugin = NewPlugin()

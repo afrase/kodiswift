@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# XBMC Swift documentation build configuration file, created by
+# Kodi Swift documentation build configuration file, created by
 # sphinx-quickstart on Sat Jan 21 15:24:10 2012.
 #
 # This file is execfile()d with the current directory set to its containing dir.
@@ -40,7 +40,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'XBMC Swift'
+project = u'Kodi Swift'
 copyright = u'2012, Jonathan Beluch'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -188,7 +188,7 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'XBMCSwift.tex', u'XBMC Swift Documentation',
+  ('index', 'XBMCSwift.tex', u'Kodi Swift Documentation',
    u'Jonathan Beluch', 'manual'),
 ]
 
@@ -218,7 +218,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'xbmcswift', u'XBMC Swift Documentation',
+    ('index', 'kodiswift', u'Kodi Swift Documentation',
      [u'Jonathan Beluch'], 1)
 ]
 
@@ -232,7 +232,7 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'XBMCSwift', u'XBMC Swift Documentation',
+  ('index', 'XBMCSwift', u'Kodi Swift Documentation',
    u'Jonathan Beluch', 'XBMCSwift', 'One line description of project.',
    'Miscellaneous'),
 ]

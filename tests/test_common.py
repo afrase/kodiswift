@@ -1,5 +1,5 @@
 from unittest import TestCase
-from xbmcswift2.common import xbmc_url, enum, clean_dict, pickle_dict, unpickle_dict, unhex
+from kodiswift.common import xbmc_url, enum, clean_dict, pickle_dict, unpickle_dict, unhex
 
 
 class TestXBMCUrl(TestCase):

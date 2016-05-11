@@ -1,5 +1,5 @@
 import unittest
-from xbmcswift2 import SortMethod
+from kodiswift import SortMethod
 
 
 class TestSortMethod(unittest.TestCase):

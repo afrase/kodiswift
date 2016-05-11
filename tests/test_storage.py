@@ -1,6 +1,6 @@
 import os
 import pickle
-from xbmcswift2.storage import _Storage, TimedStorage
+from kodiswift.storage import _Storage, TimedStorage
 from unittest import TestCase
 from datetime import timedelta
 import time

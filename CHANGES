@@ -8,9 +8,9 @@
   to True in an item dict.
 - pluign.get_setting() now requires an extra paramter, *converter*, which
   converts the item from XML to a python type specified by converter.
-- Major bug fix to accomodate handles > 0 in XBMC Frodo.
+- Major bug fix to accomodate handles > 0 in Kodi Frodo.
 - Auto-call plugin.finish(succeeded=False) if a view returns None.
-- XBMC now decides the default player when using plugin.play_video().
+- Kodi now decides the default player when using plugin.play_video().
 - Storages now call sync() when clear() is called.
 - Added plugin.clear_function_cache() which clears the storage behind the
   @cached and @cached_route decorators.
@@ -26,8 +26,8 @@
   corrupted.
 - Added subtitles support. A 'subtitles' parameter was added to
   plugin.set_resolved_url().
-- xbmcswift2 URLs and routing code is now indifferent to a trailing slash.
-- Bug fixes. See https://github.com/jbeluch/xbmcswift2/issues?milestone=3.
+- kodiswift URLs and routing code is now indifferent to a trailing slash.
+- Bug fixes. See https://github.com/jbeluch/kodiswift/issues?milestone=3.
 
 
 0.2.2
@@ -64,7 +64,7 @@ Released on November 25th, 2012.
 0.1.1
 =====
 
-* Fix package data bug. `xbmcswift2 create` should work properly now.
+* Fix package data bug. `kodiswift create` should work properly now.
 
 
 0.1

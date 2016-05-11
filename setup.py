@@ -1,17 +1,17 @@
-'''
+"""
 
-xbmcswift2
+kodiswift
 ~~~~~~~~~~
 
-A micro framework to enable rapid development of XBMC plugins.
+A micro framework to enable rapid development of Kodi plugins.
 
 
 Features
 ````````
 
-* Run the addon from the command line *or* within XBMC without changing any
+* Run the addon from the command line *or* within Kodi without changing any
   code.
-* Helper libraries to make common XBMC api operations easy, like adding items,
+* Helper libraries to make common Kodi api operations easy, like adding items,
   getting settings, creating temporary files, etc.
 * Handles all the url parsing involved in plugin routing. No need to deal with
   complicated URLs and query strings.
@@ -20,15 +20,15 @@ Features
 Documentation
 `````````````
 
-The current documentation can be found at http://www.xbmcswift.com
+The current documentation can be found at http://www.kodiswift.com
 
 Development
 ```````````
 
-This module is now available in the official XBMC Eden repository as
-xbmcswift2.
+This module is now available in the official Kodi Eden repository as
+kodiswift.
 
-This project is the next version of xbmcswift. While the APIs are similar,
+This project is the next version of kodiswift. While the APIs are similar,
 there are a few things that are not backwards compatible with the original
 version, hence the new name.
 
@@ -36,23 +36,23 @@ version, hence the new name.
 Contact
 ```````
 
-https://github.com/jbeluch/xbmcswift2
+https://github.com/jbeluch/kodiswift
 
 web@jonathanbeluch.com
-'''
+"""
 import os
 from setuptools import setup, find_packages
 
 
 setup(
-    name = 'xbmcswift2',
+    name = 'kodiswift',
     version = '0.3.0',
     author = 'Jonathan Beluch',
     author_email = 'web@jonathanbeluch.com',
-    description = 'A micro framework for rapid development of XBMC plugins.',
+    description = 'A micro framework for rapid development of Kodi plugins.',
     license = "GPL3",
     keywords = "example documentation tutorial",
-    url = 'https://github.com/jbeluch/xbmcswift2',
+    url = 'https://github.com/jbeluch/kodiswift',
     packages=find_packages(),
     include_package_data=True,
     long_description=__doc__,
@@ -64,7 +64,7 @@ setup(
     ],
     entry_points={
        'console_scripts': [
-           'xbmcswift2 = xbmcswift2.cli.cli:main',
+           'kodiswift = kodiswift.cli.cli:main',
        ]
     },
 )

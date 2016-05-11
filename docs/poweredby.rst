@@ -1,11 +1,11 @@
 .. _poweredby:
 
 
-Addons Powered by xbmcswift2
+Addons Powered by kodiswift
 ============================ 
 
 Want your addon included here? Send me an email at web@jonathanbeluch.com with
-your addon name and a link to a repository (XBMC's git repo is fine).
+your addon name and a link to a repository (Kodi's git repo is fine).
 
 ========================    =============================================================
 Addon                       Source

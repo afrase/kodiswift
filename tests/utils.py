@@ -1,6 +1,6 @@
 import os
 from contextlib import contextmanager
-import xbmcswift2
+import kodiswift
 
 
 @contextmanager
@@ -13,7 +13,7 @@ def preserve_cwd(cwd):
 
 @contextmanager
 def preserve_cli_mode(cli_mode):
-    existing = xbmcswift2.CLI_MODE
-    xbmcswift2.CLI_MODE = cli_mode
+    existing = kodiswift.CLI_MODE
+    kodiswift.CLI_MODE = cli_mode
     yield
-    xbmcswift2.CLI_MODE = existing
+    kodiswift.CLI_MODE = existing

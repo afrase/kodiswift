@@ -1,5 +1,5 @@
 import unittest
-from xbmcswift2.cli import console
+from kodiswift.cli import console
 
 
 class TestConsole(unittest.TestCase):

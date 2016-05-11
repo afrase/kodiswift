@@ -1,7 +1,7 @@
 '''
 A fabric file to automate creation of a special distribution of
-xbmcswift2 for XBMC. This distribution doesn't include docs and tests.
-It has a slightly different folder structure and contains some XBMC
+kodiswift for Kodi. This distribution doesn't include docs and tests.
+It has a slightly different folder structure and contains some Kodi
 specific files.
 
 Usage:
@@ -21,9 +21,9 @@ import fabric.colors as colors
 
 
 EDITOR = 'vim'
-REPO_DIR = 'xbmcswift2-xbmc-dist'
-REPO_URL = 'git@github.com:jbeluch/xbmcswift2-xbmc-dist.git'
-REPO_PUBLIC_URL = 'git://github.com/jbeluch/xbmcswift2-xbmc-dist.git'
+REPO_DIR = 'kodiswift-xbmc-dist'
+REPO_URL = 'git@github.com:jbeluch/kodiswift-xbmc-dist.git'
+REPO_PUBLIC_URL = 'git://github.com/jbeluch/kodiswift-xbmc-dist.git'
 BRANCHES = {
     # <xbmc_version>: <git_branch>
     'DHARMA': 'dharma',
@@ -73,7 +73,7 @@ class GitRepo(object):
 
     def commit(self, version):
         with lcd(self.path):
-            local('git commit -m "[xbmcswift2-release-script] prepare release %s"' % version)
+            local('git commit -m "[kodiswift-release-script] prepare release %s"' % version)
 
 
 def bump_minor(version_str):
@@ -145,10 +145,10 @@ def print_email(addon_id, version, git_url, tag, xbmc_version):
 @task
 def local_release(xbmc_version=None):
     if xbmc_version is None:
-        abort('Must specify an XBMC version, [dharma, eden]')
+        abort('Must specify an Kodi version, [dharma, eden]')
     xbmc_version = xbmc_version.upper()
     if xbmc_version not in BRANCHES.keys():
-        abort('Invalid XBMC version, [dharma, eden]')
+        abort('Invalid Kodi version, [dharma, eden]')
 
     local_repo, dist_repo = release_prepare(xbmc_version)
     print 'Development release created at %s' % dist_repo.path
@@ -157,10 +157,10 @@ def local_release(xbmc_version=None):
 @task
 def release(xbmc_version=None):
     if xbmc_version is None:
-        abort('Must specify an XBMC version, [dharma, eden]')
+        abort('Must specify an Kodi version, [dharma, eden]')
     xbmc_version = xbmc_version.upper()
     if xbmc_version not in BRANCHES.keys():
-        abort('Invalid XBMC version, [dharma, eden]')
+        abort('Invalid Kodi version, [dharma, eden]')
 
     local_repo, dist_repo = release_prepare(xbmc_version)
     release_perform(xbmc_version, local_repo, dist_repo)
@@ -185,25 +185,25 @@ def release_prepare(xbmc_version):
     log('Using branch %s for the distribution repo...' % BRANCHES[xbmc_version])
     dist_repo.checkout_remote_branch(BRANCHES[xbmc_version])
 
-    # We could rsync, but easier to just remove existing xbmcswift2 dir and
+    # We could rsync, but easier to just remove existing kodiswift dir and
     # copy over the current version
-    log('Removing old xbmcswift2 dir and copying over current version...')
-    rmdir(os.path.join(dist_path, 'lib', 'xbmcswift2'))
-    copydir(os.path.join(local_repo.path, 'xbmcswift2'),
-            os.path.join(dist_path, 'lib', 'xbmcswift2'))
+    log('Removing old kodiswift dir and copying over current version...')
+    rmdir(os.path.join(dist_path, 'lib', 'kodiswift'))
+    copydir(os.path.join(local_repo.path, 'kodiswift'),
+            os.path.join(dist_path, 'lib', 'kodiswift'))
 
-    # Remove the cli and mockxbmc packages as they are not necessary for XBMC
+    # Remove the cli and mockxbmc packages as they are not necessary for Kodi
     # execution
     log('Removing unneccessary cli and mockxbmc packages...')
-    rmdir(os.path.join(dist_path, 'lib', 'xbmcswift2', 'cli'))
-    rmdir(os.path.join(dist_path, 'lib', 'xbmcswift2', 'mockxbmc'))
+    rmdir(os.path.join(dist_path, 'lib', 'kodiswift', 'cli'))
+    rmdir(os.path.join(dist_path, 'lib', 'kodiswift', 'mockxbmc'))
 
     # Now we need to add the current git HEAD to a file in the dist repo
     log('Adding deployed git hash to xbmcswift2_version file...')
     write_file(os.path.join(dist_path, 'xbmcswift2_version'),
                current_git_version)
 
-    # Prompt user for new XBMC version
+    # Prompt user for new Kodi version
     log('Bumping version...')
     bump_version(dist_path)
 
@@ -223,7 +223,7 @@ def release_perform(xbmc_version, local_repo, dist_repo):
     log('Staging all modified files in the distribution repo...')
     dist_repo.stage_all()
 
-    # Get the current XBMC version
+    # Get the current Kodi version
     version = get_addon_version(dist_repo.path)
 
     # Commit all staged changes and tag
@@ -232,7 +232,7 @@ def release_perform(xbmc_version, local_repo, dist_repo):
     dist_repo.tag(version, '%s v%s' % (xbmc_version, version))
 
     # Tag the local repo as well
-    local_repo.tag('xbmc-%s' % version, 'XBMC distribution v%s' % version)
+    local_repo.tag('xbmc-%s' % version, 'Kodi distribution v%s' % version)
 
     # Push everything
     log('Pushing changes to remote...')

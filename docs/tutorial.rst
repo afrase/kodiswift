@@ -6,7 +6,7 @@ Tutorial
 At the end of this tutorial we're going to have a basic version of the Academic
 Earth Plugin. This plugin plays videos from http://www.academicearth.org/.
 
-Since this tutorial is meant to cover the usage of xbmcswift2, we will not be
+Since this tutorial is meant to cover the usage of kodiswift, we will not be
 covering HTML scraping. It makes sense to partition your scraping code into a
 separate module from your addon's core functionality. In this example, we're
 going to use a scraping library for academic earth that I already have written.
@@ -16,12 +16,12 @@ Creating the Plugin Structure
 -----------------------------
 
 The first step is to create your working directory for your addon. Since this
-can be repetitive, xbmcswift2 provides a script which will create the necessary
+can be repetitive, kodiswift provides a script which will create the necessary
 files and folders for you. So we'll do just that::
 
-    (xbmcswift2)jon@lenovo tmp  $ xbmcswift2 create
+    (kodiswift)jon@lenovo tmp  $ kodiswift create
 
-        xbmcswift2 - A micro-framework for creating XBMC plugins.
+        kodiswift - A micro-framework for creating Kodi plugins.
         xbmc@jonathanbeluch.com
         --
 
@@ -55,12 +55,12 @@ We should now have an ``academicearth`` directory in our lib directory.
 Since our api library requires the use of BeautifulSoup, we'll need to add this
 as a depenency to our addon.xml file.
 
-If you open the addon.xml file, you'll notice that xbmcswift2 is already in your dependencies:
+If you open the addon.xml file, you'll notice that kodiswift is already in your dependencies:
 
 .. sourcecode:: xml
 
     <import addon="xbmc.python" version="2.0" />
-    <import addon="script.module.xbmcswift2" version="1.1.1" />
+    <import addon="script.module.kodiswift" version="1.1.1" />
 
 We'll add BeautifulSoup right after those lines:
 
@@ -105,7 +105,7 @@ but we don't have a view with that name! So let's create a stub for that view.
 So now we have a basic plugin with two views. Keep in mind as we go along, that
 we can always run the plugin from the command line.::
 
-    $ xbmcswift2 run 2>/dev/null
+    $ kodiswift run 2>/dev/null
     ------------------------------------------------------------
      #  Label    Path
      ------------------------------------------------------------
@@ -141,18 +141,18 @@ The call to ``get_subjects`` returns a list of Subject objects with various
 attributes that we can access.
 
 So our code simply loops over the subjects and creates a dictionary for each
-subject. These simple dictionaries will be converted by xbmcswift2 into proper
-list items and then displayed by XBMC. The two mandatory keys are ``label``,
+subject. These simple dictionaries will be converted by kodiswift into proper
+list items and then displayed by Kodi. The two mandatory keys are ``label``,
 which is the text to display for the item, and ``path``, which is the URL to
 follow when the item is selected.
 
 Here, if the user selects a subject list item, we want to send them to the
 ``show_subject_info`` function. Notice we are also passing a keyword argument
 to the ``url_for`` method. This is the main way that we can pass information
-between successive invocations of the addon. By default, XBMC addons are
+between successive invocations of the addon. By default, Kodi addons are
 stateless, each time a user clicks on an item the addon is executed, it does
 some work and then exits. To keep track of what the user was doing, we need to
-encode the information in the url. xbmcswift2 handles the url encoding as long
+encode the information in the url. kodiswift handles the url encoding as long
 as you pass the arguments to url_for.
 
 The last lines of code in our view simply sort the list of dictionaries based
@@ -170,14 +170,14 @@ The last step we need to take before running our addon is to stub out the
 Note that since we are passing a url argument to ``url_for1``, we need to
 ensure our view can handle the argument. This involves creating a placeholder
 in the url, ``<url>`` and then ensuring our view takes a single argument,
-``url``. xbmcswift2 will attempt to match incoming URLs against the list of
+``url``. kodiswift will attempt to match incoming URLs against the list of
 routes. If it finds a match, it will convert any instances of ``<var_name>`` to
 variables and then call the view with those variables.  See :ref:`routing` for
 more detailed information about routing.
 
 Now let's run our plugin in interactive mode (for the sake of brevity I've replaces a lot of entries in the example output with ``...``)::
 
-    $ xbmcswift2 run interactive 2>/dev/null
+    $ kodiswift run interactive 2>/dev/null
     ------------------------------------------------------------
      #  Label    Path
     ------------------------------------------------------------
@@ -240,13 +240,13 @@ videos, so we want these list items to play a video when the user selects one.
 We are going to route lectures to ``play_lecture``.
 
 A new concept in this view is the ``is_playable`` item. By default, list items
-in xbmcswift2 are not playable. This means that XBMC expects the list item to
+in kodiswift are not playable. This means that Kodi expects the list item to
 point back to an addon and will not attempt to play a video (or audio) for the
-given URL. When you are finally ready for XBMC to play a video, a special flag
-must be set. xbmcswift2 handles this for you, all you need to do is remember to
+given URL. When you are finally ready for Kodi to play a video, a special flag
+must be set. kodiswift handles this for you, all you need to do is remember to
 set the ``is_playable`` flag to True.
 
-There is another new concept in this view as well. Typically, if you tell XBMC
+There is another new concept in this view as well. Typically, if you tell Kodi
 that a URL is playable, you will pass a direct URL to a resource such as an mp4
 file. In this case, we have to do more scraping in order to figure out the URL
 for the particular video the user selects. So our playable URL actually calls
@@ -282,15 +282,15 @@ The ``show_course_info`` view should look pretty familiar at this point. We are
 just listing the lectures for the given course url.
 
 The ``play_lecture`` view introduces some new concepts however. Remember that
-we told XBMC that our lecture items were *playable*. Since we gave a URL which
+we told Kodi that our lecture items were *playable*. Since we gave a URL which
 pointed to our addon, we now have to use ``plugin.set_resolved_url(url)``. This
-communicates to XBMC, that this is the *real* url that we want to play.
+communicates to Kodi, that this is the *real* url that we want to play.
 
 We are introducing one more layer of indirection here however. Since all of the
 content on Academic Earth is hosted on youtube, our addon would normally
 require lots of extra code just to parse URLs out of youtube. However, the
 youtube addon conveniently does all of that! So, we will actually set the
-playable URL to point to the youtube plugin, which will then provide XBMC with
+playable URL to point to the youtube plugin, which will then provide Kodi with
 the actual playable URL. Sounds a bit complicated, but it makes addons much
 simpler in the end. Our addon simply deals with parsing the Academic Earth
 website, and leaves anything youtube specific to the youtube addon.
@@ -306,16 +306,16 @@ Conclusion
 ----------
 
 We're finished! You should be able to navigate your addon using the command
-line. You should also be able to test your addon directly in XBMC. I personally
+line. You should also be able to test your addon directly in Kodi. I personally
 like to use symlinks to test my addons. On linux, you could do something like
 this::
 
     $ cd ~/.xbmc/addons
     $ ln -s ~/Code/plugin.video.academicearthtutorial
 
-Note that you'll also have to install the xbmcswift2 XBMC distribution. The
+Note that you'll also have to install the kodiswift Kodi distribution. The
 easiest way is to install one of the addons listed on the :ref:`poweredby`
-page. Since they all require xbmcswift2 as a dependency, it will automatically
+page. Since they all require kodiswift as a dependency, it will automatically
 be installed. The other option is to download the newest released version from
-`this page <https://github.com/jbeluch/xbmcswift2-xbmc-dist/tags>`_ and unzip
+`this page <https://github.com/jbeluch/kodiswift-xbmc-dist/tags>`_ and unzip
 it in your addons directory.

@@ -4,13 +4,13 @@
 Caching and Storage
 ===================
 
-xbmcswift2 offers a few options for caching and storage to help improve the
+kodiswift offers a few options for caching and storage to help improve the
 user experience of your addon. swift offers a simple storage mechanism that
 allows you to store arbitraty python objects to use between requests.
 
 .. warning::
     
-    The current implementation of xbmcswift2's storage is very basic and is not
+    The current implementation of kodiswift's storage is very basic and is not
     thread safe. If your addon does background calls via the context menu and
     manipulates storages in these backgound threads, you might run into some
     issues.
@@ -18,7 +18,7 @@ allows you to store arbitraty python objects to use between requests.
 Storing Arbitraty Python Objects
 --------------------------------
 
-All caches/storage objects in xbmcswift2 act like python dictionaries. So to
+All caches/storage objects in kodiswift act like python dictionaries. So to
 get a cache, simply call the ``get_storage`` method.
 
 .. sourcecode:: python
@@ -58,7 +58,7 @@ objects specified in minutes.
 Caching Decorator
 -----------------
 
-xbmcswift2 provides a convenient caching decorator to automatically cache the
+kodiswift provides a convenient caching decorator to automatically cache the
 output of a function. For example, suppose we have a function ``get_api_data``,
 that goes out to a remote API and fetches lots of data. If the website only
 updates the API once a day, it doesn't make sense to make this request every
@@ -102,7 +102,7 @@ for this decorator; it defaults to 24 hours.
 Caveats
 -------
 
-The caching features of xbmcswift2 are still young and thus have some potential
+The caching features of kodiswift are still young and thus have some potential
 problems to be aware of.
 
 * First, if you are calling ``plugin.finish`` from a view, it is not currently
@@ -113,7 +113,7 @@ problems to be aware of.
 
 * Ensure variables are part of your method signature. If you cache a given
   function, ensure that all possible inputs are in your method signature.
-  xbmcswift2 uses the arguments passed to your function as the unique key for
+  kodiswift uses the arguments passed to your function as the unique key for
   the cache. Therefore it's possible to cache different return values for
   different inputs for a function. But if you check some global state from
   inside your function, the caching logic will have no knowlege of this and

@@ -1,6 +1,6 @@
 import unittest
 import tempfile
-from xbmcswift2.cli import create
+from kodiswift.cli import create
 
 
 class TestCreate(unittest.TestCase):

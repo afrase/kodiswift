@@ -1,5 +1,5 @@
 from unittest import TestCase
-from xbmcswift2 import Request
+from kodiswift import Request
 
 class TestRequest(TestCase):
     def test_init(self):

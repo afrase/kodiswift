@@ -1,5 +1,5 @@
 from unittest import TestCase
-from xbmcswift2 import xbmcgui, ListItem
+from kodiswift import xbmcgui, ListItem
 from mock import Mock, patch
 
 class TestListItem(TestCase):
@@ -134,14 +134,14 @@ class TestListItem(TestCase):
             self.assertEqual(item.is_selected(), False)
         mock_isSelected.assert_called_with()
 
-    @patch('xbmcswift2.xbmcgui.ListItem.getProperty')
+    @patch('kodiswift.xbmcgui.ListItem.getProperty')
     def test_get_property(self, mock_getProperty):
         mock_getProperty.return_value = 'bar'
         item = ListItem()
         self.assertEqual(item.get_property('foo'), 'bar')
         mock_getProperty.assert_called_with('foo')
 
-    @patch('xbmcswift2.xbmcgui.ListItem.setProperty')
+    @patch('kodiswift.xbmcgui.ListItem.setProperty')
     def test_set_property(self, mock_setProperty):
         item = ListItem()
         item.set_property('foo', 'bar')

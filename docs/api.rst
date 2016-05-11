@@ -3,9 +3,9 @@
 API
 ===
 
-.. module:: xbmcswift2 
+.. module:: kodiswift
 
-Covers every method of xbmcswift2
+Covers every method of kodiswift
 
 Plugin Object
 -------------
@@ -34,14 +34,14 @@ Request
 Actions
 -------
 
-.. automodule:: xbmcswift2.actions
+.. automodule:: kodiswift.actions
     :members:
 
 
 Extended API
 ------------
 
-.. module:: xbmcswift2 
+.. module:: kodiswift
 
 Module
 ``````

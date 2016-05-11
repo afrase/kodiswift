@@ -5,21 +5,21 @@ Installation
 
 .. note::
 
-    The purpose of xbmcswift2 is to have the ability to run the addon on the
-    command line as well as in XBMC. This means that we will have to install
-    xbmcswift2 twice, once for the command line and once as an XBMC addon.
+    The purpose of kodiswift is to have the ability to run the addon on the
+    command line as well as in Kodi. This means that we will have to install
+    kodiswift twice, once for the command line and once as an Kodi addon.
 
-    The XBMC version of xbmcswift2 is a specially packaged version of the main
-    release. It excludes some CLI code and tests. It also contains XBMC
+    The Kodi version of kodiswift is a specially packaged version of the main
+    release. It excludes some CLI code and tests. It also contains Kodi
     required files like addon.xml.
 
-The easiest way to get the most recent version of xbmcswift2 for XBMC is to
-install an addon that requires xbmcswift2. You can find a list of such addons
-on the :ref:`poweredby` page. The other options is download the current XBMC
-distribution from https://github.com/jbeluch/xbmcswift2-xbmc-dist/tags and
+The easiest way to get the most recent version of kodiswift for Kodi is to
+install an addon that requires kodiswift. You can find a list of such addons
+on the :ref:`poweredby` page. The other options is download the current Kodi
+distribution from https://github.com/jbeluch/kodiswift-xbmc-dist/tags and
 unpack it into your addons folder.  
 
-Now, on to installing xbmcswift2 for use on the command line.
+Now, on to installing kodiswift for use on the command line.
 
 virtualenv
 ----------
@@ -50,19 +50,19 @@ Creating a Virtual Environment
 
 Now we can create our virtualenv::
 
-    $ mkvirtualenv xbmcswift2
+    $ mkvirtualenv kodiswift
 
-When this completes, your prompt should now be prefixed by `(xbmcswift2)`. The
+When this completes, your prompt should now be prefixed by `(kodiswift)`. The
 new prompt signals that we are now working within our virtualenv. Any libraries
 that we install via pip will only be available in this environment. Now we'll
-install xbmcswift2::
+install kodiswift::
 
-    $ pip install xbmcswift2
+    $ pip install kodiswift
 
 Everything should be good to go. When you would like to work on your project
 in the future, issue the following command to start your virtual env::
 
-    $ workon xbmcswift2
+    $ workon kodiswift
 
 and to deactive the virtualenv::
 
