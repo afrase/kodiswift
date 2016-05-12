@@ -1,10 +1,12 @@
+from __future__ import print_function
+import errno
+import os
 import tempfile
-import os, errno
+
 from kodiswift import log
 from kodiswift.cli.create import get_value
 
-
-TEMP_DIR = os.path.join(tempfile.gettempdir(), 'xbmcswift2_debug')
+TEMP_DIR = os.path.join(tempfile.gettempdir(), 'kodiswift_debug')
 log.info('Using temp directory %s', TEMP_DIR)
 
 
@@ -14,7 +16,7 @@ def _create_dir(path):
     """
     try:
         os.makedirs(path)
-    except OSError, exc:
+    except OSError as exc:
         if exc.errno == errno.EEXIST:
             pass
         else:
@@ -32,18 +34,21 @@ def log(msg, level=0):
         'LOGFATAL',
         'LOGNONE',
     ]
-    #print '%s - %s' % (levels[level], msg)
+    print('%s - %s' % (levels[level], msg))
 
+
+# noinspection PyPep8Naming
 def translatePath(path):
     """Creates folders in the OS's temp directory. Doesn't touch any
     possible Kodi installation on the machine. Attempting to do as
     little work as possible to enable this function to work seamlessly.
     """
     valid_dirs = ['xbmc', 'home', 'temp', 'masterprofile', 'profile',
-        'subtitles', 'userdata', 'database', 'thumbnails', 'recordings',
-        'screenshots', 'musicplaylists', 'videoplaylists', 'cdrips', 'skin',
-    ]
+                  'subtitles', 'userdata', 'database', 'thumbnails',
+                  'recordings', 'screenshots', 'musicplaylists',
+                  'videoplaylists', 'cdrips', 'skin', ]
 
+    # TODO: Remove asserts
     assert path.startswith('special://'), 'Not a valid special:// path.'
     parts = path.split('/')[2:]
     assert len(parts) > 1, 'Need at least a single root directory'
@@ -55,6 +60,8 @@ def translatePath(path):
 
     return os.path.join(TEMP_DIR, *parts)
 
+
+# noinspection PyPep8Naming
 class Keyboard(object):
     def __init__(self, default='', heading='', hidden=False):
         self._heading = heading
@@ -62,7 +69,7 @@ class Keyboard(object):
         self._hidden = hidden
         self._confirmed = False
         self._input = None
-        
+
     def setDefault(self, default):
         self._default = default
 
@@ -75,9 +82,10 @@ class Keyboard(object):
     def doModal(self):
         self._confirmed = False
         try:
-            self._input = get_value(self._heading, self._default, hidden=self._hidden)
+            self._input = get_value(
+                self._heading, self._default, hidden=self._hidden)
             self._confirmed = True
-        except (KeyboardInterrupt, EOFError):
+        except(KeyboardInterrupt, EOFError):
             pass
 
     def isConfirmed(self):

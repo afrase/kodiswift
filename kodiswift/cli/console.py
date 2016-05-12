@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     kodiswift.cli.console
     ----------------------
@@ -8,6 +9,8 @@
     :license: GPLv3, see LICENSE for more details.
 """
 from __future__ import print_function
+
+from .._compat import input
 
 
 def get_max_len(items):
@@ -74,20 +77,20 @@ def get_user_choice(items):
     """Returns the selected item from provided items or None if 'q' was
     entered for quit.
     """
-    choice = raw_input('Choose an item or "q" to quit: ')
+    choice = input('Choose an item or "q" to quit: ')
     while choice != 'q':
         try:
             item = items[int(choice)]
-            print  # Blank line for readability between interactive views
+            print()  # Blank line for readability between interactive views
             return item
         except ValueError:
             # Passed something that cound't be converted with int()
-            choice = raw_input('You entered a non-integer. Choice must be an'
-                               ' integer or "q": ')
+            choice = input('You entered a non-integer. Choice must be an'
+                           ' integer or "q": ')
         except IndexError:
             # Passed an integer that was out of range of the list of urls
-            choice = raw_input('You entered an invalid integer. Choice must be'
-                               ' from above url list or "q": ')
+            choice = input('You entered an invalid integer. Choice must be'
+                           ' from above url list or "q": ')
     return None
 
 
@@ -95,4 +98,4 @@ def continue_or_quit():
     """Prints an exit message and returns False if the user wants to
     quit.
     """
-    return raw_input('Enter to continue or "q" to quit') != 'q'
+    return input('Enter to continue or "q" to quit') != 'q'

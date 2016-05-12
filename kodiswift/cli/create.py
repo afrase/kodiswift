@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     kodiswift.cli.create
     ---------------------
@@ -8,14 +9,17 @@
     :license: GPLv3, see LICENSE for more details.
 """
 from __future__ import print_function
+
 import os
-import string
 import readline
-from os import getcwd
-from xml.sax import saxutils
-from optparse import OptionParser
-from shutil import copytree, ignore_patterns
+import string
 from getpass import getpass
+from optparse import OptionParser
+from os import getcwd
+from shutil import copytree, ignore_patterns
+from xml.sax import saxutils
+
+from .._compat import input
 
 
 class CreateCommand(object):
@@ -102,7 +106,7 @@ def get_value(prompt, default=None, hidden=False):
     if hidden:
         ans = getpass(_prompt)
     else:
-        ans = raw_input(_prompt)
+        ans = input(_prompt)
 
     # If user hit Enter and there is a default value
     if not ans and default:

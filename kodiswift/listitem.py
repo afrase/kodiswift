@@ -10,7 +10,8 @@
 """
 import warnings
 
-from kodiswift import xbmcgui
+from . import xbmcgui
+from ._compat import string_types
 
 
 class ListItem(object):
@@ -33,7 +34,7 @@ class ListItem(object):
 
         # kodi doesn't make getters available for these properties so we'll
         # keep track on our own
-        self._art = {}
+        self._art = {'icon': icon, 'thumbnail': thumbnail}
         self._icon = icon
         self._path = path
         self._thumbnail = thumbnail
@@ -50,8 +51,8 @@ class ListItem(object):
         previous context menu items will be removed.
         """
         for label, action in items:
-            assert isinstance(label, basestring)
-            assert isinstance(action, basestring)
+            assert isinstance(label, string_types)
+            assert isinstance(action, string_types)
         if replace_items:
             self._context_menu_items = []
         self._context_menu_items.extend(items)
@@ -269,13 +270,13 @@ class ListItem(object):
         listitem = cls(label, label2, icon, thumbnail, path)
 
         if selected is not None:
-            listitem.select(selected)
+            listitem.selected = selected
 
         if info:
             listitem.set_info(info_type, info)
 
         if is_playable:
-            listitem.set_is_playable(True)
+            listitem.playable = True
 
         if properties:
             # Need to support existing tuples, but prefer to have a dict for

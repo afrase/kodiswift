@@ -70,7 +70,7 @@ class TestXBMCMixin(TestCase):
 
     def test_get_setting(self):
         self.m.get_setting('username')
-        assert self.m.addon.getSetting.called_with(id='username')
+        assert self.m.addon.getSetting.called_with(key='username')
         # Test int
         self.m.addon.getSetting.return_value = '3'
         self.assertEqual(self.m.get_setting('int'), '3')
@@ -94,7 +94,7 @@ class TestXBMCMixin(TestCase):
 
     def test_set_setting(self):
         self.m.set_setting('username', 'xbmc')
-        assert self.m.addon.setSetting.called_with(id='username', value='xbmc')
+        assert self.m.addon.setSetting.called_with(key='username', value='xbmc')
 
     def test_open_settings(self):
         self.m.open_settings()

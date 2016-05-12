@@ -9,7 +9,9 @@
 """
 import re
 from urllib import urlencode, unquote_plus, quote_plus
-from kodiswift.common import pickle_dict, unpickle_dict
+
+from ._compat import string_types
+from .common import pickle_dict, unpickle_dict
 
 
 # TODO: Use regular Exceptions
@@ -104,9 +106,9 @@ class UrlRule(object):
         with the appropriate value from the items dict.
         """
         for key, val in items.items():
-            if not isinstance(val, basestring):
-                raise TypeError, ('Value "%s" for key "%s" must be an instance'
-                                  ' of basestring' % (val, key))
+            if not isinstance(val, string_types):
+                raise TypeError('Value "%s" for key "%s" must be an instance'
+                                ' of basestring' % (val, key))
             items[key] = quote_plus(val)
 
         try:

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     kodiswift.request
     ------------------
@@ -8,12 +9,10 @@
     :copyright: (c) 2012 by Jonathan Beluch
     :license: GPLv3, see LICENSE for more details.
 """
-from kodiswift.common import unpickle_args
-import urlparse
-try:
-    from urlparse import parse_qs
-except ImportError:
-    from cgi import parse_qs
+from __future__ import absolute_import
+
+from .common import unpickle_args
+from ._compat import urlparse
 
 
 class Request(object):
@@ -40,4 +39,4 @@ class Request(object):
         parts = urlparse.urlparse(remainder)
         self.netloc, self.path, self.query_string = (
             parts[1], parts[2], parts[4])
-        self.args = unpickle_args(parse_qs(self.query_string))
+        self.args = unpickle_args(urlparse.parse_qs(self.query_string))

@@ -7,13 +7,7 @@
     :copyright: (c) 2012 by Jonathan Beluch
     :license: GPLv3, see LICENSE for more details.
 """
-import urllib
-import urllib2
-
-try:
-    import cPickle as pickle
-except ImportError:
-    import pickle
+from ._compat import string_types, pickle, urllib, urlopen
 
 
 class Modes(object):
@@ -68,7 +62,7 @@ def pickle_dict(items):
     ret = {}
     pickled_keys = []
     for k, v in items.items():
-        if isinstance(v, basestring):
+        if isinstance(v, string_types):
             ret[k] = v
         else:
             pickled_keys.append(k)
@@ -138,7 +132,7 @@ def download_page(url, data=None):
     Returns:
         str: The results of requesting the URL.
     """
-    conn = urllib2.urlopen(url, data)
+    conn = urlopen(url, data)
     resp = conn.read()
     conn.close()
     return resp

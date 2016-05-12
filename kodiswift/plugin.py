@@ -65,7 +65,7 @@ class Plugin(XBMCMixin):
 
         # addon_id is no longer required as it can be parsed from addon.xml
         if addon_id:
-            self._addon = xbmcaddon.Addon(id=addon_id)
+            self._addon = xbmcaddon.Addon(addon_id=addon_id)
         else:
             self._addon = xbmcaddon.Addon()
 

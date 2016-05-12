@@ -1,6 +1,8 @@
+import mock
 from unittest import TestCase
+
 from kodiswift import xbmcgui, ListItem
-from mock import Mock, patch
+
 
 class TestListItem(TestCase):
     def setUp(self):
@@ -78,18 +80,20 @@ class TestListItem(TestCase):
         self.assertEqual(item.get_context_menu_items(), menu_items)
 
     def test_set_info(self):
-        with patch.object(xbmcgui.ListItem, 'setInfo') as mock_setInfo:
+        with mock.patch('kodiswift.xbmcgui.ListItem',
+                        'setInfo') as mock_setInfo:
             item = ListItem()
             item.set_info('video', {'title': '300'})
         mock_setInfo.assert_called_with('video', {'title': '300'})
 
     def test_stream_info(self):
-        with patch.object(xbmcgui.ListItem, 'addStreamInfo') as mock_stream_info:
+        with mock.patch('kodiswift.xbmcgui.ListItem',
+                        'addStreamInfo') as mock_stream_info:
             item = ListItem()
             item.add_stream_info('video', {'duration': 185})
             mock_stream_info.assert_called_with('video', {'duration': 185})
-            item.add_stream_info('audio', {'languange': 'en'})
-            mock_stream_info.assert_called_with('audio', {'languange': 'en'})
+            item.add_stream_info('audio', {'language': 'en'})
+            mock_stream_info.assert_called_with('audio', {'language': 'en'})
 
     def test_selected(self):
         item = ListItem()
@@ -105,14 +109,15 @@ class TestListItem(TestCase):
         self.assertEqual(item.is_selected(), False)
 
     def test_select_getter(self):
-        with patch.object(xbmcgui.ListItem, 'isSelected') as mock_isSelected:
-            mock_isSelected.return_value = False
+        with mock.patch('kodiswift.xbmcgui.ListItem',
+                        'isSelected') as mock_selected:
+            mock_selected.return_value = False
             item = ListItem()
             self.assertEqual(item.selected, False)
-        mock_isSelected.assert_called_with()
+        mock_selected.assert_called_with()
 
     def test_select_setter(self):
-        with patch.object(xbmcgui.ListItem, 'select') as mock_select:
+        with mock.patch('kodiswift.xbmcgui.ListItem', 'select') as mock_select:
             item = ListItem()
             item.selected = True
             mock_select.assert_called_with(True)
@@ -120,7 +125,7 @@ class TestListItem(TestCase):
             mock_select.assert_called_with(False)
 
     def test_select(self):
-        with patch.object(xbmcgui.ListItem, 'select') as mock_select:
+        with mock.patch('kodiswift.xbmcgui.ListItem', 'select') as mock_select:
             item = ListItem()
             item.selected = True
             mock_select.assert_called_with(True)
@@ -128,47 +133,48 @@ class TestListItem(TestCase):
             mock_select.assert_called_with(False)
 
     def test_is_selected(self):
-        with patch.object(xbmcgui.ListItem, 'isSelected') as mock_isSelected:
-            mock_isSelected.return_value = False
+        with mock.patch('kodiswift.xbmcgui.ListItem',
+                        'isSelected') as mock_selected:
+            mock_selected.return_value = False
             item = ListItem()
             self.assertEqual(item.is_selected(), False)
-        mock_isSelected.assert_called_with()
+        mock_selected.assert_called_with()
 
-    @patch('kodiswift.xbmcgui.ListItem.getProperty')
-    def test_get_property(self, mock_getProperty):
-        mock_getProperty.return_value = 'bar'
+    @mock.patch('kodiswift.xbmcgui.ListItem.getProperty')
+    def test_get_property(self, mock_get_property):
+        mock_get_property.return_value = 'bar'
         item = ListItem()
         self.assertEqual(item.get_property('foo'), 'bar')
-        mock_getProperty.assert_called_with('foo')
+        mock_get_property.assert_called_with('foo')
 
-    @patch('kodiswift.xbmcgui.ListItem.setProperty')
-    def test_set_property(self, mock_setProperty):
+    @mock.patch('kodiswift.xbmcgui.ListItem.setProperty')
+    def test_set_property(self, mock_set_property):
         item = ListItem()
         item.set_property('foo', 'bar')
-        mock_setProperty.assert_called_with('foo', 'bar')
+        mock_set_property.assert_called_with('foo', 'bar')
 
     def test_as_tuple(self):
         item = ListItem()
         self.assertEqual(item.as_tuple(), (None, item._listitem, True))
 
 
-
 class TestListItemAsserts(TestCase):
-
     def test_non_basestring_key(self):
         item = ListItem()
-        self.assertRaises(AssertionError, item.add_context_menu_items, [(42, 'action')])
-        self.assertRaises(AssertionError, item.add_context_menu_items, [(None, 'action')])
+        self.assertRaises(AssertionError, item.add_context_menu_items,
+                          [(42, 'action')])
+        self.assertRaises(AssertionError, item.add_context_menu_items,
+                          [(None, 'action')])
 
     def test_non_basestring_val(self):
         item = ListItem()
-        self.assertRaises(AssertionError, item.add_context_menu_items, [('label', 42)])
-        self.assertRaises(AssertionError, item.add_context_menu_items, [('label', None)])
-
+        self.assertRaises(AssertionError, item.add_context_menu_items,
+                          [('label', 42)])
+        self.assertRaises(AssertionError, item.add_context_menu_items,
+                          [('label', None)])
 
 
 class TestFromDict(TestCase):
-
     def test_from_dict_props(self):
         dct = {
             'properties': {'StartOffset': '256.4'},
@@ -198,8 +204,10 @@ class TestFromDict(TestCase):
             },
             'context_menu': [('label', 'action')],
             'is_playable': True}
-        with patch.object(ListItem, 'set_info', spec=True) as mock_set_info:
-            with patch.object(ListItem, 'add_stream_info', spec=True) as mock_set_stream_info:
+        with mock.patch('kodiswift.listitem.ListItem', 'set_info',
+                        spec=True) as mock_set_info:
+            with mock.patch('kodiswift.listitem.ListItem', 'add_stream_info',
+                            spec=True) as mock_set_stream_info:
                 item = ListItem.from_dict(**dct)
         self.assertEqual(item.label, 'foo')
         self.assertEqual(item.label2, 'bar')
@@ -216,6 +224,7 @@ class TestFromDict(TestCase):
 
     def test_from_dict_info_default_info_type(self):
         dct = {'info': {'title': 'My title'}}
-        with patch.object(ListItem, 'set_info', spec=True) as mock_set_info:
-            item = ListItem.from_dict(**dct)
+        with mock.patch('kodiswift.listitem.ListItem', 'set_info',
+                        spec=True) as mock_set_info:
+            _ = ListItem.from_dict(**dct)
         mock_set_info.assert_called_with('video', {'title': 'My title'})

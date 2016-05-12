@@ -200,7 +200,7 @@ class XBMCMixin(object):
         """
         # TODO: allow pickling of settings items?
         # TODO: STUB THIS OUT ON CLI
-        value = self.addon.getSetting(id=key)
+        value = self.addon.getSetting(key=key)
         if converter is str:
             return value
         elif converter is unicode:
@@ -222,7 +222,7 @@ class XBMCMixin(object):
 
     def set_setting(self, key, val):
         # TODO: STUB THIS OUT ON CLI
-        return self.addon.setSetting(id=key, value=val)
+        return self.addon.setSetting(key=key, value=val)
 
     def open_settings(self):
         """Opens the settings dialog within Kodi"""

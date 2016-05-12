@@ -40,31 +40,33 @@ https://github.com/jbeluch/kodiswift
 
 web@jonathanbeluch.com
 """
-import os
 from setuptools import setup, find_packages
 
-
 setup(
-    name = 'kodiswift',
-    version = '0.3.0',
-    author = 'Jonathan Beluch',
-    author_email = 'web@jonathanbeluch.com',
-    description = 'A micro framework for rapid development of Kodi plugins.',
-    license = "GPL3",
-    keywords = "example documentation tutorial",
-    url = 'https://github.com/jbeluch/kodiswift',
+    name='kodiswift',
+    version='0.3.0',
+    author='Jonathan Beluch',
+    author_email='web@jonathanbeluch.com',
+    description='A micro framework for rapid development of Kodi plugins.',
+    license='GPL3',
+    keywords='example documentation tutorial',
+    url='https://github.com/jbeluch/kodiswift',
     packages=find_packages(),
     include_package_data=True,
     long_description=__doc__,
     classifiers=[
-        "Development Status :: 3 - Alpha",
-        "Topic :: Utilities",
+        'Development Status :: 3 - Alpha',
+        'Topic :: Utilities',
         'License :: OSI Approved :: GNU Affero General Public License v3',
         'Programming Language :: Python',
     ],
     entry_points={
-       'console_scripts': [
-           'kodiswift = kodiswift.cli.cli:main',
-       ]
+        'console_scripts': [
+            'kodiswift = kodiswift.cli.cli:main',
+        ]
     },
+    tests_require=[
+        'nose',
+        'mock',
+    ],
 )

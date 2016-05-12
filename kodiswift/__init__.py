@@ -34,9 +34,9 @@ class module(ModuleType):
                 """A mock function which returns itself, enabling chainable
                 function calls.
                 """
-                log.warning('The %s method has not been implented on the CLI. '
-                            'Your code might not work properly when calling '
-                            'it.', name)
+                log.warning('The %s method has not been implemented on the '
+                            'CLI. Your code might not work properly when '
+                            'calling it.', name)
                 return self
 
             return func
@@ -64,14 +64,14 @@ except ImportError:
     xbmcaddon = module(xbmcaddon)
     xbmcvfs = module(xbmcvfs)
 
-from kodiswift.storage import TimedStorage
-from kodiswift.request import Request
-from kodiswift.common import (kodi_url, clean_dict, pickle_dict, unpickle_args,
-                              unpickle_dict, download_page, unhex)
-from kodiswift.constants import SortMethod, VIEW_MODES
-from kodiswift.listitem import ListItem
-from kodiswift.logger import setup_log
-from kodiswift.module import Module
-from kodiswift.urls import AmbiguousUrlException, NotFoundException, UrlRule
-from kodiswift.xbmcmixin import XBMCMixin
-from kodiswift.plugin import Plugin
+from .storage import TimedStorage
+from .request import Request
+from .common import (kodi_url, clean_dict, pickle_dict, unpickle_args,
+                     unpickle_dict, download_page)
+from .constants import SortMethod, VIEW_MODES
+from .listitem import ListItem
+from .logger import setup_log
+from .module import Module
+from .urls import AmbiguousUrlException, NotFoundException, UrlRule
+from .xbmcmixin import XBMCMixin
+from .plugin import Plugin
