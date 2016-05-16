@@ -1,7 +1,8 @@
-import mock
 from unittest import TestCase
 
-from kodiswift import xbmcgui, ListItem
+import mock
+
+from kodiswift import ListItem, xbmcgui
 
 
 class TestListItem(TestCase):
@@ -80,15 +81,17 @@ class TestListItem(TestCase):
         self.assertEqual(item.get_context_menu_items(), menu_items)
 
     def test_set_info(self):
-        with mock.patch('kodiswift.xbmcgui.ListItem',
-                        'setInfo') as mock_setInfo:
+        # noinspection PyUnresolvedReferences
+        with mock.patch.object(xbmcgui.ListItem,
+                               'setInfo') as mock_setInfo:
             item = ListItem()
             item.set_info('video', {'title': '300'})
         mock_setInfo.assert_called_with('video', {'title': '300'})
 
     def test_stream_info(self):
-        with mock.patch('kodiswift.xbmcgui.ListItem',
-                        'addStreamInfo') as mock_stream_info:
+        # noinspection PyUnresolvedReferences
+        with mock.patch.object(xbmcgui.ListItem,
+                               'addStreamInfo') as mock_stream_info:
             item = ListItem()
             item.add_stream_info('video', {'duration': 185})
             mock_stream_info.assert_called_with('video', {'duration': 185})
@@ -109,15 +112,16 @@ class TestListItem(TestCase):
         self.assertEqual(item.is_selected(), False)
 
     def test_select_getter(self):
-        with mock.patch('kodiswift.xbmcgui.ListItem',
-                        'isSelected') as mock_selected:
+        # noinspection PyUnresolvedReferences
+        with mock.patch.object(xbmcgui.ListItem, 'isSelected') as mock_selected:
             mock_selected.return_value = False
             item = ListItem()
             self.assertEqual(item.selected, False)
         mock_selected.assert_called_with()
 
     def test_select_setter(self):
-        with mock.patch('kodiswift.xbmcgui.ListItem', 'select') as mock_select:
+        # noinspection PyUnresolvedReferences
+        with mock.patch.object(xbmcgui.ListItem, 'select') as mock_select:
             item = ListItem()
             item.selected = True
             mock_select.assert_called_with(True)
@@ -125,7 +129,8 @@ class TestListItem(TestCase):
             mock_select.assert_called_with(False)
 
     def test_select(self):
-        with mock.patch('kodiswift.xbmcgui.ListItem', 'select') as mock_select:
+        # noinspection PyUnresolvedReferences
+        with mock.patch.object(xbmcgui.ListItem, 'select') as mock_select:
             item = ListItem()
             item.selected = True
             mock_select.assert_called_with(True)
@@ -133,8 +138,8 @@ class TestListItem(TestCase):
             mock_select.assert_called_with(False)
 
     def test_is_selected(self):
-        with mock.patch('kodiswift.xbmcgui.ListItem',
-                        'isSelected') as mock_selected:
+        # noinspection PyUnresolvedReferences
+        with mock.patch.object(xbmcgui.ListItem, 'isSelected') as mock_selected:
             mock_selected.return_value = False
             item = ListItem()
             self.assertEqual(item.is_selected(), False)
@@ -204,11 +209,15 @@ class TestFromDict(TestCase):
             },
             'context_menu': [('label', 'action')],
             'is_playable': True}
-        with mock.patch('kodiswift.listitem.ListItem', 'set_info',
-                        spec=True) as mock_set_info:
-            with mock.patch('kodiswift.listitem.ListItem', 'add_stream_info',
-                            spec=True) as mock_set_stream_info:
+
+        # noinspection PyUnresolvedReferences
+        with mock.patch.object(ListItem, 'set_info',
+                               spec=False) as mock_set_info:
+            # noinspection PyUnresolvedReferences
+            with mock.patch.object(ListItem, 'add_stream_info',
+                                   spec=False) as mock_set_stream:
                 item = ListItem.from_dict(**dct)
+
         self.assertEqual(item.label, 'foo')
         self.assertEqual(item.label2, 'bar')
         self.assertEqual(item.icon, 'icon')
@@ -216,7 +225,7 @@ class TestFromDict(TestCase):
         self.assertEqual(item.path, 'plugin://my.plugin.id/')
         self.assertEqual(item.selected, True)
         mock_set_info.assert_called_with('pictures', {'title': 'My title'})
-        mock_set_stream_info.assert_called_with('video', {'duration': 185})
+        mock_set_stream.assert_called_with('video', {'duration': 185})
         self.assertEqual(item.get_property('StartOffset'), '256.4')
         self.assertEqual(item.get_context_menu_items(), [('label', 'action')])
         self.assertEqual(item.get_property('isPlayable'), 'true')
@@ -224,7 +233,8 @@ class TestFromDict(TestCase):
 
     def test_from_dict_info_default_info_type(self):
         dct = {'info': {'title': 'My title'}}
-        with mock.patch('kodiswift.listitem.ListItem', 'set_info',
-                        spec=True) as mock_set_info:
+        # noinspection PyUnresolvedReferences
+        with mock.patch.object(ListItem, 'set_info',
+                               spec=False) as mock_set_info:
             _ = ListItem.from_dict(**dct)
         mock_set_info.assert_called_with('video', {'title': 'My title'})

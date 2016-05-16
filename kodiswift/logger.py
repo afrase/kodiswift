@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     kodiswift.log
     --------------
@@ -19,7 +20,7 @@ from kodiswift import CLI_MODE
 # fh.setFormatter(formatter)
 # log.addHandler(fh)
 # TODO: Allow a global flag to set logging level when dealing with Kodi
-# TODO: Add -q and -v flags to CLI to quiet or enabel more verbose logging
+# TODO: Add -q and -v flags to CLI to quiet or enable more verbose logging
 
 
 class XBMCFilter(object):

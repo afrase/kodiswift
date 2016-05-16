@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     kodiswift.plugin
     -----------------
@@ -8,20 +9,15 @@
     :copyright: (c) 2012 by Jonathan Beluch
     :license: GPLv3, see LICENSE for more details.
 """
+import inspect
 import os
 import sys
+import collections
 
 import kodiswift
-
-try:
-    from urlparse import parse_qs
-except ImportError:
-    from cgi import parse_qs
-
+from kodiswift import xbmc, xbmcaddon, Request
 from logger import log, setup_log
 from urls import UrlRule, NotFoundException, AmbiguousUrlException
-from kodiswift import xbmc, xbmcaddon, Request
-
 from xbmcmixin import XBMCMixin
 
 
@@ -113,7 +109,7 @@ class Plugin(XBMCMixin):
             else:
                 addon_dir = os.getcwd()
             strings_fn = os.path.join(addon_dir, 'resources', 'language',
-                                      'English', 'strings.xml')
+                                      'English', 'strings.po')
             utils.load_addon_strings(self._addon, strings_fn)
 
     @property
@@ -157,10 +153,6 @@ class Plugin(XBMCMixin):
         """
         return self._current_items
 
-    def clear_added_items(self):
-        # TODO: This shouldn't be exposed probably...
-        self._current_items = []
-
     @property
     def handle(self):
         """The current plugin's handle. Equal to ``plugin.request.handle``."""
@@ -185,45 +177,33 @@ class Plugin(XBMCMixin):
         """The addon's name"""
         return self._name
 
-    def _parse_request(self, url=None, handle=None):
-        """Handles setup of the plugin state, including request
-        arguments, handle, mode.
-
-        This method never needs to be called directly. For testing, see
-        plugin.test()
-        """
-        # To accommodate self.redirect, we need to be able to parse a full
-        # url as well
-        if url is None:
-            url = sys.argv[0]
-            if len(sys.argv) == 3:
-                url += sys.argv[2]
-        if handle is None:
-            handle = sys.argv[1]
-        return Request(url, handle)
+    def clear_added_items(self):
+        # TODO: This shouldn't be exposed probably...
+        self._current_items = []
 
     def register_module(self, module, url_prefix):
-        """Registers a module with a plugin. Requires a url_prefix that
-        will then enable calls to url_for.
+        """Registers a module with a plugin. Requires a url_prefix that will
+        then enable calls to url_for.
 
-        :param module: Should be an instance `kodiswift.Module`.
-        :param url_prefix: A url prefix to use for all module urls,
-                           e.g. '/mymodule'
+        Args:
+            module (kodiswift.Module):
+            url_prefix (str): A url prefix to use for all module urls,
+                e.g. '/mymodule'
         """
-        module._plugin = self
-        module._url_prefix = url_prefix
-        for func in module._register_funcs:
+        module.plugin = self
+        module.url_prefix = url_prefix
+        for func in module.register_funcs:
             func(self, url_prefix)
 
-    def cached_route(self, url_rule, name=None, options=None, TTL=None):
+    def cached_route(self, url_rule, name=None, options=None, ttl=None):
         """A decorator to add a route to a view and also apply caching. The
         url_rule, name and options arguments are the same arguments for the
         route function. The TTL argument if given will passed along to the
         caching decorator.
         """
         route_decorator = self.route(url_rule, name=name, options=options)
-        if TTL:
-            cache_decorator = self.cached(TTL)
+        if ttl:
+            cache_decorator = self.cached(ttl)
         else:
             cache_decorator = self.cached()
 
@@ -232,14 +212,22 @@ class Plugin(XBMCMixin):
 
         return new_decorator
 
-    def route(self, url_rule, name=None, options=None):
+    def route(self, url_rule=None, name=None, root=False, options=None):
         """A decorator to add a route to a view. name is used to
         differentiate when there are multiple routes for a given view."""
 
-        # TODO: change options kwarg to defaults
         def decorator(f):
             view_name = name or f.__name__
-            self.add_url_rule(url_rule, f, name=view_name, options=options)
+            if root:
+                url = '/'
+            elif not url_rule:
+                url = '/' + view_name + '/'
+                args = inspect.getargspec(f)[0]
+                if args:
+                    url += '/'.join('%s/<%s>' % (p, p) for p in args)
+            else:
+                url = url_rule
+            self.add_url_rule(url, f, name=view_name, options=options)
             return f
 
         return decorator
@@ -290,30 +278,8 @@ class Plugin(XBMCMixin):
             # TODO: Make this a regular exception
             raise AmbiguousUrlException
 
-        pathqs = rule.make_path_qs(items)
-        return 'plugin://%s%s' % (self._addon_id, pathqs)
-
-    def _dispatch(self, path):
-        for rule in self._routes:
-            try:
-                view_func, items = rule.match(path)
-            except NotFoundException:
-                continue
-            log.info('Request for "%s" matches rule for function "%s"',
-                     path, view_func.__name__)
-            listitems = view_func(**items)
-
-            # Only call self.finish() for UI container listing calls to plugin
-            # (handle will be >= 0). Do not call self.finish() when called via
-            # RunPlugin() (handle will be -1).
-            if not self._end_of_directory and self.handle >= 0:
-                if listitems is None:
-                    self.finish(succeeded=False)
-                else:
-                    listitems = self.finish(listitems)
-
-            return listitems
-        raise NotFoundException('No matching view found for %s' % path)
+        path_qs = rule.make_path_qs(items)
+        return 'plugin://%s%s' % (self._addon_id, path_qs)
 
     def redirect(self, url):
         """Used when you need to redirect to another view, and you only
@@ -330,10 +296,50 @@ class Plugin(XBMCMixin):
         items = self._dispatch(self.request.path)
 
         # Close any open storages which will persist them to disk
-        if hasattr(self, '_unsynced_storages'):
-            for storage in self._unsynced_storages.values():
+        if hasattr(self, '_unsynced_storage'):
+            for storage in self._unsynced_storage.values():
                 log.debug('Saving a %s storage to disk at "%s"',
                           storage.file_format, storage.filename)
                 storage.close()
 
         return items
+
+    def _dispatch(self, path):
+        for rule in self._routes:
+            try:
+                view_func, items = rule.match(path)
+            except NotFoundException:
+                continue
+            log.info('Request for "%s" matches rule for function "%s"',
+                     path, view_func.__name__)
+            resp = view_func(**items)
+
+            # Only call self.finish() for UI container listing calls to plugin
+            # (handle will be >= 0). Do not call self.finish() when called via
+            # RunPlugin() (handle will be -1).
+            if not self._end_of_directory and self.handle >= 0:
+                if isinstance(resp, dict):
+                    resp['items'] = self.finish(**resp)
+                elif isinstance(resp, collections.Iterable):
+                    resp = self.finish(items=resp)
+            return resp
+
+        raise NotFoundException('No matching view found for %s' % path)
+
+    @staticmethod
+    def _parse_request(url=None, handle=None):
+        """Handles setup of the plugin state, including request
+        arguments, handle, mode.
+
+        This method never needs to be called directly. For testing, see
+        plugin.test()
+        """
+        # To accommodate self.redirect, we need to be able to parse a full
+        # url as well
+        if url is None:
+            url = sys.argv[0]
+            if len(sys.argv) == 3:
+                url += sys.argv[2]
+        if handle is None:
+            handle = sys.argv[1]
+        return Request(url, handle)

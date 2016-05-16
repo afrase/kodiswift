@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 import time
 from datetime import timedelta
@@ -5,6 +6,7 @@ from functools import wraps
 
 import kodiswift
 from kodiswift import xbmc, xbmcplugin, xbmcgui
+from kodiswift._compat import string_types
 from kodiswift.constants import VIEW_MODES, SortMethod
 from kodiswift.logger import log
 from kodiswift.storage import TimedStorage
@@ -14,6 +16,7 @@ from kodiswift.storage import TimedStorage
 #              a parent class.
 
 
+# noinspection PyUnresolvedReferences,PyAttributeOutsideInit
 class XBMCMixin(object):
     """A mixin to add Kodi helper methods. In order to use this mixin,
     the child class must implement the following methods and
@@ -38,28 +41,26 @@ class XBMCMixin(object):
     # optional
     self.info_type: should be in ['video', 'music', 'pictures']
     _memoized_storage = None
-    _unsynced_storages = None
+    _unsynced_storage = None
     # TODO: Ensure above is implemented
     """
 
     _function_cache_name = '.functions'
 
-    def cached(self, TTL=60 * 24):
+    def cached(self, ttl=60 * 24):
         """A decorator that will cache the output of the wrapped function. The
         key used for the cache is the function name as well as the `*args` and
         `**kwargs` passed to the function.
 
-        :param TTL: time to live in minutes
+        :param ttl: time to live in minutes
 
         .. note:: For route caching, you should use
                   :meth:`kodiswift.Plugin.cached_route`.
         """
 
         def decorating_function(function):
-            # TODO test this method
-            storage = self.get_storage(self._function_cache_name,
-                                       file_format='pickle',
-                                       TTL=TTL)
+            storage = self.get_storage(
+                self._function_cache_name, file_format='pickle', ttl=ttl)
             kwd_mark = 'f35c2d973e1bbbc61ca60fc6d7ae4eb3'
 
             @wraps(function)
@@ -93,90 +94,88 @@ class XBMCMixin(object):
         """
         self.get_storage(self._function_cache_name).clear()
 
-    def list_storages(self):
+    def list_storage(self):
         """Returns a list of existing stores. The returned names can then be
         used to call get_storage().
         """
-        # Filter out any storages used by kodiswift so caller doesn't corrupt
+        # Filter out any storage used by kodiswift so caller doesn't corrupt
         # them.
         return [name for name in os.listdir(self.storage_path)
                 if not name.startswith('.')]
 
-    def get_storage(self, name='main', file_format='pickle', TTL=None):
+    def get_storage(self, name='main', file_format='pickle', ttl=None):
         """Returns a storage for the given name. The returned storage is a
         fully functioning python dictionary and is designed to be used that
         way. It is usually not necessary for the caller to load or save the
         storage manually. If the storage does not already exist, it will be
         created.
 
-        .. seealso:: :class:`kodiswift.TimedStorage` for more details.
+        See Also:
+            :class:`kodiswift.TimedStorage` for more details.
 
-        :param name: The name  of the storage to retrieve.
-        :param file_format: Choices are 'pickle', 'csv', and 'json'. Pickle is
-                            recommended as it supports python objects.
+        Args:
+            name (str): The name  of the storage to retrieve.
+            file_format (str): Choices are 'pickle', 'csv', and 'json'.
+                Pickle is recommended as it supports python objects.
 
-                            .. note:: If a storage already exists for the given
-                                      name, the file_format parameter is
-                                      ignored. The format will be determined by
-                                      the existing storage file.
-        :param TTL: The time to live for storage items specified in minutes or None
-                    for no expiration. Since storage items aren't expired until a
-                    storage is loaded form disk, it is possible to call
-                    get_storage() with a different TTL than when the storage was
-                    created. The currently specified TTL is always honored.
+                Notes: If a storage already exists for the given name, the
+                    file_format parameter is ignored. The format will be
+                    determined by the existing storage file.
+
+            ttl (int): The time to live for storage items specified in minutes
+                or None for no expiration. Since storage items aren't expired
+                until a storage is loaded form disk, it is possible to call
+                get_storage() with a different TTL than when the storage was
+                created. The currently specified TTL is always honored.
+
+        Returns:
+            kodiswift.storage.TimedStorage:
         """
-
-        if not hasattr(self, '_unsynced_storages'):
-            self._unsynced_storages = {}
+        if not hasattr(self, '_unsynced_storage'):
+            self._unsynced_storage = {}
         filename = os.path.join(self.storage_path, name)
         try:
-            storage = self._unsynced_storages[filename]
+            storage = self._unsynced_storage[filename]
             log.debug('Loaded storage "%s" from memory', name)
         except KeyError:
-            if TTL:
-                TTL = timedelta(minutes=TTL)
-
+            if ttl:
+                ttl = timedelta(minutes=ttl)
             try:
-                storage = TimedStorage(filename, file_format, TTL)
+                storage = TimedStorage(filename, file_format, ttl)
             except ValueError:
                 # Thrown when the storage file is corrupted and can't be read.
                 # Prompt user to delete storage.
                 choices = ['Clear storage', 'Cancel']
-                ret = xbmcgui.Dialog().select('A storage file is corrupted. It'
-                                              ' is recommended to clear it.',
-                                              choices)
+                ret = xbmcgui.Dialog().select(
+                    'A storage file is corrupted. It'
+                    ' is recommended to clear it.', choices)
                 if ret == 0:
                     os.remove(filename)
-                    storage = TimedStorage(filename, file_format, TTL)
+                    storage = TimedStorage(filename, file_format, ttl)
                 else:
                     raise Exception('Corrupted storage file at %s' % filename)
 
-            self._unsynced_storages[filename] = storage
+            self._unsynced_storage[filename] = storage
             log.debug('Loaded storage "%s" from disk', name)
         return storage
 
-    def temp_fn(self, path):
-        return os.path.join(xbmc.translatePath('special://temp/'), path)
-
-    def get_string(self, stringid):
-        """Returns the localized string from strings.xml for the given
-        stringid.
+    def get_string(self, string_id):
+        """Returns the localized string from strings.po or strings.xml for the
+        given string_id.
         """
-        stringid = int(stringid)
+        string_id = int(string_id)
         if not hasattr(self, '_strings'):
             self._strings = {}
-        if not stringid in self._strings:
-            self._strings[stringid] = self.addon.getLocalizedString(stringid)
-        return self._strings[stringid]
+        if string_id not in self._strings:
+            self._strings[string_id] = self.addon.getLocalizedString(string_id)
+        return self._strings[string_id]
 
     def set_content(self, content):
         """Sets the content type for the plugin."""
-        # TODO: Change to a warning instead of an assert. Otherwise will have
-        # to keep this list in sync with
-        #       any Kodi changes.
-        # contents = ['files', 'songs', 'artists', 'albums', 'movies',
-        # 'tvshows', 'episodes', 'musicvideos']
-        # assert content in contents, 'Content type "%s" is not valid' % content
+        contents = ['files', 'songs', 'artists', 'albums', 'movies', 'tvshows',
+                    'episodes', 'musicvideos']
+        if content not in contents:
+            self.log.warning('Content type "%s" is not valid', content)
         xbmcplugin.setContent(self.handle, content)
 
     def get_setting(self, key, converter=None, choices=None):
@@ -228,19 +227,20 @@ class XBMCMixin(object):
         """Opens the settings dialog within Kodi"""
         self.addon.openSettings()
 
-    def add_to_playlist(self, items, playlist='video'):
+    @staticmethod
+    def add_to_playlist(items, playlist='video'):
         """Adds the provided list of items to the specified playlist.
         Available playlists include *video* and *music*.
         """
         playlists = {'music': 0, 'video': 1}
-        assert playlist in playlists.keys(), ('Playlist "%s" is invalid.' %
-                                              playlist)
-        selected_playlist = xbmc.PlayList(playlists[playlist])
+        if playlist not in playlists:
+            raise ValueError('Playlist "%s" is invalid.' % playlist)
 
+        selected_playlist = xbmc.PlayList(playlists[playlist])
         _items = []
         for item in items:
             if not hasattr(item, 'as_xbmc_listitem'):
-                if 'info_type' in item.keys():
+                if 'info_type' in item:
                     log.warning('info_type key has no affect for playlist '
                                 'items as the info_type is inferred from the '
                                 'playlist type.')
@@ -251,7 +251,8 @@ class XBMCMixin(object):
             selected_playlist.add(item.get_path(), item.as_xbmc_listitem())
         return _items
 
-    def get_view_mode_id(self, view_mode):
+    @staticmethod
+    def get_view_mode_id(view_mode):
         """Attempts to return a view_mode_id for a given view_mode
         taking into account the current skin. If not view_mode_id can
         be found, None is returned. 'thumbnail' is currently the only
@@ -262,7 +263,8 @@ class XBMCMixin(object):
             return view_mode_ids.get(xbmc.getSkinDir())
         return None
 
-    def set_view_mode(self, view_mode_id):
+    @staticmethod
+    def set_view_mode(view_mode_id):
         """Calls Kodi's Container.SetViewMode. Requires an integer
         view_mode_id"""
         xbmc.executebuiltin('Container.SetViewMode(%d)' % view_mode_id)
@@ -310,26 +312,29 @@ class XBMCMixin(object):
         # Create ListItems for anything that is not already an instance of
         # ListItem
         if not hasattr(item, 'as_tuple'):
-            if 'info_type' not in item.keys():
+            if 'info_type' not in item:
                 item['info_type'] = info_type
             item = kodiswift.ListItem.from_dict(**item)
         return item
 
-    def _add_subtitles(self, subtitles):
+    @staticmethod
+    def _add_subtitles(subtitles):
         """Adds subtitles to playing video.
 
-        :param subtitles: A URL to a remote subtitles file or a local filename
-                          for a subtitles file.
+        Warnings:
+            You must start playing a video before calling this method or it
+            will raise and Exception after 30 seconds.
 
-        .. warning:: You must start playing a video before calling this method
-                     or it will loop for an indefinite length.
+        Args:
+            subtitles (str): A URL to a remote subtitles file or a local
+                filename for a subtitles file.
         """
         # This method is named with an underscore to suggest that callers pass
         # the subtitles argument to set_resolved_url instead of calling this
         # method directly. This is to ensure a video is played before calling
         # this method.
         player = xbmc.Player()
-        for _ in xrange(30):
+        for _ in range(30):
             if player.isPlaying():
                 break
             time.sleep(1)
@@ -366,7 +371,7 @@ class XBMCMixin(object):
             item = {}
             succeeded = False
 
-        if isinstance(item, basestring):
+        if isinstance(item, string_types):
             # caller is passing a url instead of an item dict
             item = {'path': item}
 
@@ -381,11 +386,8 @@ class XBMCMixin(object):
         return [item]
 
     def play_video(self, item, player=None):
-        try:
-            # videos are always type video
+        if isinstance(item, dict):
             item['info_type'] = 'video'
-        except TypeError:
-            pass  # not a dict
 
         item = self._listitemify(item)
         item.set_played(True)
@@ -432,7 +434,8 @@ class XBMCMixin(object):
             # Finalize the directory items
             return xbmcplugin.endOfDirectory(self.handle, succeeded,
                                              update_listing, cache_to_disc)
-        assert False, 'Already called endOfDirectory.'
+        else:
+            raise Exception('Already called endOfDirectory.')
 
     def add_sort_method(self, sort_method, label2_mask=None):
         """A wrapper for `xbmcplugin.addSortMethod()
@@ -469,40 +472,43 @@ class XBMCMixin(object):
                update_listing=False, cache_to_disc=True, view_mode=None):
         """Adds the provided items to the Kodi interface.
 
-        :param items: an iterable of items where each item is either a
-            dictionary with keys/values suitable for passing to
-            :meth:`kodiswift.ListItem.from_dict` or an instance of
-            :class:`kodiswift.ListItem`.
-        :param sort_methods: a list of valid Kodi sort_methods. Each item in
-                             the list can either be a sort method or a tuple of
-                             ``sort_method, label2_mask``. See
-                             :meth:`add_sort_method` for
-                             more detail concerning valid sort_methods.
+        Args:
+            items (List[Dict[str, str]]]): an iterable of items where each item
+                is either a dictionary with keys/values suitable for passing to
+                :meth:`kodiswift.ListItem.from_dict` or an instance of
+                :class:`kodiswift.ListItem`.
 
-                             Example call with sort_methods::
+            sort_methods (Union[List[str], str]): A list of valid Kodi
+                sort_methods. Each item in the list can either be a sort method
+                or a tuple of `sort_method, label2_mask`. See
+                :meth:`add_sort_method` for more detail concerning valid
+                sort_methods.
 
-                                sort_methods = ['label', 'title', ('date', '%D')]
-                                plugin.finish(items, sort_methods=sort_methods)
+            succeeded (bool):
+            update_listing (bool):
+            cache_to_disc (bool):
+            view_mode (Union[str, int]): Can either be an integer
+                (or parsable integer string) corresponding to a view_mode or
+                the name of a type of view. Currently the only view type
+                supported is 'thumbnail'.
 
-        :param view_mode: can either be an integer (or parseable integer
-            string) corresponding to a view_mode or the name of a type of view.
-            Currrently the only view type supported is 'thumbnail'.
-        :returns: a list of all ListItems added to the Kodi interface.
+        Returns:
+            List[kodiswift.listitem.ListItem]: A list of all ListItems added
+                to the Kodi interface.
         """
         # If we have any items, add them. Items are optional here.
         if items:
             self.add_items(items)
         if sort_methods:
             for sort_method in sort_methods:
-                if not isinstance(sort_method, basestring) and hasattr(
-                    sort_method, '__len__'):
+                if isinstance(sort_method, list):
                     self.add_sort_method(*sort_method)
                 else:
                     self.add_sort_method(sort_method)
 
         # Attempt to set a view_mode if given
         if view_mode is not None:
-            # First check if we were given an integer or parseable integer
+            # First check if we were given an integer or parsable integer
             try:
                 view_mode_id = int(view_mode)
             except ValueError:

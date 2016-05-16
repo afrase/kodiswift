@@ -8,6 +8,7 @@ from unittest import TestCase
 
 from mock import patch
 
+import kodiswift
 from kodiswift import Plugin
 from kodiswift.mockxbmc.xbmc import TEMP_DIR
 from utils import preserve_cli_mode, preserve_cwd
@@ -36,6 +37,25 @@ class TestInit(TestCase):
         self.assertEqual(plugin.added_items, [])
         self.assertRaises(Exception, getattr, plugin, 'handle')
         self.assertRaises(Exception, getattr, plugin, 'request')
+        # Test loading from strings.po
+        self.assertEqual(
+            plugin.addon.getLocalizedString(30100), 'View all results')
+
+        addon_path = kodiswift.xbmc.translatePath(
+            plugin.addon.getAddonInfo('path'))
+        if not os.path.exists(addon_path):
+            os.makedirs(addon_path)
+
+    def test_init_cli_mode_no_strings_po(self):
+        name = 'Hello Kodi'
+        plugin_id = 'plugin.video.hellokodi'
+        path = os.path.join(os.path.dirname(__file__), 'data',
+                            'plugin_no_strings_po', 'addon.py')
+        with preserve_cwd(os.path.dirname(path)):
+            plugin = Plugin(name, plugin_id, path)
+        # Test loading from strings.xml
+        self.assertEqual(plugin.addon.getLocalizedString(30100),
+                         'View all results')
 
     def test_init_cli_mode_default_args(self):
         with preserve_cwd(

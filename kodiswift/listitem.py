@@ -10,8 +10,8 @@
 """
 import warnings
 
-from . import xbmcgui
-from ._compat import string_types
+from kodiswift import xbmcgui
+from kodiswift._compat import string_types
 
 
 class ListItem(object):
@@ -112,22 +112,6 @@ class ListItem(object):
                       DeprecationWarning)
         return self._listitem.select(selected_status)
 
-    def set_info(self, info_type, info_labels):
-        """Sets the listitems info"""
-        return self._listitem.setInfo(info_type, info_labels)
-
-    def get_property(self, key):
-        """Returns the property associated with the given key"""
-        return self._listitem.getProperty(key)
-
-    def set_property(self, key, value):
-        """Sets a property for the given key and value"""
-        return self._listitem.setProperty(key, value)
-
-    def add_stream_info(self, stream_type, stream_values):
-        """Adds stream details"""
-        return self._listitem.addStreamInfo(stream_type, stream_values)
-
     @property
     def icon(self):
         return self._art.get('icon')
@@ -140,13 +124,13 @@ class ListItem(object):
     def get_icon(self):
         warnings.warn('get_icon is deprecated, use icon property',
                       DeprecationWarning)
-        return self._icon
+        return self.icon
 
     def set_icon(self, icon):
         warnings.warn('set_icon is deprecated, use icon property',
                       DeprecationWarning)
-        self._icon = icon
-        return self._listitem.setIconImage(icon)
+        self.icon = icon
+        return self.icon
 
     @property
     def thumbnail(self):
@@ -160,13 +144,13 @@ class ListItem(object):
     def get_thumbnail(self):
         warnings.warn('get_thumbnail is deprecated, use thumbnail property',
                       DeprecationWarning)
-        return self._thumbnail
+        return self.thumbnail
 
     def set_thumbnail(self, thumbnail):
         warnings.warn('set_thumbnail is deprecated, use thumbnail property',
                       DeprecationWarning)
-        self._thumbnail = thumbnail
-        return self._listitem.setThumbnailImage(thumbnail)
+        self.thumbnail = thumbnail
+        return self.thumbnail
 
     @property
     def path(self):
@@ -246,6 +230,22 @@ class ListItem(object):
     def set_art(self, value):
         self._art = value
         self._listitem.setArt(value)
+
+    def set_info(self, info_type, info_labels):
+        """Sets the listitems info"""
+        return self._listitem.setInfo(info_type, info_labels)
+
+    def get_property(self, key):
+        """Returns the property associated with the given key"""
+        return self._listitem.getProperty(key)
+
+    def set_property(self, key, value):
+        """Sets a property for the given key and value"""
+        return self._listitem.setProperty(key, value)
+
+    def add_stream_info(self, stream_type, stream_values):
+        """Adds stream details"""
+        return self._listitem.addStreamInfo(stream_type, stream_values)
 
     def as_tuple(self):
         """Returns a tuple of list item properties:

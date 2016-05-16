@@ -1,6 +1,9 @@
 import os
 from kodiswift.logger import log
 from kodiswift.mockxbmc import utils
+from kodiswift._compat import input
+
+__all__ = ['Addon']
 
 
 def _get_env_setting(name):
@@ -13,9 +16,12 @@ class Addon(object):
         # In CLI mode, kodiswift must be run from the root of the addon
         # directory, so we can rely on getcwd() being correct.
         addon_xml = os.path.join(os.getcwd(), 'addon.xml')
+        _id = utils.get_addon_id(addon_xml)
         self._info = {
-            'id': addon_id or utils.get_addon_id(addon_xml),
+            'id': addon_id or _id,
             'name': utils.get_addon_name(addon_xml),
+            'profile': 'special://profile/addon_data/%s/' % _id,
+            'path': 'special://home/addons/%s' % _id
         }
         self._strings = {}
         self._settings = {}
@@ -24,12 +30,14 @@ class Addon(object):
         properties = ['author', 'changelog', 'description', 'disclaimer',
                       'fanart', 'icon', 'id', 'name', 'path', 'profile',
                       'stars', 'summary', 'type', 'version']
-        assert prop in properties, '%s is not a valid property.' % prop
+        if prop not in properties:
+            raise ValueError('%s is not a valid property.' % prop)
         return self._info.get(prop, 'Unavailable')
 
     def getLocalizedString(self, str_id):
         key = str(str_id)
-        assert key in self._strings, 'id not found in English/strings.xml.'
+        if key not in self._strings:
+            raise KeyError('id not found in English/strings.po or strings.xml.')
         return self._strings[key]
 
     def getSetting(self, key):
@@ -41,8 +49,7 @@ class Addon(object):
             # see if we have an env var
             value = _get_env_setting(key)
             if _get_env_setting(key) is None:
-                value = raw_input('* Please enter a temporary value for %s: ' %
-                                  key)
+                value = input('* Please enter a temporary value for %s: ' % key)
             self._settings[key] = value
         return value
 

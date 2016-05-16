@@ -1,3 +1,5 @@
+import os
+import polib
 from xml.dom.minidom import parse
 
 
@@ -5,10 +7,15 @@ def load_addon_strings(addon, filename):
     """This is not an official Kodi method, it is here to facilitate
     mocking up the other methods when running outside of Kodi."""
     def get_strings(fn):
-        xml = parse(fn)
-        strings = {tag.getAttribute('id'): tag.firstChild.data
-                   for tag in xml.getElementsByTagName('string')}
-        return strings
+        if os.path.exists(filename):
+            po = polib.pofile(fn)
+            return {entry.msgctxt[1:]: entry.msgid for entry in po}
+        else:
+            fn = os.path.splitext(fn)[0] + '.xml'
+            xml = parse(fn)
+            strings = {tag.getAttribute('id'): tag.firstChild.data
+                       for tag in xml.getElementsByTagName('string')}
+            return strings
     addon._strings = get_strings(filename)
 
 

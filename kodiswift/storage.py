@@ -7,18 +7,15 @@
     :copyright: (c) 2012 by Jonathan Beluch
     :license: GPLv3, see LICENSE for more details.
 """
-import os
+import collections
 import csv
 import json
-import time
-
-try:
-    import cPickle as pickle
-except ImportError:
-    import pickle
+import os
 import shutil
-import collections
+import time
 from datetime import datetime
+
+from kodiswift._compat import pickle
 from kodiswift.logger import log
 
 
@@ -43,25 +40,24 @@ class _persistentdictmixin(object):
         if flag != 'n' and os.access(filename, os.R_OK):
             log.debug('Reading %s storage from disk at "%s"',
                       self.file_format, self.filename)
-            fileobj = open(filename, 'rb' if file_format == 'pickle' else 'r')
-            with fileobj:
-                self.load(fileobj)
+            with open(filename, 'rb') as f:
+                self.load(f)
 
     def sync(self):
         """Write the dict to disk"""
         if self.flag == 'r':
             return
         filename = self.filename
-        tempname = filename + '.tmp'
-        fileobj = open(tempname, 'wb' if self.file_format == 'pickle' else 'w')
+        temp_name = filename + '.tmp'
+        file_obj = open(temp_name, 'wb')
         try:
-            self.dump(fileobj)
+            self.dump(file_obj)
         except Exception:
-            os.remove(tempname)
+            os.remove(temp_name)
             raise
         finally:
-            fileobj.close()
-        shutil.move(tempname, self.filename)  # atomic commit
+            file_obj.close()
+        shutil.move(temp_name, self.filename)  # atomic commit
         if self.mode is not None:
             os.chmod(self.filename, self.mode)
 
@@ -75,14 +71,14 @@ class _persistentdictmixin(object):
     def __exit__(self, *exc_info):
         self.close()
 
-    def dump(self, fileobj):
+    def dump(self, file_obj):
         """Handles the writing of the dict to the file object"""
         if self.file_format == 'csv':
-            csv.writer(fileobj).writerows(self.raw_dict().items())
+            csv.writer(file_obj).writerows(self.raw_dict().items())
         elif self.file_format == 'json':
-            json.dump(self.raw_dict(), fileobj, separators=(',', ':'))
+            json.dump(self.raw_dict(), file_obj, separators=(',', ':'))
         elif self.file_format == 'pickle':
-            pickle.dump(dict(self.raw_dict()), fileobj, 2)
+            pickle.dump(dict(self.raw_dict()), file_obj, 2)
         else:
             raise NotImplementedError('Unknown format: ' +
                                       repr(self.file_format))
@@ -120,8 +116,8 @@ class _Storage(collections.MutableMapping, _persistentdictmixin):
 
     def __init__(self, filename, file_format='pickle'):
         """Acceptable formats are 'csv', 'json' and 'pickle'."""
+        super(_Storage, self).__init__(filename, file_format=file_format)
         self._items = {}
-        _persistentdictmixin.__init__(self, filename, file_format=file_format)
 
     def __setitem__(self, key, val):
         self._items.__setitem__(key, val)
@@ -157,8 +153,8 @@ class TimedStorage(_Storage):
         older than the provided TTL will be removed upon load and upon item
         access.
         """
+        super(TimedStorage, self).__init__(filename, file_format=file_format)
         self.TTL = ttl
-        _Storage.__init__(self, filename, file_format=file_format)
 
     def __setitem__(self, key, val, raw=False):
         if raw:
@@ -184,5 +180,5 @@ class TimedStorage(_Storage):
             if not self.TTL or ttl_diff < self.TTL:
                 self.__setitem__(key, val, raw=True)
 
-    def dump(self, fileobj):
+    def dump(self, file_obj):
         pass

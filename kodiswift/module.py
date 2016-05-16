@@ -25,20 +25,26 @@ class Module(XBMCMixin):
         self._register_funcs = []
         self._plugin = None
         self._url_prefix = None
-        # TODO: Think of a better log name
         self._log = setup_log(namespace)
 
-    # TODO: add setter for plugin during registration
     @property
     def plugin(self):
-        """Returns the plugin this module is registered to, or raises a
-        RuntimeError if not registered.
+        """Returns the plugin this module is registered to, or
+
+        Returns:
+            kodiswift.Plugin:
+
+        Raises:
+            RuntimeError: If not registered
         """
         if self._plugin is None:
-            # TODO: print called method in the error message
             raise RuntimeError('Module must be registered in order to call'
                                'this method.')
         return self._plugin
+
+    @plugin.setter
+    def plugin(self, value):
+        self._plugin = value
 
     @property
     def cache_path(self):
@@ -76,12 +82,25 @@ class Module(XBMCMixin):
 
         Raises an Exception if this module is not registered with a
         Plugin.
+
+        Returns:
+            str:
+
+        Raises:
+            RuntimeError:
         """
         if self._url_prefix is None:
-            # TODO: print called method in the error message
             raise RuntimeError('Module must be registered in order to call'
                                'this method.')
         return self._url_prefix
+
+    @url_prefix.setter
+    def url_prefix(self, value):
+        self._url_prefix = value
+
+    @property
+    def register_funcs(self):
+        return self._register_funcs
 
     def route(self, url_rule, name=None, options=None):
         """A decorator to add a route to a view. name is used to

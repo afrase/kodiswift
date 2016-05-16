@@ -64,7 +64,7 @@ def validate_nonblank(value):
 @error_msg('** Value must contain only letters or underscores.')
 def validate_pluginid(value):
     """Returns True if the provided value is a valid pluglin id"""
-    valid = string.ascii_letters + string.digits + '.'
+    valid = string.ascii_letters + string.digits + '.' + '_'
     return all(c in valid for c in value)
 
 
