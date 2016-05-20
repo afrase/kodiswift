@@ -299,7 +299,7 @@ class Plugin(XBMCMixin):
         if hasattr(self, '_unsynced_storage'):
             for storage in self._unsynced_storage.values():
                 log.debug('Saving a %s storage to disk at "%s"',
-                          storage.file_format, storage.filename)
+                          storage.file_format, storage.file_path)
                 storage.close()
 
         return items

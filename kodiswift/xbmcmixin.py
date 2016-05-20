@@ -141,7 +141,7 @@ class XBMCMixin(object):
             if ttl:
                 ttl = timedelta(minutes=ttl)
             try:
-                storage = TimedStorage(filename, file_format, ttl)
+                storage = TimedStorage(filename, ttl, file_format=file_format)
             except ValueError:
                 # Thrown when the storage file is corrupted and can't be read.
                 # Prompt user to delete storage.
