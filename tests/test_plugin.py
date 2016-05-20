@@ -9,7 +9,7 @@ from unittest import TestCase
 from mock import patch
 
 import kodiswift
-from kodiswift import Plugin
+from kodiswift import Addon
 from kodiswift.mockxbmc.xbmc import TEMP_DIR
 from utils import preserve_cli_mode, preserve_cwd
 
@@ -28,7 +28,7 @@ class TestInit(TestCase):
         path = os.path.join(
             os.path.dirname(__file__), 'data', 'plugin', 'addon.py')
         with preserve_cwd(os.path.dirname(path)):
-            plugin = Plugin(name, plugin_id, path)
+            plugin = Addon(name, plugin_id, path)
 
         self.assertEqual(plugin_id, plugin.id)
         self.assertEqual(plugin.name, name)
@@ -52,7 +52,7 @@ class TestInit(TestCase):
         path = os.path.join(os.path.dirname(__file__), 'data',
                             'plugin_no_strings_po', 'addon.py')
         with preserve_cwd(os.path.dirname(path)):
-            plugin = Plugin(name, plugin_id, path)
+            plugin = Addon(name, plugin_id, path)
         # Test loading from strings.xml
         self.assertEqual(plugin.addon.getLocalizedString(30100),
                          'View all results')
@@ -60,7 +60,7 @@ class TestInit(TestCase):
     def test_init_cli_mode_default_args(self):
         with preserve_cwd(
                 os.path.join(os.path.dirname(__file__), 'data', 'plugin')):
-            plugin = Plugin()
+            plugin = Addon()
 
         self.assertEqual('plugin.video.academicearth', plugin.id)
         self.assertEqual(plugin.name, 'Academic Earth')
@@ -76,7 +76,7 @@ class TestInit(TestCase):
                             'addon.py')
         with preserve_cwd(os.path.dirname(path)):
             with preserve_cli_mode(cli_mode=False):
-                plugin = Plugin(name, plugin_id, path)
+                plugin = Addon(name, plugin_id, path)
 
         self.assertEqual(plugin_id, plugin.id)
         self.assertEqual(plugin.name, name)
@@ -89,7 +89,7 @@ class TestInit(TestCase):
         with preserve_cli_mode(cli_mode=False):
             with preserve_cwd(
                     os.path.join(os.path.dirname(__file__), 'data', 'plugin')):
-                plugin = Plugin()
+                plugin = Addon()
 
         self.assertEqual('plugin.video.academicearth', plugin.id)
         self.assertEqual(plugin.name, 'Academic Earth')
@@ -106,21 +106,21 @@ class TestInit(TestCase):
         with preserve_cli_mode(cli_mode=False):
             with preserve_cwd(
                     os.path.join(os.path.dirname(__file__), 'data', 'plugin')):
-                plugin = Plugin(name, 'script.module.test', path)
+                plugin = Addon(name, 'script.module.test', path)
                 self.assertEqual(plugin.info_type, 'video')
 
                 # parse from ID
-                plugin = Plugin(name, 'plugin.audio.test')
+                plugin = Addon(name, 'plugin.audio.test')
                 self.assertEqual(plugin.info_type, 'music')
 
-                plugin = Plugin(name, 'plugin.video.test')
+                plugin = Addon(name, 'plugin.video.test')
                 self.assertEqual(plugin.info_type, 'video')
 
-                plugin = Plugin(name, 'plugin.image.test')
+                plugin = Addon(name, 'plugin.image.test')
                 self.assertEqual(plugin.info_type, 'pictures')
 
                 # info_type param should override value parsed from id
-                plugin = Plugin(name, 'plugin.video.test', info_type='music')
+                plugin = Addon(name, 'plugin.video.test', info_type='music')
                 self.assertEqual(plugin.info_type, 'music')
 
 
@@ -131,7 +131,7 @@ class TestParseRequest(TestCase):
         path = os.path.join(
             os.path.dirname(__file__), 'data', 'plugin', 'addon.py')
         with preserve_cwd(os.path.dirname(path)):
-            self.plugin = Plugin(name, plugin_id, path)
+            self.plugin = Addon(name, plugin_id, path)
 
     def test_parse_request(self):
         with patch('kodiswift.plugin.Request') as MockRequest:
@@ -171,7 +171,7 @@ def new_plugin():
     plugin_id = 'plugin.video.hellokodi'
     path = os.path.join(os.path.dirname(__file__), 'data', 'plugin', 'addon.py')
     with preserve_cwd(os.path.dirname(path)):
-        return Plugin(name, plugin_id, path)
+        return Addon(name, plugin_id, path)
 
 
 def _test_plugin_runner(plugin):

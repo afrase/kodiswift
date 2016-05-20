@@ -1,7 +1,7 @@
-from kodiswift import Plugin
+from kodiswift import Addon
 
 
-plugin = Plugin()
+plugin = Addon()
 
 
 @plugin.route('/')

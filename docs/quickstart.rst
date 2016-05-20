@@ -35,7 +35,7 @@ minutes reading about addons in the Kodi wiki_.
 .. _wiki: http://wiki.xbmc.org/index.php?title=Add-on_development
 
 
-Creating the Plugin Skeleton
+Creating the Addon Skeleton
 ----------------------------
 
 kodiswift comes with a helpful console script that will create a plugin
@@ -68,10 +68,10 @@ find an ``addon.py`` exactly like the one below.
 
 .. sourcecode:: python
 
-    from kodiswift import Plugin
+    from kodiswift import Addon
 
 
-    plugin = Plugin()
+    plugin = Addon()
 
 
     @plugin.route('/')
@@ -90,7 +90,7 @@ find an ``addon.py`` exactly like the one below.
 The above code is a fully functioning Kodi addon (not that it does much!). So
 what does the code do?
 
-1. After importing the Plugin class, we create our plugin instance. kodiswift
+1. After importing the Addon class, we create our plugin instance. kodiswift
    will parse the proper addon name and id from the addon.xml file.
 
 2. We are using the ``plugin.route`` decorator on the ``index`` function. This
@@ -144,7 +144,7 @@ URL Routing
 Another advantage of using kodiswift, is its clean URL routing code. This
 means you don't have to write your own code to parse the URL provided by Kodi
 and route it to a specific function. kodiswift uses a a path passed to the
-:meth:`~kodiswift.Plugin.route` decorator to bind a URL to a function. For
+:meth:`~kodiswift.Addon.route` decorator to bind a URL to a function. For
 example, a route of ``/videos/`` will result in a URL of
 ``plugin://plugin.video.helloxbmc/videos/`` calling the decorated function.
 
@@ -225,7 +225,7 @@ We've introduced a few new topics here.
   command. This enables us to interact with the list items rather than just
   print them once and exit.
 
-* We've used :meth:`~kodiswift.Plugin.url_for` to create a url pointing to a
+* We've used :meth:`~kodiswift.Addon.url_for` to create a url pointing to a
   different view function. This is how view functions create list items that
   link to other functions.
 

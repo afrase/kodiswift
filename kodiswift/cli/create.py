@@ -153,9 +153,9 @@ def create_new_project():
             'What is your plugin name?', validate_nonblank)
     }
 
-    # Plugin Name
+    # Addon Name
 
-    # Plugin ID
+    # Addon ID
     opts['plugin_id'] = get_valid_value(
         'Enter your plugin id.',
         validate_pluginid,

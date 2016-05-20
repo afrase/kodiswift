@@ -57,7 +57,7 @@ A required string.
 
 For non-playable items, this is typically a URL for a different path in the
 same addon. To derive URLs for other views within your addon, use
-:meth:`kodiswift.Plugin.url_for`.
+:meth:`kodiswift.Addon.url_for`.
 
 For playable items, this is typically a URL to a remote media file. (One
 exception, is if you are using the set_resolved_url pattern, the URL will be

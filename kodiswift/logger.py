@@ -96,5 +96,5 @@ def setup_log(name):
 
 
 # The kodiswift log
-# Plugin writers should use plugin.log instead.
+# Addon writers should use plugin.log instead.
 log = setup_log('kodiswift')

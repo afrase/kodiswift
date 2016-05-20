@@ -4,7 +4,7 @@ Tutorial
 ========
 
 At the end of this tutorial we're going to have a basic version of the Academic
-Earth Plugin. This plugin plays videos from http://www.academicearth.org/.
+Earth Addon. This plugin plays videos from http://www.academicearth.org/.
 
 Since this tutorial is meant to cover the usage of kodiswift, we will not be
 covering HTML scraping. It makes sense to partition your scraping code into a
@@ -12,7 +12,7 @@ separate module from your addon's core functionality. In this example, we're
 going to use a scraping library for academic earth that I already have written.
 
 
-Creating the Plugin Structure
+Creating the Addon Structure
 -----------------------------
 
 The first step is to create your working directory for your addon. Since this

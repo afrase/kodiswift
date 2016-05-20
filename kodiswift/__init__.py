@@ -74,4 +74,4 @@ from .logger import setup_log
 from .module import Module
 from .urls import AmbiguousUrlException, NotFoundException, UrlRule
 from .xbmcmixin import XBMCMixin
-from .plugin import Plugin
+from .addon import Addon

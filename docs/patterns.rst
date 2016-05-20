@@ -11,7 +11,7 @@ Caching
 View Caching
 ````````````
 
-Use the :meth:`~kodiswift.Plugin.cached_route` decorator instead of the normal
+Use the :meth:`~kodiswift.Addon.cached_route` decorator instead of the normal
 `route` decorator. This will cache the results of your view for 24 hours.
 
 *NOTE:* You must be returning a list of plain dictionaries from your view and
@@ -38,7 +38,7 @@ General Function Caching
 ````````````````````````
 
 To cache the results of any function call, simply use the
-:meth:`~kodiswift.Plugin.cached` decorator. Keep in mind that the function name
+:meth:`~kodiswift.Addon.cached` decorator. Keep in mind that the function name
 along with the args and kwargs used to call the function are used as the cache
 key. If your function depends on any variables in outer scope which could
 affect the return value, you should pass in those variables explictly as args
@@ -54,7 +54,7 @@ Storing Arbitrary Objects
 `````````````````````````
 
 You can always create your own persistent storage using
-:meth:`~kodiswift.Plugin.get_storage`. The returned storage acts like a
+:meth:`~kodiswift.Addon.get_storage`. The returned storage acts like a
 dictionary, however it is automatically persisted to disk.
 
 .. sourcecode:: python
@@ -119,7 +119,7 @@ Reusing views with multiple routes
 
 It is possible to decorate views with more than one route. This becomes useful
 if you are parsing different URLs that share the same parsing code. In order to
-unambiguously use :meth:`~kodiswift.Plugin.url_for`, you need to pass a value
+unambiguously use :meth:`~kodiswift.Addon.url_for`, you need to pass a value
 for the name keyword argument. When calling ``url_for``, you pass this
 specified name instead of the name of the actual function.
 
@@ -155,13 +155,13 @@ normally).
         items = [create_item(movie) for movie in movies]
         return plugin.finish(items, sort_methods=['playlist_order', 'title', 'date'])
 
-See :meth:`kodiswift.Plugin.finish` for more information.
+See :meth:`kodiswift.Addon.finish` for more information.
 
 
 Playing RTMP urls
 -----------------
 
-If we need to play an RTMP url, we can use :meth:`kodiswift.Plugin.play_video`.
+If we need to play an RTMP url, we can use :meth:`kodiswift.Addon.play_video`.
 
 .. sourcecode:: python
 
@@ -204,7 +204,7 @@ for more information.
 
 The most common actions are `Kodi.RunPlugin()` and `Kodi.Container.Update()`.
 RunPlugin takes a single argument, a URL for a plugin (you can create a URL
-with :meth:`kodiswift.Plugin.url_for`). Kodi will then run your plugin in a
+with :meth:`kodiswift.Addon.url_for`). Kodi will then run your plugin in a
 background thread, *it will not affect the current UI*. So, RunPlugin is good
 for any sort of background task. Update(), however will change the current UI
 directory, so is useful when data is updated and you need to refresh the
@@ -251,7 +251,7 @@ menu items are mixed in with the built in options.
 Using extra parameters in the query string
 ------------------------------------------
 
-When calling :meth:`kodiswift.Plugin.url_for`, any keyword arguments passed
+When calling :meth:`kodiswift.Addon.url_for`, any keyword arguments passed
 that are not required for the specified view function will be added as query
 string arguments.
 

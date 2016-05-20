@@ -55,7 +55,7 @@ class XBMCMixin(object):
         :param ttl: time to live in minutes
 
         .. note:: For route caching, you should use
-                  :meth:`kodiswift.Plugin.cached_route`.
+                  :meth:`kodiswift.Addon.cached_route`.
         """
 
         def decorating_function(function):
@@ -89,8 +89,8 @@ class XBMCMixin(object):
 
     def clear_function_cache(self):
         """Clears the storage that caches results when using
-        :meth:`kodiswift.Plugin.cached_route` or
-        :meth:`kodiswift.Plugin.cached`.
+        :meth:`kodiswift.Addon.cached_route` or
+        :meth:`kodiswift.Addon.cached`.
         """
         self.get_storage(self._function_cache_name).clear()
 
@@ -426,7 +426,7 @@ class XBMCMixin(object):
         self._end_of_directory.
 
         Typically it is not necessary to call this method directly, as
-        calling :meth:`~kodiswift.Plugin.finish` will call this method.
+        calling :meth:`~kodiswift.Addon.finish` will call this method.
         """
         self._update_listing = update_listing
         if not self._end_of_directory:

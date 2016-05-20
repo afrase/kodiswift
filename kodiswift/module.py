@@ -14,7 +14,7 @@ from kodiswift import setup_log
 
 class Module(XBMCMixin):
     """Modules are basically mini plugins except they don't have any
-    functionality until they are registered with a Plugin.
+    functionality until they are registered with a Addon.
     """
 
     def __init__(self, namespace):
@@ -32,7 +32,7 @@ class Module(XBMCMixin):
         """Returns the plugin this module is registered to, or
 
         Returns:
-            kodiswift.Plugin:
+            kodiswift.Addon:
 
         Raises:
             RuntimeError: If not registered
@@ -81,7 +81,7 @@ class Module(XBMCMixin):
         """Sets or gets the url prefix of the module.
 
         Raises an Exception if this module is not registered with a
-        Plugin.
+        Addon.
 
         Returns:
             str:

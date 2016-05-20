@@ -3,7 +3,7 @@
     kodiswift.plugin
     -----------------
 
-    This module contains the Plugin class. This class handles all of the url
+    This module contains the Addon class. This class handles all of the url
     routing and interaction with Kodi for a plugin.
 
     :copyright: (c) 2012 by Jonathan Beluch
@@ -21,16 +21,16 @@ from urls import UrlRule, NotFoundException, AmbiguousUrlException
 from xbmcmixin import XBMCMixin
 
 
-class Plugin(XBMCMixin):
-    """The Plugin objects encapsulates all the properties and methods necessary
+class Addon(XBMCMixin):
+    """The Addon objects encapsulates all the properties and methods necessary
     for running an Kodi plugin. The plugin instance is a central place for
     registering view functions and keeping track of plugin state.
 
     Usually the plugin instance is created in the main addon.py file for the
     plugin. Typical creation looks like this::
 
-        from kodiswift import Plugin
-        plugin = Plugin('Hello Kodi')
+        from kodiswift import Addon
+        plugin = Addon('Hello Kodi')
 
 
     .. versionchanged:: 0.2
@@ -54,16 +54,11 @@ class Plugin(XBMCMixin):
                      testing.
     """
 
-    def __init__(self, name=None, addon_id=None, filepath=None, info_type=None):
+    def __init__(self, name=None, addon_id=None, plugin_file=None, info_type=None):
         self._name = name
         self._routes = []
         self._view_functions = {}
-
-        # addon_id is no longer required as it can be parsed from addon.xml
-        if addon_id:
-            self._addon = xbmcaddon.Addon(addon_id=addon_id)
-        else:
-            self._addon = xbmcaddon.Addon()
+        self._addon = xbmcaddon.Addon()
 
         self._addon_id = addon_id or self._addon.getAddonInfo('id')
         self._name = name or self._addon.getAddonInfo('name')
@@ -104,12 +99,12 @@ class Plugin(XBMCMixin):
         # directly, we can rely on cwd for now...
         if kodiswift.CLI_MODE:
             from kodiswift.mockxbmc import utils
-            if filepath:
-                addon_dir = os.path.dirname(filepath)
+            if plugin_file:
+                plugin_dir = os.path.dirname(plugin_file)
             else:
-                addon_dir = os.getcwd()
-            strings_fn = os.path.join(addon_dir, 'resources', 'language',
-                                      'English', 'strings.po')
+                plugin_dir = os.getcwd()
+            strings_fn = os.path.join(
+                plugin_dir, 'resources', 'language', 'English', 'strings.po')
             utils.load_addon_strings(self._addon, strings_fn)
 
     @property
@@ -148,7 +143,7 @@ class Plugin(XBMCMixin):
     def added_items(self):
         """The list of currently added items.
 
-        Even after repeated calls to :meth:`~kodiswift.Plugin.add_items`, this
+        Even after repeated calls to :meth:`~kodiswift.Addon.add_items`, this
         property will contain the complete list of added items.
         """
         return self._current_items
@@ -163,7 +158,7 @@ class Plugin(XBMCMixin):
         """The current :class:`~kodiswift.Request`.
 
         Raises an Exception if the request hasn't been initialized yet via
-        :meth:`~kodiswift.Plugin.run()`.
+        :meth:`~kodiswift.Addon.run()`.
         """
         if self._request is None:
             raise Exception('It seems the current request has not been '
