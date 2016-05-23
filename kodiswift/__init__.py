@@ -10,7 +10,7 @@
 from types import ModuleType
 
 
-class module(ModuleType):
+class _Module(ModuleType):
     """A wrapper class for a module used to override __getattr__. This class
     will behave normally for any existing module attributes. For any attributes
     which do not existi in in the wrapped module, a mock function will be
@@ -30,6 +30,7 @@ class module(ModuleType):
         try:
             return getattr(self.wrapped, name)
         except AttributeError:
+            # noinspection PyUnusedLocal
             def func(*args, **kwargs):
                 """A mock function which returns itself, enabling chainable
                 function calls.
@@ -48,30 +49,32 @@ try:
     import xbmcplugin
     import xbmcaddon
     import xbmcvfs
+
     CLI_MODE = False
+
 except ImportError:
     CLI_MODE = True
 
     import sys
-    from logger import log
+    from kodiswift.logger import log
 
     # Mock the Kodi modules
-    from mockxbmc import xbmc, xbmcgui, xbmcplugin, xbmcaddon, xbmcvfs
+    from kodiswift.mockxbmc import xbmc, xbmcgui, xbmcplugin, xbmcaddon, xbmcvfs
 
-    xbmc = module(xbmc)
-    xbmcgui = module(xbmcgui)
-    xbmcplugin = module(xbmcplugin)
-    xbmcaddon = module(xbmcaddon)
-    xbmcvfs = module(xbmcvfs)
+    xbmc = _Module(xbmc)
+    xbmcgui = _Module(xbmcgui)
+    xbmcplugin = _Module(xbmcplugin)
+    xbmcaddon = _Module(xbmcaddon)
+    xbmcvfs = _Module(xbmcvfs)
 
-from .storage import TimedStorage
-from .request import Request
-from .common import (kodi_url, clean_dict, pickle_dict, unpickle_args,
-                     unpickle_dict, download_page)
-from .constants import SortMethod, VIEW_MODES
-from .listitem import ListItem
-from .logger import setup_log
-from .module import Module
-from .urls import AmbiguousUrlException, NotFoundException, UrlRule
-from .xbmcmixin import XBMCMixin
-from .addon import Addon
+from kodiswift.storage import TimedStorage
+from kodiswift.request import Request
+from kodiswift.common import (kodi_url, clean_dict, pickle_dict, unpickle_args,
+                              unpickle_dict, download_page)
+from kodiswift.constants import SortMethod, VIEW_MODES
+from kodiswift.listitem import ListItem
+from kodiswift.logger import setup_log
+from kodiswift.module import Module
+from kodiswift.urls import AmbiguousUrlException, NotFoundException, UrlRule
+from kodiswift.xbmcmixin import XBMCMixin
+from kodiswift.addon import Addon

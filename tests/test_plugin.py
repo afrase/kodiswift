@@ -59,7 +59,7 @@ class TestInit(TestCase):
 
     def test_init_cli_mode_default_args(self):
         with preserve_cwd(
-                os.path.join(os.path.dirname(__file__), 'data', 'plugin')):
+            os.path.join(os.path.dirname(__file__), 'data', 'plugin')):
             plugin = Addon()
 
         self.assertEqual('plugin.video.academicearth', plugin.id)
@@ -88,7 +88,7 @@ class TestInit(TestCase):
     def test_init_not_cli_mode_default_args(self):
         with preserve_cli_mode(cli_mode=False):
             with preserve_cwd(
-                    os.path.join(os.path.dirname(__file__), 'data', 'plugin')):
+                os.path.join(os.path.dirname(__file__), 'data', 'plugin')):
                 plugin = Addon()
 
         self.assertEqual('plugin.video.academicearth', plugin.id)
@@ -105,7 +105,7 @@ class TestInit(TestCase):
         # can't parse from id, default to video
         with preserve_cli_mode(cli_mode=False):
             with preserve_cwd(
-                    os.path.join(os.path.dirname(__file__), 'data', 'plugin')):
+                os.path.join(os.path.dirname(path), 'data', 'plugin')):
                 plugin = Addon(name, 'script.module.test', path)
                 self.assertEqual(plugin.info_type, 'video')
 
@@ -134,14 +134,14 @@ class TestParseRequest(TestCase):
             self.plugin = Addon(name, plugin_id, path)
 
     def test_parse_request(self):
-        with patch('kodiswift.plugin.Request') as MockRequest:
+        with patch('kodiswift.addon.Request') as MockRequest:
             sys.argv = ['plugin://plugin.video.hellokodi', '0', '?']
             self.plugin._parse_request()
             MockRequest.assert_called_with(
                 'plugin://plugin.video.hellokodi?', '0')
 
     def test_parse_request_no_qs(self):
-        with patch('kodiswift.plugin.Request') as MockRequest:
+        with patch('kodiswift.addon.Request') as MockRequest:
             sys.argv = ['plugin://plugin.video.hellokodi', '0']
             self.plugin._parse_request()
             MockRequest.assert_called_with(
@@ -149,7 +149,7 @@ class TestParseRequest(TestCase):
 
     def test_parse_request_path_in_arg0(self):
         # Older versions of xbmc sometimes pass path in arg0
-        with patch('kodiswift.plugin.Request') as MockRequest:
+        with patch('kodiswift.addon.Request') as MockRequest:
             sys.argv = [
                 'plugin://plugin.video.hellokodi/videos/', '0', '?foo=bar']
             self.plugin._parse_request()
@@ -158,7 +158,7 @@ class TestParseRequest(TestCase):
 
     def test_parse_request_path_in_arg2(self):
         # Older versions of xbmc sometimes pass path in arg2
-        with patch('kodiswift.plugin.Request') as MockRequest:
+        with patch('kodiswift.addon.Request') as MockRequest:
             sys.argv = [
                 'plugin://plugin.video.hellokodi', '0', '/videos/?foo=bar']
             self.plugin._parse_request()
@@ -178,10 +178,11 @@ def _test_plugin_runner(plugin):
     def run(relative_url, handle=0, qs='?'):
         url = 'plugin://%s%s' % (plugin.id, relative_url)
         sys.argv = [url, handle, qs]
-        items = plugin.run(test=True)
+        items = plugin.run()
         plugin._end_of_directory = False
         plugin.clear_added_items()
         return items
+
     return run
 
 
@@ -273,21 +274,6 @@ class TestBasicRouting(TestCase):
             self.assertEqual('Hello dave', resp[0].get_label())
             resp = test_run('/')
             self.assertEqual('Hello chris', resp[0].get_label())
-
-            # def test_route_conflict(self):
-            # TODO this should raise an error
-            # plugin = NewPlugin()
-            # @plugin.route('/')
-            # def jon():
-            # return 'Hello jon'
-            # @plugin.route('/')
-            # def dave():
-            # return 'Hello dave'
-            # with preserve_cli_mode(cli_mode=False):
-            # test_run = _TestPluginRunner(plugin)
-            # resp = test_run('/')
-            # self.assertEqual('Hello jon', resp)
-            # self.assertEqual('Hello dave', resp)
 
     def test_redirect(self):
         plugin = new_plugin()

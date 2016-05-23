@@ -136,7 +136,7 @@ class Addon(XBMCMixin):
 
     @property
     def addon(self):
-        """This plugin's wrapped instance of xbmcaddon.Addon."""
+        """This addon's wrapped instance of xbmcaddon.Addon."""
         return self._addon
 
     @property
@@ -284,7 +284,7 @@ class Addon(XBMCMixin):
         log.debug('Redirecting %s to %s', self.request.path, new_request.path)
         return self._dispatch(new_request.path)
 
-    def run(self, test=False):
+    def run(self):
         """The main entry point for a plugin."""
         self._request = self._parse_request()
         log.debug('Handling incoming request for %s', self.request.path)

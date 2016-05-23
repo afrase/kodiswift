@@ -25,6 +25,9 @@ class Addon(object):
         }
         self._strings = {}
         self._settings = {}
+        strings_fn = os.path.join(
+            os.getcwd(), 'resources', 'language', 'English', 'strings.po')
+        utils.load_addon_strings(self, strings_fn)
 
     def getAddonInfo(self, prop):
         properties = ['author', 'changelog', 'description', 'disclaimer',

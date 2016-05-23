@@ -173,8 +173,7 @@ class TestXBMCMixin(TestCase):
             {'label': 'Bar', 'path': 'http://example.com/bar'},
         ]
         plugin = TestMixedIn()
-        resp = plugin.finish(items,
-                             sort_methods=['title', ('dAte', '%D'), 'label',
+        plugin.finish(items, sort_methods=['title', ('dAte', '%D'), 'label',
                                            'mpaa_rating', SortMethod.SIZE])
         calls = [
             call(0, 9),
@@ -308,7 +307,7 @@ class TestAddItems(TestCase):
             {'label': 'Course 1', 'path': 'plugin.image.test/foo',
              'info_type': 'music'}
         ]
-        returned = plugin.add_items(items)
+        plugin.add_items(items)
 
         # TODO: Assert actual arguments passed to the addDirectoryItems call
         assert addDirectoryItems.called
@@ -349,7 +348,7 @@ class TestAddToPlaylist(TestCase):
             {'label': 'Grape Stomp'},
             {'label': 'Boom Goes the Dynamite'},
         ]
-        items = self.m.add_to_playlist(dict_items)
+        self.m.add_to_playlist(dict_items)
 
         # Verify from_dict was called properly, defaults to info_type=video
         calls = [
@@ -358,14 +357,14 @@ class TestAddToPlaylist(TestCase):
         ]
         self.assertEqual(MockListItem.from_dict.call_args_list, calls)
 
-        ## Verify with playlist=music
+        # Verify with playlist=music
         MockListItem.from_dict.reset_mock()
 
         dict_items = [
             {'label': 'Grape Stomp'},
             {'label': 'Boom Goes the Dynamite'},
         ]
-        items = self.m.add_to_playlist(dict_items, 'music')
+        self.m.add_to_playlist(dict_items, 'music')
 
         # Verify from_dict was called properly, defaults to info_type=video
         calls = [
@@ -374,7 +373,7 @@ class TestAddToPlaylist(TestCase):
         ]
         self.assertEqual(MockListItem.from_dict.call_args_list, calls)
 
-        ## Verify an item's info_dict key is not used
+        # Verify an item's info_dict key is not used
         MockListItem.from_dict.reset_mock()
 
         dict_items = [
@@ -425,8 +424,6 @@ class TestAddToPlaylist(TestCase):
             ListItem('Boom Goes the Dyanmite'),
         ]
         items = self.m.add_to_playlist(listitems)
-        print(items)
-        print(self.mock_playlist.add.call_args_list)
         for item, call_args in zip(items,
                                    self.mock_playlist.add.call_args_list):
             self.assertEqual((item.get_path(), item.as_xbmc_listitem(), 0),
@@ -442,7 +439,8 @@ class TestAddToPlaylist(TestCase):
         self.assertEqual(self.m.get_view_mode_id('thumbnail'), None)
         self.assertEqual(self.m.get_view_mode_id('unknown'), None)
 
-    @patch('kodiswift.xbmcmixin.xbmc')
-    def test_set_view_mode(self, _xbmc):
-        self.m.set_view_mode(500)
-        _xbmc.executebuiltin.assertCalledWith('Container.SetViewMode(500)')
+    def test_set_view_mode(self):
+        with patch('kodiswift.xbmcmixin.xbmc') as _xbmc:
+            self.m.set_view_mode(500)
+            _xbmc.executebuiltin.assert_called_with(
+                'Container.SetViewMode(500)')

@@ -10,11 +10,10 @@
 import re
 from urllib import urlencode, unquote_plus, quote_plus
 
-from ._compat import string_types
-from .common import pickle_dict, unpickle_dict
+from kodiswift._compat import string_types
+from kodiswift.common import pickle_dict, unpickle_dict
 
 
-# TODO: Use regular Exceptions
 class AmbiguousUrlException(Exception):
     pass
 
@@ -66,10 +65,13 @@ class UrlRule(object):
                              'brackets: "<" or ">"')
 
     def __eq__(self, other):
-        return (
-            (self._name, self._url_rule, self._view_func, self._options) ==
-            (other._name, other._url_rule, other._view_func, other._options)
-        )
+        if isinstance(other, UrlRule):
+            return (
+                (self._name, self._url_rule, self._view_func, self._options) ==
+                (other._name, other._url_rule, other._view_func, other._options)
+            )
+        else:
+            raise NotImplementedError
 
     def __ne__(self, other):
         return not self.__eq__(other)

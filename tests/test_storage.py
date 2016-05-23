@@ -1,17 +1,9 @@
-import os
 import time
 from datetime import timedelta
-from unittest import TestCase
 from tempfile import NamedTemporaryFile
+from unittest import TestCase
 
 from kodiswift.storage import TimedStorage, PersistentStorage, Formats
-
-
-def remove(filename):
-    try:
-        os.remove(filename)
-    except OSError:
-        pass
 
 
 class TestCache(TestCase):

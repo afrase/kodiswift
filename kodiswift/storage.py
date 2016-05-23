@@ -123,7 +123,7 @@ class TimedStorage(PersistentStorage):
 
     def items(self):
         items = []
-        for k in self._store.items():
+        for k in self._store.keys():
             try:
                 items.append((k, self[k]))
             except KeyError:
