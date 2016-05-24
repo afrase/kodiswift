@@ -1,7 +1,7 @@
 """
 
 kodiswift
-~~~~~~~~~~
+---------
 
 A micro framework to enable rapid development of Kodi plugins.
 
@@ -20,45 +20,46 @@ Features
 Documentation
 `````````````
 
-The current documentation can be found at http://www.kodiswift.com
+The current documentation still needs updated
 
 Development
 ```````````
 
-This module is now available in the official Kodi Eden repository as
-kodiswift.
-
-This project is the next version of kodiswift. While the APIs are similar,
-there are a few things that are not backwards compatible with the original
-version, hence the new name.
+This project is a fork of xbmcswift2.
 
 
 Contact
 ```````
 
-https://github.com/jbeluch/kodiswift
+https://github.com/Sinap/kodiswift
 
-web@jonathanbeluch.com
+afrase91@gmail.com
 """
 from setuptools import setup, find_packages
 
 setup(
     name='kodiswift',
-    version='0.3.0',
-    author='Jonathan Beluch',
-    author_email='web@jonathanbeluch.com',
+    version='0.4.0',
+    author='Aaron Frase',
+    author_email='afrase91@gmail.com',
     description='A micro framework for rapid development of Kodi plugins.',
     license='GPL3',
     keywords='example documentation tutorial',
-    url='https://github.com/jbeluch/kodiswift',
+    url='https://github.com/Sinap/kodiswift',
     packages=find_packages(),
     include_package_data=True,
     long_description=__doc__,
     classifiers=[
         'Development Status :: 3 - Alpha',
-        'Topic :: Utilities',
+        'Intended Audience :: Developers',
         'License :: OSI Approved :: GNU Affero General Public License v3',
-        'Programming Language :: Python',
+        'Natural Language :: English',
+        'Topic :: Utilities',
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
     ],
     entry_points={
         'console_scripts': [

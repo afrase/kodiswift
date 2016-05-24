@@ -10,3 +10,5 @@ docs/_build/
 TODO
 xbmcswift2.egg-info/
 .idea
+.coverage
+.cache

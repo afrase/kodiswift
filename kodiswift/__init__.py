@@ -13,7 +13,7 @@ from types import ModuleType
 class _Module(ModuleType):
     """A wrapper class for a module used to override __getattr__. This class
     will behave normally for any existing module attributes. For any attributes
-    which do not existi in in the wrapped module, a mock function will be
+    which do not exist in the wrapped module, a mock function will be
     returned. This function will also return itself enabling multiple mock
     function calls.
     """
@@ -51,10 +51,8 @@ try:
     import xbmcvfs
 
     CLI_MODE = False
-
 except ImportError:
     CLI_MODE = True
-
     import sys
     from kodiswift.logger import log
 

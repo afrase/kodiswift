@@ -1,7 +1,8 @@
 kodiswift
 ==========
 
-[![Build Status](https://secure.travis-ci.org/jbeluch/kodiswift.png)](http://travis-ci.org/jbeluch/kodiswift)
+[![Build Status](https://travis-ci.org/Sinap/kodiswift.svg?branch=develop)](https://travis-ci.org/Sinap/kodiswift)
+[![Code Health](https://landscape.io/github/Sinap/kodiswift/develop/landscape.svg?style=flat)](https://landscape.io/github/Sinap/kodiswift/develop)
 
 A micro framework to enable rapid development of Kodi plugins.
 
