@@ -24,12 +24,6 @@ class ListItem(object):
         """Defaults are an emtpy string since xbmcgui.ListItem will not
         accept None.
         """
-        # kwargs = {
-        #     'label': label,
-        #     'label2': label2,
-        #     'path': path,
-        # }
-        # kwargs = {k: v for k, v in kwargs.items() if v is not None}
         self._listitem = xbmcgui.ListItem(label, label2, path)
 
         # kodi doesn't make getters available for these properties so we'll
@@ -134,11 +128,11 @@ class ListItem(object):
 
     @property
     def thumbnail(self):
-        return self._art.get('thumbnail')
+        return self._art.get('thumb')
 
     @thumbnail.setter
     def thumbnail(self, value):
-        self._art['thumbnail'] = value
+        self._art['thumb'] = value
         self._listitem.setArt(self._art)
 
     def get_thumbnail(self):
@@ -151,6 +145,15 @@ class ListItem(object):
                       DeprecationWarning)
         self.thumbnail = thumbnail
         return self.thumbnail
+
+    @property
+    def poster(self):
+        return self._art.get('poster')
+
+    @poster.setter
+    def poster(self, value):
+        self._art['poster'] = value
+        self._listitem.setArt(self._art)
 
     @property
     def path(self):
@@ -261,13 +264,23 @@ class ListItem(object):
     def from_dict(cls, label=None, label2=None, icon=None, thumbnail=None,
                   path=None, selected=None, info=None, properties=None,
                   context_menu=None, replace_context_menu=False,
-                  is_playable=None, info_type='video', stream_info=None):
+                  is_playable=None, info_type='video', stream_info=None,
+                  **kwargs):
         """A ListItem constructor for setting a lot of properties not
         available in the regular __init__ method. Useful to collect all
         the properties in a dict and then use the **dct to call this
         method.
         """
-        listitem = cls(label, label2, icon, thumbnail, path)
+        # TODO(Sinap): Should this just use **kwargs? or should art be a dict?
+        listitem = cls(label, label2, path=path)
+        listitem.art = {
+            'icon': icon,
+            'thumb': thumbnail,
+            'poster': kwargs.get('poster'),
+            'banner': kwargs.get('banner'),
+            'fanart': kwargs.get('fanart'),
+            'landscape': kwargs.get('landscape'),
+        }
 
         if selected is not None:
             listitem.selected = selected

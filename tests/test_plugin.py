@@ -59,7 +59,7 @@ class TestInit(TestCase):
 
     def test_init_cli_mode_default_args(self):
         with preserve_cwd(
-            os.path.join(os.path.dirname(__file__), 'data', 'plugin')):
+                os.path.join(os.path.dirname(__file__), 'data', 'plugin')):
             plugin = Addon()
 
         self.assertEqual('plugin.video.academicearth', plugin.id)
@@ -88,7 +88,7 @@ class TestInit(TestCase):
     def test_init_not_cli_mode_default_args(self):
         with preserve_cli_mode(cli_mode=False):
             with preserve_cwd(
-                os.path.join(os.path.dirname(__file__), 'data', 'plugin')):
+                    os.path.join(os.path.dirname(__file__), 'data', 'plugin')):
                 plugin = Addon()
 
         self.assertEqual('plugin.video.academicearth', plugin.id)
@@ -105,7 +105,7 @@ class TestInit(TestCase):
         # can't parse from id, default to video
         with preserve_cli_mode(cli_mode=False):
             with preserve_cwd(
-                os.path.join(os.path.dirname(path), 'data', 'plugin')):
+                    os.path.join(os.path.dirname(path), 'data', 'plugin')):
                 plugin = Addon(name, 'script.module.test', path)
                 self.assertEqual(plugin.info_type, 'video')
 
@@ -291,10 +291,6 @@ class TestBasicRouting(TestCase):
             test_run = _test_plugin_runner(plugin)
             resp = test_run('/')
             self.assertEqual('Hello Videos', resp[0].get_label())
-
-
-class TestRegisterModule():
-    pass
 
 
 class TestUnsyncedCaches(TestCase):

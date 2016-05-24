@@ -199,7 +199,7 @@ class XBMCMixin(object):
         """
         # TODO: allow pickling of settings items?
         # TODO: STUB THIS OUT ON CLI
-        value = self.addon.getSetting(key=key)
+        value = self.addon.getSetting(key)
         if converter is str:
             return value
         elif converter is unicode:
