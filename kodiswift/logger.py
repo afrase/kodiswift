@@ -9,7 +9,10 @@
     :copyright: (c) 2012 by Jonathan Beluch
     :license: GPLv3, see LICENSE for more details.
 """
+from __future__ import absolute_import
+
 import logging
+
 from kodiswift import CLI_MODE
 
 
@@ -96,5 +99,5 @@ def setup_log(name):
 
 
 # The kodiswift log
-# Addon writers should use plugin.log instead.
+# Plugin writers should use plugin.log instead.
 log = setup_log('kodiswift')

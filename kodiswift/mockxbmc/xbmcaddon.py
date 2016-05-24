@@ -1,7 +1,11 @@
+# -*- coding: utf-8 -*-
+from __future__ import absolute_import
+
 import os
+
+from kodiswift._compat import input
 from kodiswift.logger import log
 from kodiswift.mockxbmc import utils
-from kodiswift._compat import input
 
 __all__ = ['Addon']
 
@@ -44,7 +48,7 @@ class Addon(object):
         return self._strings[key]
 
     def getSetting(self, key):
-        log.warning('xbmcaddon.Addon.getSetting() has not been implemented in '
+        log.warning('xbmcaddon.Plugin.getSetting() has not been implemented in '
                     'CLI mode.')
         try:
             value = self._settings[key]

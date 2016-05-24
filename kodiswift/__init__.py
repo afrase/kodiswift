@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     kodiswift
     ----------
@@ -7,6 +8,8 @@
     :copyright: (c) 2012 by Jonathan Beluch
     :license: GPLv3, see LICENSE for more details.
 """
+from __future__ import absolute_import
+
 from types import ModuleType
 
 
@@ -75,4 +78,4 @@ from kodiswift.logger import setup_log
 from kodiswift.module import Module
 from kodiswift.urls import AmbiguousUrlException, NotFoundException, UrlRule
 from kodiswift.xbmcmixin import XBMCMixin
-from kodiswift.addon import Addon
+from kodiswift.plugin import Plugin

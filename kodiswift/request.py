@@ -11,23 +11,24 @@
 """
 from __future__ import absolute_import
 
+from kodiswift._compat import urlparse
 from kodiswift.common import unpickle_args
-from ._compat import urlparse
 
 
 class Request(object):
-    """The request objects contains all the arguments passed to the plugin via
-    the command line.
-
-    :param url: The complete plugin URL being requested. Since Kodi typically
-                passes the URL query string in a separate argument from the
-                base URL, they must be joined into a single string before being
-                provided.
-    :param handle: The handle associated with the current request.
-    """
 
     def __init__(self, url, handle):
-        #: The entire request url.
+        """The request objects contains all the arguments passed to the plugin via
+        the command line.
+
+        Args:
+            url (str): The complete plugin URL being requested. Since Kodi
+                typically passes the URL query string in a separate argument
+                from the base URL, they must be joined into a single string
+                before being provided.
+            handle (Union[int, str]): The handle associated with the current
+                request.
+        """
         self.url = url
 
         #: The current request's handle, an integer.

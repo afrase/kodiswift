@@ -1,12 +1,9 @@
-from __future__ import print_function
-from __future__ import print_function
-
+# -*- coding: utf-8 -*-
 import os
 import tempfile
-from unittest import TestCase
+import unittest
 
 from mock import Mock, patch, call
-from nose.plugins.skip import SkipTest
 
 import kodiswift
 from kodiswift import SortMethod
@@ -14,15 +11,13 @@ from kodiswift import xbmc
 from kodiswift.listitem import ListItem
 from kodiswift.xbmcmixin import XBMCMixin
 
-TEST_STRINGS_FN = os.path.join(os.path.dirname(__file__), 'data', 'strings.xml')
-
 
 class TestMixedIn(XBMCMixin):
     storage_path = '/tmp/cache'
     if not os.path.isdir(storage_path):
         os.mkdir(storage_path)
     # TODO: use a mock with return values here
-    # addon = Addon('plugin.video.helloxbmc')
+    # addon = Plugin('plugin.video.helloxbmc')
     addon = Mock()
     added_items = []
     handle = 0
@@ -38,7 +33,7 @@ class MixedIn(XBMCMixin):
 
 
 # noinspection PyUnresolvedReferences
-class TestXBMCMixin(TestCase):
+class TestXBMCMixin(unittest.TestCase):
     def setUp(self):
         self.m = TestMixedIn()
 
@@ -61,11 +56,11 @@ class TestXBMCMixin(TestCase):
     @patch('kodiswift.xbmcplugin')
     def test_set_content(self, mock_xbmcplugin):
         self.m.set_content('movies')
-        assert mock_xbmcplugin.setContent.called_with(0, 'movies')
+        self.assertTrue(mock_xbmcplugin.setContent.called_with(0, 'movies'))
 
     def test_get_setting(self):
         self.m.get_setting('username')
-        assert self.m.addon.getSetting.called_with(key='username')
+        self.assertTrue(self.m.addon.getSetting.called_with(key='username'))
         # Test int
         self.m.addon.getSetting.return_value = '3'
         self.assertEqual(self.m.get_setting('int'), '3')
@@ -89,36 +84,33 @@ class TestXBMCMixin(TestCase):
 
     def test_set_setting(self):
         self.m.set_setting('username', 'xbmc')
-        assert self.m.addon.setSetting.called_with(key='username', value='xbmc')
+        self.assertTrue(
+            self.m.addon.setSetting.called_with(key='username', value='xbmc'))
 
     def test_open_settings(self):
         self.m.open_settings()
-        assert self.m.addon.openSettings.called
+        self.assertTrue(self.m.addon.openSettings.called)
 
     def test_set_resolved_url(self):
         url = 'http://www.example.com/video.mp4'
         ret = self.m.set_resolved_url(url)
         item = ret[0]
         self.assertIsInstance(item, kodiswift.ListItem)
-        self.assertTrue(item.get_played())
+        self.assertTrue(item.played)
 
     def test_set_resolved_url2(self):
         item = {'path': 'http://www.example.com/video.mp4'}
         ret = self.m.set_resolved_url(item=item)
         item = ret[0]
         self.assertIsInstance(item, kodiswift.ListItem)
-        self.assertTrue(item.get_played())
+        self.assertTrue(item.played)
 
     @patch.object(xbmc, 'Player')
     @patch('kodiswift.ListItem', wraps=kodiswift.ListItem)
-    def test_play_video_dict(self, WrappedListItem, MockPlayer):
-        plugin = MixedIn(storage_path=tempfile.mkdtemp(),
-                         addon=Mock(),
-                         added_items=[],
-                         request=Mock(),
-                         info_type='pictures',
-                         handle=0,
-                         )
+    def test_play_video_dict(self, wrapped_list_item, mock_player):
+        plugin = MixedIn(
+            storage_path=tempfile.mkdtemp(), addon=Mock(), added_items=[],
+            request=Mock(), info_type='pictures', handle=0)
 
         item = {'label': 'The Ultimate Showdown',
                 'path': 'http://example.com/video.mp4'}
@@ -126,27 +118,17 @@ class TestXBMCMixin(TestCase):
         returned_item = returned[0]
         self.assertTrue(returned_item.get_played())
 
-        WrappedListItem.from_dict.assert_called_with(
-            label='The Ultimate Showdown',
-            info_type='video',
+        wrapped_list_item.from_dict.assert_called_with(
+            label='The Ultimate Showdown', info_type='video',
             path='http://example.com/video.mp4')
-        self.assertTrue(MockPlayer().play.called)
+        self.assertTrue(mock_player().play.called)
 
         # Check that the second arg to play was an instance of xbmc listitem
         # and not kodiswift.ListItem
-        item_arg = MockPlayer().play.call_args[0][1]
+        item_arg = mock_player().play.call_args[0][1]
         self.assertTrue(isinstance(item_arg, kodiswift.xbmcgui.ListItem))
 
-        # TODO: Implement ListItem.__eq__
-        # MockPlayer().play.assert_called_with('http://example.com/video.mp4', ListItem.from_dict(**item))
-
-    def test_play_video_listitem(self):
-        pass
-
-    def test_end_of_directory(self):
-        raise SkipTest('Test not implemented.')
-
-    @patch('kodiswift.xbmcplugin.add_sort_method')
+    @patch('kodiswift.xbmcplugin.addSortMethod')
     def test_add_sort_method(self, add_sort_method):
         plugin = TestMixedIn()
 
@@ -202,25 +184,21 @@ class TestXBMCMixin(TestCase):
             plugin.notify('Hello World!', 'My Title', 3000,
                           'http://example.com/image.png')
         mock_executebuiltin.assert_called_with(
-            'Kodi.Notification("Hello World!", "My Title", "3000", "http://example.com/image.png")'
-        )
+            'Kodi.Notification("Hello World!", "My Title", "3000", '
+            '"http://example.com/image.png")')
 
     @patch('kodiswift.xbmc.Keyboard')
     def test_keyboard(self, mock_keyboard):
         plugin = TestMixedIn()
-        with patch.object(plugin.addon, 'getAddonInfo',
-                          return_value='Academic Earth'):
+        with patch.object(plugin.addon,
+                          'getAddonInfo', return_value='Academic Earth'):
             plugin.keyboard()
         mock_keyboard.assert_called_with('', 'Academic Earth', False)
 
     def test_clear_function_cache(self):
-        plugin = MixedIn(storage_path=tempfile.mkdtemp(),
-                         addon=Mock(),
-                         added_items=[],
-                         request=Mock(),
-                         info_type='pictures',
-                         handle=0,
-                         )
+        plugin = MixedIn(
+            storage_path=tempfile.mkdtemp(), addon=Mock(), added_items=[],
+            request=Mock(), info_type='pictures', handle=0)
 
         @plugin.cached()
         def echo(msg):
@@ -235,32 +213,28 @@ class TestXBMCMixin(TestCase):
         self.assertEqual(len(storage.items()), 0)
 
 
-class TestAddItems(TestCase):
+class TestAddItems(unittest.TestCase):
     @patch('kodiswift.ListItem.from_dict')
     @patch('kodiswift.xbmcplugin.addDirectoryItems')
-    def test_add_items(self, addDirectoryItems, fromDict):
-        plugin = MixedIn(storage_path=tempfile.mkdtemp(),
-                         addon=Mock(),
-                         added_items=[],
-                         request=Mock(),
-                         info_type='pictures',
-                         handle=0,
-                         )
+    def test_add_items(self, add_dir_items, from_dict):
+        plugin = MixedIn(storage_path=tempfile.mkdtemp(), addon=Mock(),
+                         added_items=[], request=Mock(), info_type='pictures',
+                         handle=0)
         items = [
             {'label': 'Course 1', 'path': 'plugin.image.test/foo'},
             {'label': 'Course 2', 'path': 'plugin.image.test/bar'},
         ]
-        returned = plugin.add_items(items)
+        plugin.add_items(items)
 
         # TODO: Assert actual arguments passed to the addDirectoryItems call
-        assert addDirectoryItems.called
+        self.assertTrue(add_dir_items.called)
         calls = [
             call(label='Course 1', path='plugin.image.test/foo',
                  info_type='pictures'),
             call(label='Course 2', path='plugin.image.test/bar',
                  info_type='pictures'),
         ]
-        fromDict.assert_has_calls(calls)
+        from_dict.assert_has_calls(calls)
 
         # TODO: Currently ListItems don't implement __eq__
         # list_items = [ListItem.from_dict(**item) for item in items]
@@ -268,73 +242,61 @@ class TestAddItems(TestCase):
 
     @patch('kodiswift.ListItem.from_dict')
     @patch('kodiswift.xbmcplugin.addDirectoryItems')
-    def test_add_items_no_info_type(self, addDirectoryItems, fromDict):
-        plugin = MixedIn(storage_path=tempfile.mkdtemp(),
-                         addon=Mock(),
-                         added_items=[],
-                         request=Mock(),
-                         handle=0,
-                         )
+    def test_add_items_no_info_type(self, add_directory_items, from_dict):
+        plugin = MixedIn(storage_path=tempfile.mkdtemp(), addon=Mock(),
+                         added_items=[], request=Mock(), handle=0)
         items = [
             {'label': 'Course 1', 'path': 'plugin.image.test/foo'}
         ]
-        returned = plugin.add_items(items)
+        results = plugin.add_items(items)
 
-        # TODO: Assert actual arguments passed to the addDirectoryItems call
-        assert addDirectoryItems.called
+        self.assertTrue(add_directory_items.called)
         calls = [
             call(label='Course 1', path='plugin.image.test/foo',
                  info_type='video'),
         ]
-        fromDict.assert_has_calls(calls)
+        from_dict.assert_has_calls(calls)
 
-        # TODO: Currently ListItems don't implement __eq__
-        # list_items = [ListItem.from_dict(**item) for item in items]
-        # self.assertEqual(returned, list_items)
+        list_items = [ListItem.from_dict(**item) for item in items]
+        self.assertEqual(results, list_items)
 
     @patch('kodiswift.ListItem.from_dict')
     @patch('kodiswift.xbmcplugin.addDirectoryItems')
-    def test_add_items_item_specific_info_type(self, addDirectoryItems,
-                                               fromDict):
-        plugin = MixedIn(storage_path=tempfile.mkdtemp(),
-                         addon=Mock(),
-                         added_items=[],
-                         request=Mock(),
-                         handle=0,
-                         info_type='pictures',
-                         )
+    def test_add_items_item_specific_info_type(self, add_directory_items,
+                                               from_dict):
+        plugin = MixedIn(
+            storage_path=tempfile.mkdtemp(), addon=Mock(), added_items=[],
+            request=Mock(), handle=0, info_type='pictures')
         items = [
             {'label': 'Course 1', 'path': 'plugin.image.test/foo',
              'info_type': 'music'}
         ]
-        plugin.add_items(items)
+        results = plugin.add_items(items)
 
-        # TODO: Assert actual arguments passed to the addDirectoryItems call
-        assert addDirectoryItems.called
+        self.assertTrue(add_directory_items.called)
         calls = [
             call(label='Course 1', path='plugin.image.test/foo',
                  info_type='music'),
         ]
-        fromDict.assert_has_calls(calls)
+        from_dict.assert_has_calls(calls)
 
-        # TODO: Currently ListItems don't implement __eq__
-        # list_items = [ListItem.from_dict(**item) for item in items]
-        # self.assertEqual(returned, list_items)
+        list_items = [ListItem.from_dict(**item) for item in items]
+        self.assertEqual(results, list_items)
 
 
-class TestAddToPlaylist(TestCase):
+class TestAddToPlaylist(unittest.TestCase):
     def setUp(self):
-        with patch('kodiswift.xbmc.Playlist') as mock_playlist:
+        with patch('kodiswift.xbmc.Playlist') as playlist:
             self.m = TestMixedIn()
             # Mock some things so we can verify what was called
             mock_playlist = Mock()
-            mock_playlist.return_value = mock_playlist
-            self.mock_playlist = mock_playlist
+            playlist.return_value = mock_playlist
+            self.mock_playlist = playlist
 
     def test_args(self):
         # Verify playlists
-        self.assertRaises(ValueError, self.m.add_to_playlist, [],
-                          'invalid_playlist')
+        self.assertRaises(
+            ValueError, self.m.add_to_playlist, [], 'invalid_playlist')
 
         # Verify video and music work
         self.m.add_to_playlist([])
@@ -342,7 +304,7 @@ class TestAddToPlaylist(TestCase):
         self.m.add_to_playlist([], 'music')
 
     @patch('kodiswift.ListItem', wraps=ListItem)
-    def test_return_values(self, MockListItem):
+    def test_return_values(self, mock_list_item):
         # Verify dicts are transformed into listitems
         dict_items = [
             {'label': 'Grape Stomp'},
@@ -355,10 +317,10 @@ class TestAddToPlaylist(TestCase):
             call(label='Grape Stomp', info_type='video'),
             call(label='Boom Goes the Dynamite', info_type='video'),
         ]
-        self.assertEqual(MockListItem.from_dict.call_args_list, calls)
+        self.assertEqual(mock_list_item.from_dict.call_args_list, calls)
 
         # Verify with playlist=music
-        MockListItem.from_dict.reset_mock()
+        mock_list_item.from_dict.reset_mock()
 
         dict_items = [
             {'label': 'Grape Stomp'},
@@ -371,10 +333,10 @@ class TestAddToPlaylist(TestCase):
             call(label='Grape Stomp', info_type='music'),
             call(label='Boom Goes the Dynamite', info_type='music'),
         ]
-        self.assertEqual(MockListItem.from_dict.call_args_list, calls)
+        self.assertEqual(mock_list_item.from_dict.call_args_list, calls)
 
         # Verify an item's info_dict key is not used
-        MockListItem.from_dict.reset_mock()
+        mock_list_item.from_dict.reset_mock()
 
         dict_items = [
             {'label': 'Grape Stomp', 'info_type': 'music'},
@@ -387,15 +349,15 @@ class TestAddToPlaylist(TestCase):
             call(label='Grape Stomp', info_type='video'),
             call(label='Boom Goes the Dynamite', info_type='video'),
         ]
-        self.assertEqual(MockListItem.from_dict.call_args_list, calls)
+        self.assertEqual(mock_list_item.from_dict.call_args_list, calls)
 
         # verify ListItems were created correctly
         for item, returned_item in zip(dict_items, items):
             assert isinstance(returned_item, ListItem)
-            self.assertEqual(item['label'], returned_item.get_label())
+            self.assertEqual(item['label'], returned_item.label)
 
         # Verify listitems are unchanged
-        MockListItem.from_dict.reset_mock()
+        mock_list_item.from_dict.reset_mock()
 
         listitems = [
             ListItem('Grape Stomp'),
@@ -403,7 +365,7 @@ class TestAddToPlaylist(TestCase):
         ]
         items = self.m.add_to_playlist(listitems)
 
-        self.assertFalse(MockListItem.from_dict.called)
+        self.assertFalse(mock_list_item.from_dict.called)
         for item, returned_item in zip(listitems, items):
             self.assertEqual(item, returned_item)
 
@@ -418,16 +380,15 @@ class TestAddToPlaylist(TestCase):
             assert isinstance(returned_item, ListItem)
 
     def test_added_to_playlist(self):
-        # TODO: not working... check mocks
-        listitems = [
+        list_items = [
             ListItem('Grape Stomp'),
-            ListItem('Boom Goes the Dyanmite'),
+            ListItem('Boom Goes the Dynamite'),
         ]
-        items = self.m.add_to_playlist(listitems)
+        items = self.m.add_to_playlist(list_items)
         for item, call_args in zip(items,
                                    self.mock_playlist.add.call_args_list):
-            self.assertEqual((item.get_path(), item.as_xbmc_listitem(), 0),
-                             call_args)
+            self.assertEqual(
+                (item.get_path(), item.as_xbmc_listitem(), 0), call_args)
 
     @patch('kodiswift.xbmcmixin.xbmc')
     def test_get_view_mode_id(self, _xbmc):

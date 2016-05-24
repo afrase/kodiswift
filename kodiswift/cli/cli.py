@@ -9,12 +9,13 @@
     :copyright: (c) 2012 by Jonathan Beluch
     :license: GPLv3, see LICENSE for more details.
 """
+from __future__ import absolute_import
+
 import sys
 from optparse import OptionParser
 
 from kodiswift.cli.app import RunCommand
 from kodiswift.cli.create import CreateCommand
-
 
 # TODO: Make an ABC for Command
 COMMANDS = {

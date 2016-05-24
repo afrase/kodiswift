@@ -8,16 +8,18 @@
     :copyright: (c) 2012 by Jonathan Beluch
     :license: GPLv3, see LICENSE for more details.
 """
+from __future__ import absolute_import
+
+import logging
 import os
 import sys
-import logging
 from xml.etree import ElementTree as Et
 
-from kodiswift import Addon, ListItem, logger
-from kodiswift.common import Modes
+from kodiswift import Plugin, ListItem, logger
 from kodiswift.cli import Option
 from kodiswift.cli.console import (display_listitems, continue_or_quit,
                                    get_user_choice)
+from kodiswift.common import Modes
 
 
 class RunCommand(object):
@@ -93,7 +95,7 @@ class PluginManager(object):
     @classmethod
     def load_plugin_from_addon_xml(cls, mode, url):
         """Attempts to import a plugin's source code and find an instance of
-        :class:`~kodiswift.Addon`. Returns an instance of PluginManager if
+        :class:`~kodiswift.Plugin`. Returns an instance of PluginManager if
         successful.
         """
         cwd = os.getcwd()
@@ -101,12 +103,12 @@ class PluginManager(object):
         module_name = get_addon_module_name(os.path.join(cwd, 'addon.xml'))
         addon = __import__(module_name)
 
-        # Find the first instance of kodiswift.Addon
+        # Find the first instance of kodiswift.Plugin
         try:
             plugin = (attr_value for attr_value in vars(addon).values()
-                      if isinstance(attr_value, Addon)).next()
+                      if isinstance(attr_value, Plugin)).next()
         except StopIteration:
-            sys.exit('Could not find a Addon instance in %s.py' % module_name)
+            sys.exit('Could not find a Plugin instance in %s.py' % module_name)
 
         return cls(plugin, mode, url)
 

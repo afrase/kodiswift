@@ -1,12 +1,13 @@
+# -*- coding: utf-8 -*-
 import time
+import unittest
 from datetime import timedelta
 from tempfile import NamedTemporaryFile
-from unittest import TestCase
 
 from kodiswift.storage import TimedStorage, PersistentStorage, Formats
 
 
-class TestCache(TestCase):
+class TestCache(unittest.TestCase):
 
     def test_pickle(self):
         with NamedTemporaryFile() as temp:
@@ -43,7 +44,7 @@ class TestCache(TestCase):
             self.assertEqual('42', storage2['answer'])
 
 
-class TestTimedStorage(TestCase):
+class TestTimedStorage(unittest.TestCase):
 
     def test_timed_pickle(self):
         with NamedTemporaryFile() as temp:

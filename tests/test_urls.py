@@ -1,12 +1,13 @@
+# -*- coding: utf-8 -*-
 import unittest
+
 from kodiswift import UrlRule
 
 
 class TestUrls(unittest.TestCase):
-
     def test_make_path_qs(self):
         def view(video_id):
-            pass
+            return video_id
 
         rule = UrlRule('/videos/<video_id>', view, view.__name__, {})
 
@@ -19,7 +20,7 @@ class TestUrls(unittest.TestCase):
 
     def test_make_qs(self):
         def view(video_id):
-            pass
+            return video_id
 
         rule = UrlRule('/videos', view, view.__name__, {})
 
@@ -30,18 +31,18 @@ class TestUrls(unittest.TestCase):
         path_qs = rule.make_path_qs({'video_id': 24})
         self.assertEqual(path_qs, '/videos?video_id=24')
 
-class TestUrlRule(unittest.TestCase):
 
+class TestUrlRule(unittest.TestCase):
     def test_match_without_trailing_slash(self):
         def view():
             pass
+
         rule = UrlRule('/videos/', view, view.__name__, {})
         self.assertEqual((view, {}), rule.match('/videos'))
 
     def test_match_with_trailing_slash(self):
         def view():
             pass
+
         rule = UrlRule('/videos', view, view.__name__, {})
         self.assertEqual((view, {}), rule.match('/videos/'))
-
-

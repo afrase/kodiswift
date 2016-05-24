@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+
+
 # noinspection PyPep8Naming,PyUnusedLocal
 class ListItem(object):
     def __init__(self, label=None, label2=None, iconImage=None,

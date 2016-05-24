@@ -8,9 +8,9 @@
     :copyright: (c) 2012 by Jonathan Beluch
     :license: GPLv3, see LICENSE for more details.
 """
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 
-from .._compat import input
+from kodiswift._compat import input
 
 
 def get_max_len(items):

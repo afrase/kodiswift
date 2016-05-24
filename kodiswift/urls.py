@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     kodiswift.urls
     ---------------
@@ -7,6 +8,8 @@
     :copyright: (c) 2012 by Jonathan Beluch
     :license: GPLv3, see LICENSE for more details.
 """
+from __future__ import absolute_import
+
 import re
 from urllib import urlencode, unquote_plus, quote_plus
 
@@ -74,7 +77,7 @@ class UrlRule(object):
             raise NotImplementedError
 
     def __ne__(self, other):
-        return not self.__eq__(other)
+        return not self == other
 
     def match(self, path):
         """Attempts to match a url to the given path. If successful, a tuple is

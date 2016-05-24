@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     kodiswift.constants
     --------------------
@@ -8,6 +9,8 @@
     :copyright: (c) 2012 by Jonathan Beluch
     :license: GPLv3, see LICENSE for more details.
 """
+from __future__ import absolute_import
+
 from kodiswift import xbmcplugin
 
 

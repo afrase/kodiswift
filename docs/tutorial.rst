@@ -4,7 +4,7 @@ Tutorial
 ========
 
 At the end of this tutorial we're going to have a basic version of the Academic
-Earth Addon. This plugin plays videos from http://www.academicearth.org/.
+Earth Plugin. This plugin plays videos from http://www.academicearth.org/.
 
 Since this tutorial is meant to cover the usage of kodiswift, we will not be
 covering HTML scraping. It makes sense to partition your scraping code into a
@@ -12,7 +12,7 @@ separate module from your addon's core functionality. In this example, we're
 going to use a scraping library for academic earth that I already have written.
 
 
-Creating the Addon Structure
+Creating the Plugin Structure
 -----------------------------
 
 The first step is to create your working directory for your addon. Since this
@@ -34,7 +34,7 @@ files and folders for you. So we'll do just that::
         Done.
 
 If you ``cd`` into the created directory, you should see the familiar addon
-structure, including ``addon.py``, ``addon.xml``, ``resourcres`` directory,
+structure, including ``plugin.py``, ``addon.xml``, ``resourcres`` directory,
 etc.
 
 Setup for this Tutorial
@@ -74,7 +74,7 @@ the command line.::
     $ pip install BeautifulSoup
 
 
-Creating our Addon's Main Menu
+Creating our Plugin's Main Menu
 ------------------------------
 
 Let's modify the the index function, to look like this:

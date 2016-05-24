@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     kodiswift.listitem
     ------------------
@@ -8,6 +9,8 @@
     :copyright: (c) 2012 by Jonathan Beluch
     :license: GPLv3, see LICENSE for more details.
 """
+from __future__ import absolute_import
+
 import warnings
 
 from kodiswift import xbmcgui
@@ -26,15 +29,15 @@ class ListItem(object):
         """
         self._listitem = xbmcgui.ListItem(label, label2, path)
 
-        # kodi doesn't make getters available for these properties so we'll
-        # keep track on our own
-        self._art = {'icon': icon, 'thumbnail': thumbnail}
+        # The docs have the thumbnail property set as thumb
+        # http://mirrors.kodi.tv/docs/python-docs/16.x-jarvis/xbmcgui.html#ListItem-setArt
+        self._art = {'icon': icon, 'thumb': thumbnail}
         self._icon = icon
         self._path = path
         self._thumbnail = thumbnail
         self._context_menu_items = []
-        self.is_folder = True
         self._played = False
+        self.is_folder = True
 
     def get_context_menu_items(self):
         """Returns the list of currently set context_menu items."""
@@ -307,6 +310,29 @@ class ListItem(object):
             listitem.add_context_menu_items(context_menu, replace_context_menu)
 
         return listitem
+
+    def __eq__(self, other):
+        if not isinstance(other, ListItem):
+            raise NotImplementedError
+        self_props = (
+            self.label,
+            self.label2,
+            self.art,
+            self.path,
+            self.playable,
+            self.selected,
+            self.played,
+        )
+        other_props = (
+            other.label,
+            other.label2,
+            other.art,
+            other.path,
+            other.playable,
+            other.selected,
+            other.played,
+        )
+        return self_props == other_props
 
     def __str__(self):
         return ('%s (%s)' % (self.label, self.path)).encode('utf-8')

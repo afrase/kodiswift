@@ -1,11 +1,12 @@
-from unittest import TestCase
+# -*- coding: utf-8 -*-
+import unittest
 
 import mock
 
 from kodiswift import ListItem, xbmcgui
 
 
-class TestListItem(TestCase):
+class TestListItem(unittest.TestCase):
     def setUp(self):
         self.listitem = ListItem('label', 'label2', 'icon', 'thumbnail', 'path')
 
@@ -163,7 +164,7 @@ class TestListItem(TestCase):
         self.assertEqual(item.as_tuple(), (None, item._listitem, True))
 
 
-class TestListItemAsserts(TestCase):
+class TestListItemAsserts(unittest.TestCase):
     def test_non_basestring_key(self):
         item = ListItem()
         self.assertRaises(AssertionError, item.add_context_menu_items,
@@ -179,7 +180,7 @@ class TestListItemAsserts(TestCase):
                           [('label', None)])
 
 
-class TestFromDict(TestCase):
+class TestFromDict(unittest.TestCase):
     def test_from_dict_props(self):
         dct = {
             'properties': {'StartOffset': '256.4'},

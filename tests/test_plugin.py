@@ -1,5 +1,4 @@
-from __future__ import print_function
-
+# -*- coding: utf-8 -*-
 import os
 import pickle
 import shutil
@@ -9,7 +8,7 @@ from unittest import TestCase
 from mock import patch
 
 import kodiswift
-from kodiswift import Addon
+from kodiswift import Plugin
 from kodiswift.mockxbmc.xbmc import TEMP_DIR
 from utils import preserve_cli_mode, preserve_cwd
 
@@ -26,9 +25,9 @@ class TestInit(TestCase):
         name = 'Hello Kodi'
         plugin_id = 'plugin.video.hellokodi'
         path = os.path.join(
-            os.path.dirname(__file__), 'data', 'plugin', 'addon.py')
+            os.path.dirname(__file__), 'data', 'plugin', 'plugin.py')
         with preserve_cwd(os.path.dirname(path)):
-            plugin = Addon(name, plugin_id, path)
+            plugin = Plugin(name, plugin_id, path)
 
         self.assertEqual(plugin_id, plugin.id)
         self.assertEqual(plugin.name, name)
@@ -50,9 +49,9 @@ class TestInit(TestCase):
         name = 'Hello Kodi'
         plugin_id = 'plugin.video.hellokodi'
         path = os.path.join(os.path.dirname(__file__), 'data',
-                            'plugin_no_strings_po', 'addon.py')
+                            'plugin_no_strings_po', 'plugin.py')
         with preserve_cwd(os.path.dirname(path)):
-            plugin = Addon(name, plugin_id, path)
+            plugin = Plugin(name, plugin_id, path)
         # Test loading from strings.xml
         self.assertEqual(plugin.addon.getLocalizedString(30100),
                          'View all results')
@@ -60,7 +59,7 @@ class TestInit(TestCase):
     def test_init_cli_mode_default_args(self):
         with preserve_cwd(
                 os.path.join(os.path.dirname(__file__), 'data', 'plugin')):
-            plugin = Addon()
+            plugin = Plugin()
 
         self.assertEqual('plugin.video.academicearth', plugin.id)
         self.assertEqual(plugin.name, 'Academic Earth')
@@ -73,10 +72,10 @@ class TestInit(TestCase):
         name = 'Hello Kodi'
         plugin_id = 'plugin.video.hellokodi'
         path = os.path.join(os.path.dirname(__file__), 'data', 'plugin',
-                            'addon.py')
+                            'plugin.py')
         with preserve_cwd(os.path.dirname(path)):
             with preserve_cli_mode(cli_mode=False):
-                plugin = Addon(name, plugin_id, path)
+                plugin = Plugin(name, plugin_id, path)
 
         self.assertEqual(plugin_id, plugin.id)
         self.assertEqual(plugin.name, name)
@@ -89,7 +88,7 @@ class TestInit(TestCase):
         with preserve_cli_mode(cli_mode=False):
             with preserve_cwd(
                     os.path.join(os.path.dirname(__file__), 'data', 'plugin')):
-                plugin = Addon()
+                plugin = Plugin()
 
         self.assertEqual('plugin.video.academicearth', plugin.id)
         self.assertEqual(plugin.name, 'Academic Earth')
@@ -106,21 +105,21 @@ class TestInit(TestCase):
         with preserve_cli_mode(cli_mode=False):
             with preserve_cwd(
                     os.path.join(os.path.dirname(path), 'data', 'plugin')):
-                plugin = Addon(name, 'script.module.test', path)
+                plugin = Plugin(name, 'script.module.test', path)
                 self.assertEqual(plugin.info_type, 'video')
 
                 # parse from ID
-                plugin = Addon(name, 'plugin.audio.test')
+                plugin = Plugin(name, 'plugin.audio.test')
                 self.assertEqual(plugin.info_type, 'music')
 
-                plugin = Addon(name, 'plugin.video.test')
+                plugin = Plugin(name, 'plugin.video.test')
                 self.assertEqual(plugin.info_type, 'video')
 
-                plugin = Addon(name, 'plugin.image.test')
+                plugin = Plugin(name, 'plugin.image.test')
                 self.assertEqual(plugin.info_type, 'pictures')
 
                 # info_type param should override value parsed from id
-                plugin = Addon(name, 'plugin.video.test', info_type='music')
+                plugin = Plugin(name, 'plugin.video.test', info_type='music')
                 self.assertEqual(plugin.info_type, 'music')
 
 
@@ -129,19 +128,19 @@ class TestParseRequest(TestCase):
         name = 'Hello Kodi'
         plugin_id = 'plugin.video.hellokodi'
         path = os.path.join(
-            os.path.dirname(__file__), 'data', 'plugin', 'addon.py')
+            os.path.dirname(__file__), 'data', 'plugin', 'plugin.py')
         with preserve_cwd(os.path.dirname(path)):
-            self.plugin = Addon(name, plugin_id, path)
+            self.plugin = Plugin(name, plugin_id, path)
 
     def test_parse_request(self):
-        with patch('kodiswift.addon.Request') as MockRequest:
+        with patch('kodiswift.plugin.Request') as MockRequest:
             sys.argv = ['plugin://plugin.video.hellokodi', '0', '?']
             self.plugin._parse_request()
             MockRequest.assert_called_with(
                 'plugin://plugin.video.hellokodi?', '0')
 
     def test_parse_request_no_qs(self):
-        with patch('kodiswift.addon.Request') as MockRequest:
+        with patch('kodiswift.plugin.Request') as MockRequest:
             sys.argv = ['plugin://plugin.video.hellokodi', '0']
             self.plugin._parse_request()
             MockRequest.assert_called_with(
@@ -149,7 +148,7 @@ class TestParseRequest(TestCase):
 
     def test_parse_request_path_in_arg0(self):
         # Older versions of xbmc sometimes pass path in arg0
-        with patch('kodiswift.addon.Request') as MockRequest:
+        with patch('kodiswift.plugin.Request') as MockRequest:
             sys.argv = [
                 'plugin://plugin.video.hellokodi/videos/', '0', '?foo=bar']
             self.plugin._parse_request()
@@ -158,7 +157,7 @@ class TestParseRequest(TestCase):
 
     def test_parse_request_path_in_arg2(self):
         # Older versions of xbmc sometimes pass path in arg2
-        with patch('kodiswift.addon.Request') as MockRequest:
+        with patch('kodiswift.plugin.Request') as MockRequest:
             sys.argv = [
                 'plugin://plugin.video.hellokodi', '0', '/videos/?foo=bar']
             self.plugin._parse_request()
@@ -169,9 +168,10 @@ class TestParseRequest(TestCase):
 def new_plugin():
     name = 'Hello Kodi'
     plugin_id = 'plugin.video.hellokodi'
-    path = os.path.join(os.path.dirname(__file__), 'data', 'plugin', 'addon.py')
+    path = os.path.join(os.path.dirname(__file__), 'data', 'plugin',
+                        'plugin.py')
     with preserve_cwd(os.path.dirname(path)):
-        return Addon(name, plugin_id, path)
+        return Plugin(name, plugin_id, path)
 
 
 def _test_plugin_runner(plugin):
@@ -268,7 +268,6 @@ class TestBasicRouting(TestCase):
         with preserve_cli_mode(cli_mode=False):
             test_run = _test_plugin_runner(plugin)
             resp = test_run('/person/jon/')
-            print(plugin.request.url)
             self.assertEqual('Hello jon', resp[0].get_label())
             resp = test_run('/dave/')
             self.assertEqual('Hello dave', resp[0].get_label())

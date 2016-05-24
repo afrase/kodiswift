@@ -7,10 +7,10 @@ API
 
 Covers every method of kodiswift
 
-Addon Object
+Plugin Object
 -------------
 
-.. autoclass:: Addon
+.. autoclass:: Plugin
     :members:
     :inherited-members:
 

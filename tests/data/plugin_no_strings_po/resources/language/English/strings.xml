@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <strings>
-  <!-- Addon name -->
+  <!-- Plugin name -->
   <string id="30000">Hello Kodi</string>
   <!-- List item titles and dialog progress strings -->
   <string id="30100">View all results</string>

@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import
+
 import os
 import time
 from datetime import timedelta
@@ -55,7 +57,7 @@ class XBMCMixin(object):
         :param ttl: time to live in minutes
 
         .. note:: For route caching, you should use
-                  :meth:`kodiswift.Addon.cached_route`.
+                  :meth:`kodiswift.Plugin.cached_route`.
         """
 
         def decorating_function(function):
@@ -89,8 +91,8 @@ class XBMCMixin(object):
 
     def clear_function_cache(self):
         """Clears the storage that caches results when using
-        :meth:`kodiswift.Addon.cached_route` or
-        :meth:`kodiswift.Addon.cached`.
+        :meth:`kodiswift.Plugin.cached_route` or
+        :meth:`kodiswift.Plugin.cached`.
         """
         self.get_storage(self._function_cache_name).clear()
 
@@ -426,7 +428,7 @@ class XBMCMixin(object):
         self._end_of_directory.
 
         Typically it is not necessary to call this method directly, as
-        calling :meth:`~kodiswift.Addon.finish` will call this method.
+        calling :meth:`~kodiswift.Plugin.finish` will call this method.
         """
         self._update_listing = update_listing
         if not self._end_of_directory:
@@ -501,7 +503,7 @@ class XBMCMixin(object):
             self.add_items(items)
         if sort_methods:
             for sort_method in sort_methods:
-                if isinstance(sort_method, list):
+                if isinstance(sort_method, (list, tuple)):
                     self.add_sort_method(*sort_method)
                 else:
                     self.add_sort_method(sort_method)

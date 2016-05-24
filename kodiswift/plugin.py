@@ -3,34 +3,36 @@
     kodiswift.plugin
     -----------------
 
-    This module contains the Addon class. This class handles all of the url
+    This module contains the Plugin class. This class handles all of the url
     routing and interaction with Kodi for a plugin.
 
     :copyright: (c) 2012 by Jonathan Beluch
     :license: GPLv3, see LICENSE for more details.
 """
+from __future__ import absolute_import
+
+import collections
 import inspect
 import os
 import sys
-import collections
 
 import kodiswift
 from kodiswift import xbmc, xbmcaddon, Request
-from logger import log, setup_log
-from urls import UrlRule, NotFoundException, AmbiguousUrlException
-from xbmcmixin import XBMCMixin
+from kodiswift.logger import log, setup_log
+from kodiswift.urls import UrlRule, NotFoundException, AmbiguousUrlException
+from kodiswift.xbmcmixin import XBMCMixin
 
 
-class Addon(XBMCMixin):
-    """The Addon objects encapsulates all the properties and methods necessary
+class Plugin(XBMCMixin):
+    """The Plugin objects encapsulates all the properties and methods necessary
     for running an Kodi plugin. The plugin instance is a central place for
     registering view functions and keeping track of plugin state.
 
-    Usually the plugin instance is created in the main addon.py file for the
+    Usually the plugin instance is created in the main plugin.py file for the
     plugin. Typical creation looks like this::
 
-        from kodiswift import Addon
-        plugin = Addon('Hello Kodi')
+        from kodiswift import Plugin
+        plugin = Plugin('Hello Kodi')
 
 
     .. versionchanged:: 0.2
@@ -46,7 +48,7 @@ class Addon(XBMCMixin):
                      from the addon.xml file.
 
     :param filepath: Optional parameter. If provided, it should be the path to
-                     the addon.py file in the root of the addon directoy. This
+                     the plugin.py file in the root of the addon directoy. This
                      only has an effect when kodiswift is running on the
                      command line. Will default to the current working
                      directory since kodiswift requires execution in the root
@@ -54,7 +56,8 @@ class Addon(XBMCMixin):
                      testing.
     """
 
-    def __init__(self, name=None, addon_id=None, plugin_file=None, info_type=None):
+    def __init__(self, name=None, addon_id=None, plugin_file=None,
+                 info_type=None):
         self._name = name
         self._routes = []
         self._view_functions = {}
@@ -94,7 +97,7 @@ class Addon(XBMCMixin):
         if not os.path.isdir(self._storage_path):
             os.makedirs(self._storage_path)
 
-        # If we are runing in CLI, we need to load the strings.xml manually
+        # If we are running in CLI, we need to load the strings.xml manually
         # Since kodiswift currently relies on execution from an addon's root
         # directly, we can rely on cwd for now...
         if kodiswift.CLI_MODE:
@@ -136,14 +139,14 @@ class Addon(XBMCMixin):
 
     @property
     def addon(self):
-        """This addon's wrapped instance of xbmcaddon.Addon."""
+        """This addon's wrapped instance of xbmcaddon.Plugin."""
         return self._addon
 
     @property
     def added_items(self):
         """The list of currently added items.
 
-        Even after repeated calls to :meth:`~kodiswift.Addon.add_items`, this
+        Even after repeated calls to :meth:`~kodiswift.Plugin.add_items`, this
         property will contain the complete list of added items.
         """
         return self._current_items
@@ -158,7 +161,7 @@ class Addon(XBMCMixin):
         """The current :class:`~kodiswift.Request`.
 
         Raises an Exception if the request hasn't been initialized yet via
-        :meth:`~kodiswift.Addon.run()`.
+        :meth:`~kodiswift.Plugin.run()`.
         """
         if self._request is None:
             raise Exception('It seems the current request has not been '

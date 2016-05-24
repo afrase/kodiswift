@@ -8,13 +8,15 @@
     :copyright: (c) 2012 by Jonathan Beluch
     :license: GPLv3, see LICENSE for more details.
 """
-from xbmcmixin import XBMCMixin
+from __future__ import absolute_import
+
 from kodiswift import setup_log
+from kodiswift.xbmcmixin import XBMCMixin
 
 
 class Module(XBMCMixin):
     """Modules are basically mini plugins except they don't have any
-    functionality until they are registered with a Addon.
+    functionality until they are registered with a Plugin.
     """
 
     def __init__(self, namespace):
@@ -32,7 +34,7 @@ class Module(XBMCMixin):
         """Returns the plugin this module is registered to, or
 
         Returns:
-            kodiswift.Addon:
+            kodiswift.Plugin:
 
         Raises:
             RuntimeError: If not registered
@@ -81,7 +83,7 @@ class Module(XBMCMixin):
         """Sets or gets the url prefix of the module.
 
         Raises an Exception if this module is not registered with a
-        Addon.
+        Plugin.
 
         Returns:
             str:
@@ -90,8 +92,8 @@ class Module(XBMCMixin):
             RuntimeError:
         """
         if self._url_prefix is None:
-            raise RuntimeError('Module must be registered in order to call'
-                               'this method.')
+            raise RuntimeError(
+                'Module must be registered in order to call this method.')
         return self._url_prefix
 
     @url_prefix.setter
@@ -124,7 +126,7 @@ class Module(XBMCMixin):
         # TODO: Enable items to be passed with keywords of other var names
         #       such as endpoing and explicit
         # TODO: Figure out how to handle the case where a module wants to
-        # call a parent plugin view.
+        #       call a parent plugin view.
         if not explicit and not endpoint.startswith(self._namespace):
             endpoint = '%s.%s' % (self._namespace, endpoint)
         return self._plugin.url_for(endpoint, **items)
@@ -149,8 +151,3 @@ class Module(XBMCMixin):
         # Delay actual registration of the url rule until this module is
         # registered with a plugin
         self._register_funcs.append(register_rule)
-
-    def redirect(self, url):
-        """Used when you need to redirect to another view, and you only
-        have the final plugin:// url."""
-        return self._plugin._fake_run(url)

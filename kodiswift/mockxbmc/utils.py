@@ -1,6 +1,10 @@
+# -*- coding: utf-8 -*-
+from __future__ import absolute_import
+
 import os
-import polib
 from xml.dom.minidom import parse
+
+import kodiswift.mockxbmc.polib as polib
 
 
 def load_addon_strings(addon, filename):

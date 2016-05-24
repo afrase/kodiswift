@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     kodiswift.storage
     -----------------
@@ -7,13 +8,14 @@
     :copyright: (c) 2012 by Jonathan Beluch
     :license: GPLv3, see LICENSE for more details.
 """
+from __future__ import absolute_import
+
 import collections
 import json
 import os
 import time
 from datetime import datetime
 
-# noinspection PyProtectedMember
 from kodiswift._compat import pickle
 
 

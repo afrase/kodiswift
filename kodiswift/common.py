@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
     kodiswift.common
     -----------------
@@ -7,13 +8,16 @@
     :copyright: (c) 2012 by Jonathan Beluch
     :license: GPLv3, see LICENSE for more details.
 """
-from ._compat import string_types, pickle, urllib, urlopen
+from __future__ import absolute_import
+
+from kodiswift._compat import string_types, pickle, urllib, urlopen
 
 
 class Modes(object):
     ONCE = 'ONCE'
     CRAWL = 'CRAWL'
     INTERACTIVE = 'INTERACTIVE'
+
 # TODO(Sinap): This doesn't appear to be used for anything
 DEBUG_MODES = [Modes.ONCE, Modes.CRAWL, Modes.INTERACTIVE]
 
