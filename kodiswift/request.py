@@ -11,7 +11,8 @@
 """
 from __future__ import absolute_import
 
-from kodiswift._compat import urlparse
+import urlparse
+
 from kodiswift.common import unpickle_args
 
 

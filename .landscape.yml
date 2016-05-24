@@ -1,4 +1,4 @@
-doc-warnings: yes
+wdoc-warnings: yes
 test-warnings: no
 strictness: veryhigh
 autodetect: yes
@@ -8,9 +8,10 @@ ignore-patterns:
     - (^|/)docs(/|$)
     - setup\.py
     - fabfile\.py
+    - polib\.py
+    - _compat\.py
 python-targets:
     - 2
-    - 3
 pyflakes:
   disable:
     - F401

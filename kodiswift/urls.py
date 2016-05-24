@@ -13,7 +13,6 @@ from __future__ import absolute_import
 import re
 from urllib import urlencode, unquote_plus, quote_plus
 
-from kodiswift._compat import string_types
 from kodiswift.common import pickle_dict, unpickle_dict
 
 
@@ -111,7 +110,7 @@ class UrlRule(object):
         with the appropriate value from the items dict.
         """
         for key, val in items.items():
-            if not isinstance(val, string_types):
+            if not isinstance(val, basestring):
                 raise TypeError('Value "%s" for key "%s" must be an instance'
                                 ' of basestring' % (val, key))
             items[key] = quote_plus(val)

@@ -14,7 +14,6 @@ from __future__ import absolute_import
 import warnings
 
 from kodiswift import xbmcgui
-from kodiswift._compat import string_types
 
 
 class ListItem(object):
@@ -48,8 +47,8 @@ class ListItem(object):
         previous context menu items will be removed.
         """
         for label, action in items:
-            assert isinstance(label, string_types)
-            assert isinstance(action, string_types)
+            assert isinstance(label, basestring)
+            assert isinstance(action, basestring)
         if replace_items:
             self._context_menu_items = []
         self._context_menu_items.extend(items)

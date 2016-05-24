@@ -16,7 +16,10 @@ import os
 import time
 from datetime import datetime
 
-from kodiswift._compat import pickle
+try:
+    import cPickle as pickle
+except ImportError:
+    import pickle
 
 
 class Formats(object):

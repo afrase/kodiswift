@@ -8,7 +8,6 @@ from functools import wraps
 
 import kodiswift
 from kodiswift import xbmc, xbmcplugin, xbmcgui
-from kodiswift._compat import string_types
 from kodiswift.constants import VIEW_MODES, SortMethod
 from kodiswift.logger import log
 from kodiswift.storage import TimedStorage
@@ -153,7 +152,8 @@ class XBMCMixin(object):
                     ' is recommended to clear it.', choices)
                 if ret == 0:
                     os.remove(filename)
-                    storage = TimedStorage(filename, file_format, ttl)
+                    storage = TimedStorage(filename, ttl,
+                                           file_format=file_format)
                 else:
                     raise Exception('Corrupted storage file at %s' % filename)
 
@@ -275,7 +275,8 @@ class XBMCMixin(object):
         """Displays the keyboard input window to the user. If the user does not
         cancel the modal, the value entered by the user will be returned.
 
-        :param default: The placeholder text used to prepopulate the input field.
+        :param default: The placeholder text used to prepopulate the input
+                        field.
         :param heading: The heading for the window. Defaults to the current
                         addon's name. If you require a blank heading, pass an
                         empty string.
@@ -373,7 +374,7 @@ class XBMCMixin(object):
             item = {}
             succeeded = False
 
-        if isinstance(item, string_types):
+        if isinstance(item, basestring):
             # caller is passing a url instead of an item dict
             item = {'path': item}
 
@@ -450,12 +451,14 @@ class XBMCMixin(object):
                             string name. For instance, the following method
                             calls are all equivalent:
 
-                            * ``plugin.add_sort_method(xbmcplugin.SORT_METHOD_TITLE)``
+                            * ``plugin.add_sort_method(xbmcplugin.
+                            SORT_METHOD_TITLE)``
                             * ``plugin.add_sort_metohd(SortMethod.TITLE)``
                             * ``plugin.add_sort_method('title')``
         :param label2_mask: A mask pattern for label2. See the `Kodi
                             documentation
-                            <http://mirrors.xbmc.org/docs/python-docs/xbmcplugin.html#-addSortMethod>`_
+                            <http://mirrors.xbmc.org/docs/python-docs/
+                            xbmcplugin.html#-addSortMethod>`_
                             for more information.
         """
         try:

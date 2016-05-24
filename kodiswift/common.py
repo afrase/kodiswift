@@ -10,7 +10,12 @@
 """
 from __future__ import absolute_import
 
-from kodiswift._compat import string_types, pickle, urllib, urlopen
+import urllib
+
+try:
+    import cPickle as pickle
+except ImportError:
+    import pickle
 
 
 class Modes(object):
@@ -66,7 +71,7 @@ def pickle_dict(items):
     ret = {}
     pickled_keys = []
     for k, v in items.items():
-        if isinstance(v, string_types):
+        if isinstance(v, basestring):
             ret[k] = v
         else:
             pickled_keys.append(k)
