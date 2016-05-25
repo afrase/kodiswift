@@ -1,17 +1,19 @@
 # -*- coding: utf-8 -*-
 """
-    kodiswift.module
-    -----------------
+kodiswift.module
+-----------------
 
-    This module contains the Module Class.
+This module contains the Module Class.
 
-    :copyright: (c) 2012 by Jonathan Beluch
-    :license: GPLv3, see LICENSE for more details.
+:copyright: (c) 2012 by Jonathan Beluch
+:license: GPLv3, see LICENSE for more details.
 """
 from __future__ import absolute_import
 
 from kodiswift import setup_log
 from kodiswift.xbmcmixin import XBMCMixin
+
+__all__ = ['Module']
 
 
 class Module(XBMCMixin):

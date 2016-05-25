@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 """
-    kodiswift.plugin
-    -----------------
+kodiswift.plugin
+-----------------
 
-    This module contains the Plugin class. This class handles all of the url
-    routing and interaction with Kodi for a plugin.
+This module contains the Plugin class. This class handles all of the url
+routing and interaction with Kodi for a plugin.
 
-    :copyright: (c) 2012 by Jonathan Beluch
-    :license: GPLv3, see LICENSE for more details.
+:copyright: (c) 2012 by Jonathan Beluch
+:license: GPLv3, see LICENSE for more details.
 """
 from __future__ import absolute_import
 
@@ -21,6 +21,8 @@ from kodiswift import xbmc, xbmcaddon, Request
 from kodiswift.logger import log, setup_log
 from kodiswift.urls import UrlRule, NotFoundException, AmbiguousUrlException
 from kodiswift.xbmcmixin import XBMCMixin
+
+__all__ = ['Plugin']
 
 
 class Plugin(XBMCMixin):

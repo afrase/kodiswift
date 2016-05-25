@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 """
-    kodiswift.cli.create
-    ---------------------
+kodiswift.cli.create
+---------------------
 
-    This module contains the code to initialize a new Kodi addon project.
+This module contains the code to initialize a new Kodi addon project.
 
-    :copyright: (c) 2012 by Jonathan Beluch
-    :license: GPLv3, see LICENSE for more details.
+:copyright: (c) 2012 by Jonathan Beluch
+:license: GPLv3, see LICENSE for more details.
 """
 from __future__ import print_function, absolute_import
 

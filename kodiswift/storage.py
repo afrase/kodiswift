@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 """
-    kodiswift.storage
-    -----------------
+kodiswift.storage
+-----------------
 
-    This module contains persistent storage classes.
+This module contains persistent storage classes.
 
-    :copyright: (c) 2012 by Jonathan Beluch
-    :license: GPLv3, see LICENSE for more details.
+:copyright: (c) 2012 by Jonathan Beluch
+:license: GPLv3, see LICENSE for more details.
 """
 from __future__ import absolute_import
 
@@ -21,6 +21,8 @@ try:
 except ImportError:
     import pickle
 
+__all__ = ['Formats', 'PersistentStorage', 'TimedStorage']
+
 
 class Formats(object):
     PICKLE = 'pickle'
@@ -29,6 +31,11 @@ class Formats(object):
 
 class PersistentStorage(collections.MutableMapping):
     def __init__(self, file_path, file_format=Formats.PICKLE):
+        """
+        Args:
+            file_path (str):
+            file_format (Optional[kodiswift.Formats]):
+        """
         super(PersistentStorage, self).__init__()
         self.file_path = file_path
         self.file_format = file_format
@@ -108,6 +115,11 @@ class TimedStorage(PersistentStorage):
     """A dict with the ability to persist to disk and TTL for items."""
 
     def __init__(self, file_path, ttl=None, **kwargs):
+        """
+        Args:
+            file_path (str):
+            ttl (Optional[int]):
+        """
         super(TimedStorage, self).__init__(file_path, **kwargs)
         self.ttl = ttl
 

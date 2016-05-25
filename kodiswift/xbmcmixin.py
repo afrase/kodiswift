@@ -12,6 +12,7 @@ from kodiswift.constants import VIEW_MODES, SortMethod
 from kodiswift.logger import log
 from kodiswift.storage import TimedStorage
 
+__all__ = ['XBMCMixin']
 
 # TODO(Sinap): Need to either break the single mixin into multiple or just use
 #              a parent class.

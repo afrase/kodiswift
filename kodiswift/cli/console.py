@@ -79,7 +79,7 @@ def get_user_choice(items):
     """Returns the selected item from provided items or None if 'q' was
     entered for quit.
     """
-    choice = input('Choose an item or "q" to quit: ')
+    choice = raw_input('Choose an item or "q" to quit: ')
     while choice != 'q':
         try:
             item = items[int(choice)]
@@ -87,7 +87,7 @@ def get_user_choice(items):
             return item
         except ValueError:
             # Passed something that cound't be converted with int()
-            choice = input('You entered a non-integer. Choice must be an'
+            choice = raw_input('You entered a non-integer. Choice must be an'
                            ' integer or "q": ')
         except IndexError:
             # Passed an integer that was out of range of the list of urls

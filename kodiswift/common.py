@@ -17,14 +17,14 @@ try:
 except ImportError:
     import pickle
 
+__all__ = ['clean_dict', 'kodi_url', 'unpickle_args', 'pickle_dict',
+           'unpickle_dict', 'download_page', 'Modes']
+
 
 class Modes(object):
     ONCE = 'ONCE'
     CRAWL = 'CRAWL'
     INTERACTIVE = 'INTERACTIVE'
-
-# TODO(Sinap): This doesn't appear to be used for anything
-DEBUG_MODES = [Modes.ONCE, Modes.CRAWL, Modes.INTERACTIVE]
 
 
 def kodi_url(url, **options):

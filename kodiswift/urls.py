@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 """
-    kodiswift.urls
-    ---------------
+kodiswift.urls
+---------------
 
-    This module contains URLRule class for dealing with url patterns.
+This module contains URLRule class for dealing with url patterns.
 
-    :copyright: (c) 2012 by Jonathan Beluch
-    :license: GPLv3, see LICENSE for more details.
+:copyright: (c) 2012 by Jonathan Beluch
+:license: GPLv3, see LICENSE for more details.
 """
 from __future__ import absolute_import
 
@@ -14,6 +14,8 @@ import re
 from urllib import urlencode, unquote_plus, quote_plus
 
 from kodiswift.common import pickle_dict, unpickle_dict
+
+__all__ = ['UrlRule', 'AmbiguousUrlException', 'NotFoundException']
 
 
 class AmbiguousUrlException(Exception):

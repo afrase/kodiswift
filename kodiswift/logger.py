@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 """
-    kodiswift.log
-    --------------
+kodiswift.log
+--------------
 
-    This module contains the kodiswift logger as well as a convenience
-    method for creating new loggers.
+This module contains the kodiswift logger as well as a convenience
+method for creating new loggers.
 
-    :copyright: (c) 2012 by Jonathan Beluch
-    :license: GPLv3, see LICENSE for more details.
+:copyright: (c) 2012 by Jonathan Beluch
+:license: GPLv3, see LICENSE for more details.
 """
 from __future__ import absolute_import
 
@@ -15,6 +15,7 @@ import logging
 
 from kodiswift import CLI_MODE
 
+__all__ = ['setup_log', 'GLOBAL_LOG_LEVEL', 'log']
 
 # TODO: Add logging to a file as well when on CLI with lowest threshold
 #       possible

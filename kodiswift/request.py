@@ -1,19 +1,21 @@
 # -*- coding: utf-8 -*-
 """
-    kodiswift.request
-    ------------------
+kodiswift.request
+------------------
 
-    This module contains the Request class. This class represents an incoming
-    request from Kodi.
+This module contains the Request class. This class represents an incoming
+request from Kodi.
 
-    :copyright: (c) 2012 by Jonathan Beluch
-    :license: GPLv3, see LICENSE for more details.
+:copyright: (c) 2012 by Jonathan Beluch
+:license: GPLv3, see LICENSE for more details.
 """
 from __future__ import absolute_import
 
 import urlparse
 
 from kodiswift.common import unpickle_args
+
+__all__ = ['Request']
 
 
 class Request(object):

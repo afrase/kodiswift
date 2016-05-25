@@ -1,19 +1,21 @@
 # -*- coding: utf-8 -*-
 """
-    kodiswift.listitem
-    ------------------
+kodiswift.listitem
+------------------
 
-    This module contains the ListItem class, which acts as a wrapper
-    for xbmcgui.ListItem.
+This module contains the ListItem class, which acts as a wrapper
+for xbmcgui.ListItem.
 
-    :copyright: (c) 2012 by Jonathan Beluch
-    :license: GPLv3, see LICENSE for more details.
+:copyright: (c) 2012 by Jonathan Beluch
+:license: GPLv3, see LICENSE for more details.
 """
 from __future__ import absolute_import
 
 import warnings
 
 from kodiswift import xbmcgui
+
+__all__ = ['ListItem']
 
 
 class ListItem(object):
@@ -321,24 +323,10 @@ class ListItem(object):
     def __eq__(self, other):
         if not isinstance(other, ListItem):
             raise NotImplementedError
-        self_props = (
-            self.label,
-            self.label2,
-            self.art,
-            self.path,
-            self.playable,
-            self.selected,
-            self.played,
-        )
-        other_props = (
-            other.label,
-            other.label2,
-            other.art,
-            other.path,
-            other.playable,
-            other.selected,
-            other.played,
-        )
+        self_props = (self.label, self.label2, self.art, self.path,
+                      self.playable, self.selected, self.played,)
+        other_props = (other.label, other.label2, other.art, other.path,
+                       other.playable, other.selected, other.played,)
         return self_props == other_props
 
     def __str__(self):
