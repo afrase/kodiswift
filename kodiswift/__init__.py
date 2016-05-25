@@ -28,7 +28,6 @@ except ImportError:
     # Mock the Kodi modules
     from kodiswift.mockxbmc import xbmc, xbmcgui, xbmcplugin, xbmcaddon, xbmcvfs
 
-
     class _Module(ModuleType):
         """A wrapper class for a module used to override __getattr__.
         This class will behave normally for any existing module attributes.
@@ -51,17 +50,17 @@ except ImportError:
                 return getattr(self.wrapped, name)
             except AttributeError:
                 # noinspection PyUnusedLocal
+                # pylint disable=unused-argument
                 def func(*args, **kwargs):
                     """A mock function which returns itself, enabling chainable
                     function calls.
                     """
-                    log.warning('The %s method has not been implemented on the '
-                                'CLI. Your code might not work properly when '
-                                'calling it.', name)
+                    log.warning('The %s method has not been implemented on '
+                                'the CLI. Your code might not work properly '
+                                'when calling it.', name)
                     return self
 
                 return func
-
 
     xbmc = _Module(xbmc)
     xbmcgui = _Module(xbmcgui)

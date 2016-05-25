@@ -86,9 +86,9 @@ def get_user_choice(items):
             print()  # Blank line for readability between interactive views
             return item
         except ValueError:
-            # Passed something that cound't be converted with int()
+            # Passed something that couldn't be converted with int()
             choice = raw_input('You entered a non-integer. Choice must be an'
-                           ' integer or "q": ')
+                               ' integer or "q": ')
         except IndexError:
             # Passed an integer that was out of range of the list of urls
             choice = raw_input('You entered an invalid integer. Choice must '
