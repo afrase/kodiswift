@@ -19,8 +19,6 @@ from os import getcwd
 from shutil import copytree, ignore_patterns
 from xml.sax import saxutils
 
-from kodiswift._compat import input
-
 
 class CreateCommand(object):
     """A CLI command to initialize a new Kodi addon project."""
@@ -105,7 +103,7 @@ def get_value(prompt, default=None, hidden=False):
     if hidden:
         ans = getpass(_prompt)
     else:
-        ans = input(_prompt)
+        ans = raw_input(_prompt)
 
     # If user hit Enter and there is a default value
     if not ans and default:

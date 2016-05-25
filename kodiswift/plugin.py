@@ -31,33 +31,28 @@ class Plugin(XBMCMixin):
     Usually the plugin instance is created in the main plugin.py file for the
     plugin. Typical creation looks like this::
 
-        from kodiswift import Plugin
-        plugin = Plugin('Hello Kodi')
-
-
-    .. versionchanged:: 0.2
-        The *addon_id* and *filepath* parameters are now optional. They will
-        now default to the correct values.
-
-    :param name: The name of the plugin, e.g. 'Academic Earth'.
-
-    :param addon_id: The Kodi addon ID for the plugin, e.g.
-                     'plugin.video.academicearth'. This parameter is now
-                     optional and is really only useful for testing purposes.
-                     If it is not provided, the correct value will be parsed
-                     from the addon.xml file.
-
-    :param filepath: Optional parameter. If provided, it should be the path to
-                     the plugin.py file in the root of the addon directoy. This
-                     only has an effect when kodiswift is running on the
-                     command line. Will default to the current working
-                     directory since kodiswift requires execution in the root
-                     addon directoy anyway. The parameter still exists to ease
-                     testing.
+        >>> from kodiswift import Plugin
+        >>> plugin = Plugin('Hello Kodi')
     """
 
     def __init__(self, name=None, addon_id=None, plugin_file=None,
                  info_type=None):
+        """
+        Args:
+            name (Optional[str]): The name of the plugin, e.g. 'Hello Kodi'.
+            addon_id (Optional[str): The Kodi addon ID for the plugin,
+                e.g. 'plugin.video.hellokodi'. This parameter is now optional
+                and is really only useful for testing purposes. If it is not
+                provided, the correct value will be parsed from the
+                addon.xml file.
+            plugin_file (Optional[str]): If provided, it should be the path
+                to the plugin.py file in the root of the addon directory.
+                This only has an effect when kodiswift is running on the
+                command line. Will default to the current working directory
+                since kodiswift requires execution in the root addon directory
+                anyway. The parameter still exists to ease testing.
+            info_type (Optional[str):
+        """
         self._name = name
         self._routes = []
         self._view_functions = {}
@@ -129,17 +124,20 @@ class Plugin(XBMCMixin):
 
     @property
     def id(self):
-        """The id for the addon instance."""
+        """The id for the addon instance.
+        """
         return self._addon_id
 
     @property
     def storage_path(self):
-        """A full path to the storage folder for this plugin's addon data."""
+        """A full path to the storage folder for this plugin's addon data.
+        """
         return self._storage_path
 
     @property
     def addon(self):
-        """This addon's wrapped instance of xbmcaddon.Plugin."""
+        """This addon's wrapped instance of xbmcaddon.Plugin.
+        """
         return self._addon
 
     @property
@@ -153,15 +151,20 @@ class Plugin(XBMCMixin):
 
     @property
     def handle(self):
-        """The current plugin's handle. Equal to ``plugin.request.handle``."""
+        """The current plugin's handle. Equal to ``plugin.request.handle``.
+        """
         return self.request.handle
 
     @property
     def request(self):
         """The current :class:`~kodiswift.Request`.
 
-        Raises an Exception if the request hasn't been initialized yet via
-        :meth:`~kodiswift.Plugin.run()`.
+        Raises:
+            Exception: if the request hasn't been initialized yet via
+                :meth:`~kodiswift.Plugin.run()`.
+
+        Returns:
+            kodiswift.Request:
         """
         if self._request is None:
             raise Exception('It seems the current request has not been '
@@ -172,11 +175,14 @@ class Plugin(XBMCMixin):
 
     @property
     def name(self):
-        """The addon's name"""
+        """The addon's name.
+
+        Returns:
+            str:
+        """
         return self._name
 
     def clear_added_items(self):
-        # TODO: This shouldn't be exposed probably...
         self._current_items = []
 
     def register_module(self, module, url_prefix):

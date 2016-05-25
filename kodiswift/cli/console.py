@@ -10,8 +10,6 @@
 """
 from __future__ import print_function, absolute_import
 
-from kodiswift._compat import input
-
 
 def get_max_len(items):
     """Returns the max of the lengths for the provided items"""
@@ -24,18 +22,22 @@ def get_max_len(items):
 def display_listitems(items, url):
     """Displays a list of items along with the index to enable a user
     to select an item.
+
+    Args:
+        items (list[kodiswift.ListItem]):
+        url (str):
     """
-    if len(items) == 2 and items[0].get_label() == '..' and items[1].get_played():
+    if len(items) == 2 and items[0].label == '..' and items[1].played:
         display_video(items)
     else:
-        label_width = get_max_len(item.get_label() for item in items)
+        label_width = get_max_len(item.label for item in items)
         num_width = len(str(len(items)))
         output = []
         for i, item in enumerate(items):
             output.append('[%s] %s (%s)' % (
                 str(i).rjust(num_width),
-                item.get_label().ljust(label_width),
-                item.get_path()))
+                item.label.ljust(label_width),
+                item.label))
 
         line_width = get_max_len(output)
         output.append('-' * line_width)
@@ -58,10 +60,10 @@ def display_video(items):
     """
     parent_item, played_item = items
 
-    title_line = 'Playing Media %s (%s)' % (played_item.get_label(),
-                                            played_item.get_path())
-    parent_line = '[0] %s (%s)' % (parent_item.get_label(),
-                                   parent_item.get_path())
+    title_line = 'Playing Media %s (%s)' % (played_item.label,
+                                            played_item.path)
+    parent_line = '[0] %s (%s)' % (parent_item.label,
+                                   parent_item.path)
     line_width = get_max_len([title_line, parent_line])
 
     output = [
@@ -89,8 +91,8 @@ def get_user_choice(items):
                            ' integer or "q": ')
         except IndexError:
             # Passed an integer that was out of range of the list of urls
-            choice = input('You entered an invalid integer. Choice must be'
-                           ' from above url list or "q": ')
+            choice = raw_input('You entered an invalid integer. Choice must '
+                               'be from above url list or "q": ')
     return None
 
 
@@ -98,4 +100,4 @@ def continue_or_quit():
     """Prints an exit message and returns False if the user wants to
     quit.
     """
-    return input('Enter to continue or "q" to quit') != 'q'
+    return raw_input('Enter to continue or "q" to quit') != 'q'

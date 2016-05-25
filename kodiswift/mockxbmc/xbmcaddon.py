@@ -3,7 +3,6 @@ from __future__ import absolute_import
 
 import os
 
-from kodiswift._compat import input
 from kodiswift.logger import log
 from kodiswift.mockxbmc import utils
 
@@ -56,7 +55,8 @@ class Addon(object):
             # see if we have an env var
             value = _get_env_setting(key)
             if _get_env_setting(key) is None:
-                value = input('* Please enter a temporary value for %s: ' % key)
+                value = raw_input(
+                    '* Please enter a temporary value for %s: ' % key)
             self._settings[key] = value
         return value
 

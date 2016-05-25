@@ -56,10 +56,18 @@ class ListItem(object):
 
     @property
     def label(self):
+        """
+        Returns:
+            str:
+        """
         return self._listitem.getLabel()
 
     @label.setter
     def label(self, value):
+        """
+        Args:
+            value (str):
+        """
         self._listitem.setLabel(value)
 
     def get_label(self):
