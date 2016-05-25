@@ -131,7 +131,7 @@ def unpickle_dict(items):
 
 def download_page(url, data=None):
     """Returns the response for the given url. The optional data argument is
-    passed directly to urlopen.
+        passed directly to urlopen.
 
     Args:
         url (str): The URL to read.
@@ -141,7 +141,7 @@ def download_page(url, data=None):
     Returns:
         str: The results of requesting the URL.
     """
-    conn = urlopen(url, data)
+    conn = urllib.urlopen(url, data)
     resp = conn.read()
     conn.close()
     return resp
