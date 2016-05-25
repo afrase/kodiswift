@@ -25,6 +25,7 @@ class CreateCommand(object):
     command = 'create'
     usage = '%prog create'
 
+    # noinspection PyUnusedLocal
     @staticmethod
     def run(opts, args):
         """Required run function for the 'create' CLI command."""
@@ -60,7 +61,7 @@ def validate_nonblank(value):
 
 @error_msg('** Value must contain only letters or underscores.')
 def validate_pluginid(value):
-    """Returns True if the provided value is a valid pluglin id"""
+    """Returns True if the provided value is a valid plugin id"""
     valid = string.ascii_letters + string.digits + '.' + '_'
     return all(c in valid for c in value)
 
@@ -169,7 +170,7 @@ def create_new_project():
     copytree(SKEL, opts['plugin_dir'], ignore=ignore_patterns('*.pyc'))
 
     # Walk through all the new files and fill in with out options
-    for root, dirs, files in os.walk(opts['plugin_dir']):
+    for root, _, files in os.walk(opts['plugin_dir']):
         for filename in files:
             update_file(os.path.join(root, filename), opts)
 

@@ -5,11 +5,11 @@ import errno
 import os
 import tempfile
 
-from kodiswift import log
+import kodiswift
 from kodiswift.cli.create import get_value
 
 TEMP_DIR = os.path.join(tempfile.gettempdir(), 'kodiswift_debug')
-log.info('Using temp directory %s', TEMP_DIR)
+kodiswift.log.info('Using temp directory %s', TEMP_DIR)
 
 
 def _create_dir(path):

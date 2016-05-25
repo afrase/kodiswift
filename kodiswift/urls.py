@@ -102,7 +102,7 @@ class UrlRule(object):
 
         # We need to update our dictionary with default values provided in
         # options if the keys don't already exist.
-        [items.setdefault(key, val) for key, val in self._options.items()]
+        _ = [items.setdefault(key, val) for key, val in self._options.items()]
         return self._view_func, items
 
     def _make_path(self, items):
