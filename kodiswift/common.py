@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 """
-    kodiswift.common
-    -----------------
+kodiswift.common
+-----------------
 
-    This module contains some common helpful functions.
+This module contains some common helpful functions.
 
-    :copyright: (c) 2012 by Jonathan Beluch
-    :license: GPLv3, see LICENSE for more details.
+:copyright: (c) 2012 by Jonathan Beluch
+:license: GPLv3, see LICENSE for more details.
 """
 from __future__ import absolute_import
 
@@ -131,7 +131,7 @@ def unpickle_dict(items):
 
 def download_page(url, data=None):
     """Returns the response for the given url. The optional data argument is
-        passed directly to urlopen.
+    passed directly to urlopen.
 
     Args:
         url (str): The URL to read.
