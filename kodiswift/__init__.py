@@ -37,7 +37,6 @@ except ImportError:
         """
 
         def __init__(self, wrapped=None):
-            super(_Module, self).__init__()
             self.wrapped = wrapped
             if wrapped:
                 self.__dict__.update(wrapped.__dict__)
