@@ -2,3 +2,5 @@ coverage:
   ignore:
   - tests/.*
   - kodiswift/mockxbmc/.*
+  - fabfile.py
+  - setup.py
