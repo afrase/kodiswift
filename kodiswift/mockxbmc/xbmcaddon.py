@@ -43,12 +43,13 @@ class Addon(object):
     def getLocalizedString(self, str_id):
         key = str(str_id)
         if key not in self._strings:
-            raise KeyError('id not found in English/strings.po or strings.xml.')
+            raise KeyError('id not found in English/strings.po or '
+                           'strings.xml.')
         return self._strings[key]
 
     def getSetting(self, key):
-        log.warning('xbmcaddon.Plugin.getSetting() has not been implemented in '
-                    'CLI mode.')
+        log.warning('xbmcaddon.Plugin.getSetting() has not been implemented '
+                    'in CLI mode.')
         try:
             value = self._settings[key]
         except KeyError:

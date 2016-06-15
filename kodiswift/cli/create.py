@@ -146,25 +146,39 @@ def create_new_project():
 """)
     print('I\'m going to ask you a few questions to get this project started.')
 
-    opts = {
-        'plugin_name': get_valid_value(
-            'What is your plugin name?', validate_nonblank),
-        'parent_dir': get_valid_value(
-            'Enter parent folder (where to create project)', validate_isfolder,
-            getcwd()),
-        'provider_name': get_valid_value(
-            'Enter provider name', validate_nonblank),
-    }
+    opts = {}
 
+    # Plugin Name
+    opts['plugin_name'] = get_valid_value(
+        'What is your plugin name?',
+        validate_nonblank
+    )
+
+    # Plugin ID
     opts['plugin_id'] = get_valid_value(
-        'Enter your plugin id.', validate_pluginid,
-        'plugin.video.%s' % (opts['plugin_name'].lower().replace(' ', ''))),
+        'Enter your plugin id.',
+        validate_pluginid,
+        'plugin.video.%s' % (opts['plugin_name'].lower().replace(' ', ''))
+    )
+
+    # Parent Directory
+    opts['parent_dir'] = get_valid_value(
+        'Enter parent folder (where to create project)',
+        validate_isfolder,
+        getcwd()
+    )
 
     # Parent Directory
     opts['plugin_dir'] = os.path.join(opts['parent_dir'], opts['plugin_id'])
     assert not os.path.isdir(opts['plugin_dir']), \
         'A folder named %s already exists in %s.' % (opts['plugin_id'],
                                                      opts['parent_dir'])
+
+    # Provider
+    opts['provider_name'] = get_valid_value(
+        'Enter provider name',
+        validate_nonblank,
+    )
 
     # Create the project folder by copying over skel
     copytree(SKEL, opts['plugin_dir'], ignore=ignore_patterns('*.pyc'))
