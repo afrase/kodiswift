@@ -11,68 +11,119 @@ registered in this module.
 """
 from __future__ import absolute_import
 
-import sys
-from optparse import OptionParser
+import os
+import argparse
+import string
 
-from kodiswift.cli.app import RunCommand
-from kodiswift.cli.create import CreateCommand
-
-# TODO: Make an ABC for Command
-COMMANDS = {
-    RunCommand.command: RunCommand,
-    CreateCommand.command: CreateCommand,
-}
+_sentinel = '==DEFAULT=='
 
 
-# TODO: Make this usage dynamic based on COMMANDS dict
-USAGE = """%prog <command>
+class InteractiveAction(argparse.Action):
+    def __init__(self, **kwargs):
+        super(InteractiveAction, self).__init__(default=_sentinel, **kwargs)
 
-Commands:
-    create
-        Create a new plugin project.
+    def __call__(self, parser, namespace, values, option_string=None):
+        setattr(namespace, self.dest, values)
 
-    run
-        Run an kodiswift plugin from the command line.
 
-Help:
-    To see options for a command, run `kodiswift <command> -h`
-"""
+class InteractiveType(object):
+    def __init__(self, question, validator=None, default=None):
+        self.question = question
+        self.default = default
+        self.validator = validator
+
+    def __call__(self, arg_string):
+        if arg_string is not _sentinel:
+            return arg_string
+        while True:
+            response = False
+            if self.default:
+                self.question = '%s [%s]: ' % (self.question, self.default)
+            else:
+                self.question += ': '
+            arg_string = raw_input(self.question)
+            if self.validator is not None:
+                response = self.validator(arg_string)
+            if response:
+                return arg_string
+            elif self.default:
+                return self.default
+            else:
+                print(self.validator.error_message)
+
+
+def error_msg(msg):
+    """A decorator that sets the error_message attribute of the decorated
+    function to the provided value.
+    """
+
+    def decorator(func):
+        """Sets the error_message attribute on the provided function"""
+        func.error_message = msg
+        return func
+
+    return decorator
+
+
+@error_msg('Value cannot be blank.')
+def non_blank_answer(value):
+    return value
+
+
+@error_msg('Value cannot be blank and only contain letters and underscores.')
+def valid_plugin_id(value):
+    valid = string.ascii_letters + string.digits + '.' + '_'
+    return value and all(c in valid for c in value)
+
+
+@error_msg('The provided path must be an existing folder.')
+def is_existing_folder(value):
+    return os.path.isdir(value)
+
+
+def build_parser():
+    parser = argparse.ArgumentParser()
+    subparsers = parser.add_subparsers()
+
+    create_sub = subparsers.add_parser('create')
+    create_sub.add_argument('-n', '--plugin-name',
+                            action=InteractiveAction,
+                            type=InteractiveType(
+                                'What is your plugin name?',
+                                non_blank_answer),
+                            help='Plugin name')
+    create_sub.add_argument('-d', '--project-dir',
+                            action=InteractiveAction,
+                            type=InteractiveType(
+                                'Where to create the project?',
+                                is_existing_folder,
+                                os.getcwd()),
+                            help='Parent directory')
+    create_sub.add_argument('-u', '--provider-name',
+                            action=InteractiveAction,
+                            type=InteractiveType(
+                                'Enter provider name',
+                                non_blank_answer),
+                            help='Provider name')
+    create_sub.add_argument('-i', '--plugin-id',
+                            action=InteractiveAction,
+                            type=InteractiveType(
+                                'Enter your plugin id',
+                                valid_plugin_id),
+                            help='Plugin ID')
+
+    run_group = subparsers.add_parser('run')
+    run_group.add_argument('-v', '--verbose',
+                           help='verbose logging')
+    run_group.add_argument('-q', '--quite',
+                           help='limit logging')
+    return parser
 
 
 def main():
-    """The entry point for the console script kodiswift.
+    parser = build_parser()
+    print(parser.parse_args(['create']))
 
-    The 'xbcmswift2' script is command bassed, so the second argument is always
-    the command to execute. Each command has its own parser options and usages.
-    If no command is provided or the -h flag is used without any other
-    commands, the general help message is shown.
-    """
-    parser = OptionParser()
-    if len(sys.argv) == 1:
-        parser.set_usage(USAGE)
-        parser.error('At least one command is required.')
 
-    # spy sys.argv[1] in order to use correct opts/args
-    command = sys.argv[1]
-
-    if command == '-h':
-        parser.set_usage(USAGE)
-        opts, args = parser.parse_args()
-
-    if command not in COMMANDS.keys():
-        parser.error('Invalid command')
-
-    # We have a proper command, set the usage and options list according to the
-    # specific command
-    manager = COMMANDS[command]
-    if hasattr(manager, 'option_list'):
-        for args, kwargs in manager.option_list:
-            parser.add_option(*args, **kwargs)
-    if hasattr(manager, 'usage'):
-        parser.set_usage(manager.usage)
-
-    opts, args = parser.parse_args()
-
-    # Since we are calling a specific comamnd's manager, we no longer need the
-    # actual command in sys.argv so we slice from position 1
-    manager.run(opts, args[1:])
+if __name__ == '__main__':
+    main()
