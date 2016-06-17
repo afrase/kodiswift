@@ -16,59 +16,18 @@ A micro framework to enable rapid development of Kodi plugins.
 * Handles all the url parsing involved in plugin routing. No need to deal with
   complicated URLs and query strings.
 
-## Installation
-
-kodiswift is available in pypi, so you can install via pip:
-
-    pip install kodiswift
-
-You should probably also read
-http://www.kodiswift.com/en/latest/installation.html#installation to ensure it
-is properly installed for Kodi as well.
-
 ## Documentation
 
-The current documentation can be found at http://www.kodiswift.com. It covers
-installation, quickstart, a guide to writing an addon and documentation for the
-full kodiswift API.
+TODO: Clean up documentation.
 
-## Upgrading from kodiswift
+## Upgrading from xbmcswift2
 
-This project is the next version of kodiswift. While the APIs are similar,
-there are a few things that are not backwards compatible with the original
-version, hence the new name.
-
-If you are upgrading an addon that used kodiswift, see
-http://www.kodiswift.com/en/latest/upgrading.html#upgrading.
-
-## Development
-
-kodiswift is now available in the official Kodi Eden repository. Every time a
-new release is created and uploaded to pypi, a new Kodi release will be created
-as well. Be aware that Kodi's "version" for kodiswift will not match the
-official python package version.
-
-New features and bug fixes are done on the develop branch of this repo. If you
-are interested in using the develop branch, you can install locally via pip:
-
-    pip install git+git://github.com/jbeluch/kodiswift.git@develop
-
-The documentation for the develop branch can be found at
-http://www.kodiswift.com/en/develop/api.html#api.
+This project is a fork of xbmcswift2. The APIs in the current release 
+are the same as xbmcswift2 but with added listitem properties and 
+other enhancements.
 
 ## Contributing
 
 Bugs, patches and suggestions are all welcome. I'm working on adding tests and
 getting better coverage. Please ensure that your patches include tests as well
 as updates to the documentation. Thanks!
-
-## Support
-
-\#kodiswift on freenode
-
-https://github.com/jbeluch/kodiswift
-
-Subscribe to the mailing list to be notified of new releases or to get help.
-Send an email to kodiswift@librelist.com to subscribe.
-
-web@jonathanbeluch.com

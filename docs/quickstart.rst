@@ -1,7 +1,7 @@
 .. _quickstart:
 
 Quickstart
-============
+==========
 
 If you haven't already installed kodiswift, head over to the `installation`
 page.

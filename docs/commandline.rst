@@ -2,7 +2,7 @@
 
 
 Running kodiswift on the Command Line
-======================================
+=====================================
 
 
 Commands
@@ -51,7 +51,7 @@ The options ``-q`` and ``-v`` decrease and increase the logging level.
     If you plan on using the command line to develop your addons, you should
     always import the xbmc modules from kodiswift::
 
-        from xbcmswift2 import xbmcgui
+        from kodiswift import xbmcgui
 
     kodiswift will correctly import the proper module based on the
     environment. When running in Kodi, it will import the actual modules, and
