@@ -136,7 +136,7 @@ class TimedStorage(PersistentStorage):
 
     def __repr__(self):
         return '%s(%r)' % (self.__class__.__name__,
-                           {k: v[0] for k, v in self._store.items()})
+                           dict((k, v[0]) for k, v in self._store.items()))
 
     def items(self):
         items = []

@@ -5,10 +5,9 @@ load-dev-env.sh
 *.swo
 dist/
 build/
-XBMC_Swift.egg-info/
 docs/_build/
 TODO
-xbmcswift2.egg-info/
 .idea
 .coverage
 .cache
+kodiswift.egg-info/

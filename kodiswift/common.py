@@ -54,7 +54,7 @@ def clean_dict(data):
     Returns:
         dict:
     """
-    return {k: v for k, v in data.items() if v is not None}
+    return dict((k, v) for k, v in data.items() if v is not None)
 
 
 def pickle_dict(items):

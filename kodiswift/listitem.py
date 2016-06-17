@@ -220,8 +220,9 @@ class ListItem(object):
         self._played = value
 
     def set_played(self, was_played):
-        """Sets the played status of the listitem. Used to
-        differentiate between a resolved video versus a playable item.
+        """Sets the played status of the listitem.
+
+        Used to differentiate between a resolved video versus a playable item.
         Has no effect on Kodi, it is strictly used for kodiswift.
         """
         warnings.warn('set_played is deprecated, use played property',
@@ -247,7 +248,7 @@ class ListItem(object):
         self._listitem.setArt(value)
 
     def set_info(self, info_type, info_labels):
-        """Sets the listitems info"""
+        """Sets the listitem's info"""
         return self._listitem.setInfo(info_type, info_labels)
 
     def get_property(self, key):
