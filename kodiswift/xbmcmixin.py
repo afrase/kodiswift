@@ -10,7 +10,7 @@ import kodiswift
 from kodiswift import xbmc, xbmcplugin, xbmcgui
 from kodiswift.constants import VIEW_MODES, SortMethod
 from kodiswift.logger import log
-from kodiswift.storage import TimedStorage
+from kodiswift.storage import TimedStorage, UnknownFormat
 
 __all__ = ['XBMCMixin']
 
@@ -144,7 +144,8 @@ class XBMCMixin(object):
                 ttl = timedelta(minutes=ttl)
             try:
                 storage = TimedStorage(filename, ttl, file_format=file_format)
-            except ValueError:
+                storage.load()
+            except UnknownFormat:
                 # Thrown when the storage file is corrupted and can't be read.
                 # Prompt user to delete storage.
                 choices = ['Clear storage', 'Cancel']

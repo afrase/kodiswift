@@ -43,6 +43,15 @@ class TestCache(unittest.TestCase):
             self.assertEqual('jon', storage2.pop('name'))
             self.assertEqual('42', storage2['answer'])
 
+    def test_load_raise_on_corrupt_file(self):
+        pass
+
+    def test_load_non_existing_file(self):
+        pass
+
+    def test_load_existing_file(self):
+        pass
+
 
 class TestTimedStorage(unittest.TestCase):
 

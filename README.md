@@ -11,7 +11,7 @@ A micro framework to enable rapid development of Kodi plugins.
 ## Features
 * Run the addon from the command line *or* within Kodi without changing any
   code.
-* Helper libraries to make common Kodi api operations easy, like adding items,
+* Helper libraries to make common Kodi API operations easy, like adding items,
   getting settings, creating temporary files, etc.
 * Handles all the url parsing involved in plugin routing. No need to deal with
   complicated URLs and query strings.

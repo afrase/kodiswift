@@ -21,7 +21,11 @@ try:
 except ImportError:
     import pickle
 
-__all__ = ['Formats', 'PersistentStorage', 'TimedStorage']
+__all__ = ['Formats', 'PersistentStorage', 'TimedStorage', 'UnknownFormat']
+
+
+class UnknownFormat(Exception):
+    pass
 
 
 class Formats(object):
@@ -72,22 +76,30 @@ class PersistentStorage(collections.MutableMapping):
         return self._store.items()
 
     def load(self):
-        """
+        """Load the file from disk.
 
         Returns:
-            bool: True if successfully loaded.
+            bool: True if successfully loaded, False if the file
+                doesn't exist.
+
+        Raises:
+            UnknownFormat: When the file exists but couldn't be loaded.
         """
-        if not self._loaded:
+
+        if not self._loaded and os.path.exists(self.file_path):
             with open(self.file_path, 'rb') as f:
                 for loader in (pickle.load, json.load):
-                    # noinspection PyBroadException
                     try:
                         f.seek(0)
                         self._store = loader(f)
                         self._loaded = True
                         break
-                    except Exception:
+                    except pickle.UnpicklingError:
                         pass
+            # If we weren't able to load the file and it exists,
+            # raise an error.
+            if not self._loaded:
+                raise UnknownFormat('Failed to load file')
         return self._loaded
 
     def close(self):
@@ -146,6 +158,3 @@ class TimedStorage(PersistentStorage):
             except KeyError:
                 pass
         return items
-
-    def sync(self):
-        super(TimedStorage, self).sync()
