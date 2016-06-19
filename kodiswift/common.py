@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- code: utf-8 -*-
 """
 kodiswift.common
 -----------------

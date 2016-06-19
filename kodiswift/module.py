@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- code: utf-8 -*-
 """
 kodiswift.module
 -----------------
@@ -53,7 +53,7 @@ class Module(XBMCMixin):
     @property
     def cache_path(self):
         """Returns the module's cache_path."""
-        return self.plugin.cache_path
+        return self.plugin.storage_path
 
     @property
     def addon(self):

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- code: utf-8 -*-
 """
 kodiswift.constants
 --------------------
@@ -11,6 +11,8 @@ with Kodi.
 """
 from __future__ import absolute_import
 
+from kodiswift import xbmcplugin
+
 __all__ = ['SortMethod']
 
 
@@ -20,47 +22,48 @@ class SortMethod(object):
 
     e.g. SORT_METHOD_TITLE becomes SortMethod.TITLE
     """
-    ALBUM = 13
-    ALBUM_IGNORE_THE = 14
-    ARTIST = 11
-    ARTIST_IGNORE_THE = 12
-    BITRATE = 40
-    CHANNEL = 38
-    COUNTRY = 16
-    DATE = 3
-    DATEADDED = 19
-    DATE_TAKEN = 41
-    DRIVE_TYPE = 6
-    DURATION = 8
-    EPISODE = 22
-    FILE = 5
-    FULLPATH = 32
-    GENRE = 15
-    LABEL = 1
-    LABEL_IGNORE_FOLDERS = 33
-    LABEL_IGNORE_THE = 2
-    LASTPLAYED = 34
-    LISTENERS = 36
-    MPAA_RATING = 28
-    NONE = 0
-    PLAYCOUNT = 35
-    PLAYLIST_ORDER = 21
-    PRODUCTIONCODE = 26
-    PROGRAM_COUNT = 20
-    SIZE = 4
-    SONG_RATING = 27
-    STUDIO = 30
-    STUDIO_IGNORE_THE = 31
-    TITLE = 9
-    TITLE_IGNORE_THE = 10
-    TRACKNUM = 7
-    UNSORTED = 37
-    VIDEO_RATING = 18
-    VIDEO_RUNTIME = 29
-    VIDEO_SORT_TITLE = 24
-    VIDEO_SORT_TITLE_IGNORE_THE = 25
-    VIDEO_TITLE = 23
-    VIDEO_YEAR = 17
+    ALBUM = xbmcplugin.SORT_METHOD_ALBUM
+    ALBUM_IGNORE_THE = xbmcplugin.SORT_METHOD_ALBUM_IGNORE_THE
+    ARTIST = xbmcplugin.SORT_METHOD_ARTIST
+    ARTIST_IGNORE_THE = xbmcplugin.SORT_METHOD_ARTIST_IGNORE_THE
+    BITRATE = xbmcplugin.SORT_METHOD_BITRATE
+    CHANNEL = xbmcplugin.SORT_METHOD_CHANNEL
+    COUNTRY = xbmcplugin.SORT_METHOD_COUNTRY
+    DATE = xbmcplugin.SORT_METHOD_DATE
+    DATEADDED = xbmcplugin.SORT_METHOD_DATEADDED
+    DATE_TAKEN = xbmcplugin.SORT_METHOD_DATE_TAKEN
+    DRIVE_TYPE = xbmcplugin.SORT_METHOD_DRIVE_TYPE
+    DURATION = xbmcplugin.SORT_METHOD_DURATION
+    EPISODE = xbmcplugin.SORT_METHOD_EPISODE
+    FILE = xbmcplugin.SORT_METHOD_FILE
+    FULLPATH = xbmcplugin.SORT_METHOD_FULLPATH
+    GENRE = xbmcplugin.SORT_METHOD_GENRE
+    LABEL = xbmcplugin.SORT_METHOD_LABEL
+    LABEL_IGNORE_FOLDERS = xbmcplugin.SORT_METHOD_LABEL_IGNORE_FOLDERS
+    LABEL_IGNORE_THE = xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE
+    LASTPLAYED = xbmcplugin.SORT_METHOD_LASTPLAYED
+    LISTENERS = xbmcplugin.SORT_METHOD_LISTENERS
+    MPAA_RATING = xbmcplugin.SORT_METHOD_MPAA_RATING
+    NONE = xbmcplugin.SORT_METHOD_NONE
+    PLAYCOUNT = xbmcplugin.SORT_METHOD_PLAYCOUNT
+    PLAYLIST_ORDER = xbmcplugin.SORT_METHOD_PLAYLIST_ORDER
+    PRODUCTIONCODE = xbmcplugin.SORT_METHOD_PRODUCTIONCODE
+    PROGRAM_COUNT = xbmcplugin.SORT_METHOD_PROGRAM_COUNT
+    SIZE = xbmcplugin.SORT_METHOD_SIZE
+    SONG_RATING = xbmcplugin.SORT_METHOD_SONG_RATING
+    STUDIO = xbmcplugin.SORT_METHOD_STUDIO
+    STUDIO_IGNORE_THE = xbmcplugin.SORT_METHOD_STUDIO_IGNORE_THE
+    TITLE = xbmcplugin.SORT_METHOD_TITLE
+    TITLE_IGNORE_THE = xbmcplugin.SORT_METHOD_TITLE_IGNORE_THE
+    TRACKNUM = xbmcplugin.SORT_METHOD_TRACKNUM
+    UNSORTED = xbmcplugin.SORT_METHOD_UNSORTED
+    VIDEO_RATING = xbmcplugin.SORT_METHOD_VIDEO_RATING
+    VIDEO_RUNTIME = xbmcplugin.SORT_METHOD_VIDEO_RUNTIME
+    VIDEO_SORT_TITLE = xbmcplugin.SORT_METHOD_VIDEO_SORT_TITLE
+    VIDEO_SORT_TITLE_IGNORE_THE = xbmcplugin.SORT_METHOD_VIDEO_SORT_TITLE_IGNORE_THE
+    VIDEO_TITLE = xbmcplugin.SORT_METHOD_VIDEO_TITLE
+    VIDEO_USER_RATING = xbmcplugin.SORT_METHOD_VIDEO_USER_RATING
+    VIDEO_YEAR = xbmcplugin.SORT_METHOD_VIDEO_YEAR
 
     @classmethod
     def from_string(cls, sort_method):
