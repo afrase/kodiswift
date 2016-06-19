@@ -161,7 +161,7 @@ class TestXBMCMixin(unittest.TestCase):
             call(0, 9),
             call(0, 3, '%D'),
             call(0, 1),
-            call(0, 28),
+            call(0, 30),
             call(0, 4),
         ]
         mock_add_sort_method.assert_has_calls(calls)
