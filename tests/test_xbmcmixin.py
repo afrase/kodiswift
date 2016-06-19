@@ -390,16 +390,6 @@ class TestAddToPlaylist(unittest.TestCase):
             self.assertEqual(
                 (item.get_path(), item.as_xbmc_listitem(), 0), call_args)
 
-    @patch('kodiswift.xbmcmixin.xbmc')
-    def test_get_view_mode_id(self, _xbmc):
-        _xbmc.getSkinDir.return_value = 'skin.confluence'
-        self.assertEqual(self.m.get_view_mode_id('thumbnail'), 500)
-        self.assertEqual(self.m.get_view_mode_id('THUMBNail'), 500)
-        self.assertEqual(self.m.get_view_mode_id('unknown'), None)
-        _xbmc.getSkinDir.return_value = 'skin.unknown'
-        self.assertEqual(self.m.get_view_mode_id('thumbnail'), None)
-        self.assertEqual(self.m.get_view_mode_id('unknown'), None)
-
     def test_set_view_mode(self):
         with patch('kodiswift.xbmcmixin.xbmc') as _xbmc:
             self.m.set_view_mode(500)
