@@ -2,7 +2,6 @@
 from __future__ import absolute_import
 
 import os
-import time
 from datetime import timedelta
 from functools import wraps
 
@@ -339,14 +338,19 @@ class XBMCMixin(object):
         # method directly. This is to ensure a video is played before calling
         # this method.
         player = xbmc.Player()
-        for _ in range(30):
-            if player.isPlaying():
+        monitor = xbmc.Monitor()
+        while not monitor.abortRequested():
+            if monitor.waitForAbort(30):
+                # Abort requested, so exit.
                 break
-            time.sleep(1)
-        else:
-            raise Exception('No video playing. Aborted after 30 seconds.')
+            elif player.isPlaying():
+                # No abort requested after 30 seconds and a video is playing
+                # so add the subtitles and exit.
+                player.setSubtitles(subtitles)
+                break
+            else:
+                raise Exception('No video playing. Aborted after 30 seconds.')
 
-        player.setSubtitles(subtitles)
 
     def set_resolved_url(self, item=None, subtitles=None):
         """Takes a url or a listitem to be played. Used in conjunction with a
