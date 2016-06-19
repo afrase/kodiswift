@@ -2,12 +2,13 @@
 from __future__ import absolute_import
 
 import os
+import warnings
 from datetime import timedelta
 from functools import wraps
 
 import kodiswift
 from kodiswift import xbmc, xbmcplugin, xbmcgui
-from kodiswift.constants import VIEW_MODES, SortMethod
+from kodiswift.constants import SortMethod
 from kodiswift.logger import log
 from kodiswift.storage import TimedStorage, UnknownFormat
 
@@ -256,14 +257,7 @@ class XBMCMixin(object):
 
     @staticmethod
     def get_view_mode_id(view_mode):
-        """Attempts to return a view_mode_id for a given view_mode
-        taking into account the current skin. If not view_mode_id can
-        be found, None is returned. 'thumbnail' is currently the only
-        suppported view_mode.
-        """
-        view_mode_ids = VIEW_MODES.get(view_mode.lower())
-        if view_mode_ids:
-            return view_mode_ids.get(xbmc.getSkinDir())
+        warnings.warn('get_view_mode_id is deprecated.', DeprecationWarning)
         return None
 
     @staticmethod
@@ -523,9 +517,7 @@ class XBMCMixin(object):
             try:
                 view_mode_id = int(view_mode)
             except ValueError:
-                # Attempt to lookup a view mode
-                view_mode_id = self.get_view_mode_id(view_mode)
-
+                view_mode_id = None
             if view_mode_id is not None:
                 self.set_view_mode(view_mode_id)
 
