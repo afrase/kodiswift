@@ -11,7 +11,7 @@ with Kodi.
 """
 from __future__ import absolute_import
 
-__all__ = ['SortMethod', 'VIEW_MODES']
+__all__ = ['SortMethod']
 
 
 class SortMethod(object):

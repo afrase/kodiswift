@@ -71,7 +71,7 @@ from kodiswift.storage import TimedStorage
 from kodiswift.request import Request
 from kodiswift.common import (kodi_url, clean_dict, pickle_dict, unpickle_args,
                               unpickle_dict, download_page)
-from kodiswift.constants import SortMethod, VIEW_MODES
+from kodiswift.constants import SortMethod
 from kodiswift.listitem import ListItem
 from kodiswift.logger import setup_log
 from kodiswift.module import Module
