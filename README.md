@@ -1,5 +1,5 @@
 kodiswift
-==========
+=========
 
 [![Build Status](https://travis-ci.org/Sinap/kodiswift.svg?branch=develop)](https://travis-ci.org/Sinap/kodiswift)
 [![codecov](https://codecov.io/gh/Sinap/kodiswift/branch/develop/graph/badge.svg)](https://codecov.io/gh/Sinap/kodiswift)
