@@ -96,8 +96,7 @@ class PersistentStorage(collections.MutableMapping):
                         break
                     except pickle.UnpicklingError:
                         pass
-            # If we weren't able to load the file and it exists,
-            # raise an error.
+            # If the file exists and wasn't able to be loaded, raise an error.
             if not self._loaded:
                 raise UnknownFormat('Failed to load file')
         return self._loaded
@@ -158,3 +157,6 @@ class TimedStorage(PersistentStorage):
             except KeyError:
                 pass
         return items
+
+    def sync(self):
+        super(TimedStorage, self).sync()
