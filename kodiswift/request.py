@@ -1,34 +1,37 @@
+# -*- coding: utf-8 -*-
 """
-    kodiswift.request
-    ------------------
+kodiswift.request
+------------------
 
-    This module contains the Request class. This class represents an incoming
-    request from Kodi.
+This module contains the Request class. This class represents an incoming
+request from Kodi.
 
-    :copyright: (c) 2012 by Jonathan Beluch
-    :license: GPLv3, see LICENSE for more details.
+:copyright: (c) 2012 by Jonathan Beluch
+:license: GPLv3, see LICENSE for more details.
 """
-from kodiswift.common import unpickle_args
+from __future__ import absolute_import
+
 import urlparse
-try:
-    from urlparse import parse_qs
-except ImportError:
-    from cgi import parse_qs
+
+from kodiswift.common import unpickle_args
+
+__all__ = ['Request']
 
 
 class Request(object):
-    """The request objects contains all the arguments passed to the plugin via
-    the command line.
-
-    :param url: The complete plugin URL being requested. Since Kodi typically
-                passes the URL query string in a separate argument from the
-                base URL, they must be joined into a single string before being
-                provided.
-    :param handle: The handle associated with the current request.
-    """
 
     def __init__(self, url, handle):
-        #: The entire request url.
+        """The request objects contains all the arguments passed to the plugin via
+        the command line.
+
+        Args:
+            url (str): The complete plugin URL being requested. Since Kodi
+                typically passes the URL query string in a separate argument
+                from the base URL, they must be joined into a single string
+                before being provided.
+            handle (Union[int, str]): The handle associated with the current
+                request.
+        """
         self.url = url
 
         #: The current request's handle, an integer.
@@ -40,4 +43,4 @@ class Request(object):
         parts = urlparse.urlparse(remainder)
         self.netloc, self.path, self.query_string = (
             parts[1], parts[2], parts[4])
-        self.args = unpickle_args(parse_qs(self.query_string))
+        self.args = unpickle_args(urlparse.parse_qs(self.query_string))

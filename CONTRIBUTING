@@ -19,6 +19,6 @@ Here are a few guidelines to help you on your way:
 To test your changes to kodiswift within Kodi, you can use `fab
 local_release:eden`. This will create a local copy of Kodi specific
 distribution of kodiswift. You can then copy this folder into your
-~/.xbmc/addons folder.
+~/.kodi/addons folder.
 
 Syntax should follow pep8 guidelines wherever possible.

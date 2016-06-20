@@ -1,8 +1,19 @@
+# Config file for automatic testing at travis-ci.org
 language: python
+
 python:
   - "2.7"
-# command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
-install: pip install --use-mirrors mock nose
-# command to run tests, e.g. python setup.py test
-script: python -m unittest discover
 
+before_install:
+  - pip install codecov pytest-cov
+
+# command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
+install:
+  - pip install --use-mirrors mock nose
+
+# command to run tests, e.g. python setup.py test
+script:
+  - py.test --cov=./
+
+after_success:
+  - codecov

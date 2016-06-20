@@ -1,5 +1,7 @@
+# -*- coding: utf-8 -*-
 import os
 from contextlib import contextmanager
+
 import kodiswift
 
 

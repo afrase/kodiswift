@@ -1,188 +1,162 @@
+# -*- coding: utf-8 -*-
 """
-    kodiswift.storage
-    ~~~~~~~~~~~~~~~~~~
+kodiswift.storage
+-----------------
 
-    This module contains persistent storage classes.
+This module contains persistent storage classes.
 
-    :copyright: (c) 2012 by Jonathan Beluch
-    :license: GPLv3, see LICENSE for more details.
+:copyright: (c) 2012 by Jonathan Beluch
+:license: GPLv3, see LICENSE for more details.
 """
-import os
-import csv
+from __future__ import absolute_import
+
+import collections
 import json
+import os
 import time
+from datetime import datetime
 
 try:
     import cPickle as pickle
 except ImportError:
     import pickle
-import shutil
-import collections
-from datetime import datetime
-from kodiswift.logger import log
+
+__all__ = ['Formats', 'PersistentStorage', 'TimedStorage', 'UnknownFormat']
 
 
-class _persistentdictmixin(object):
-    """Persistent dictionary with an API compatible with shelve and anydbm.
-
-    The dict is kept in memory, so the dictionary operations run as fast as
-    a regular dictionary.
-
-    Write to disk is delayed until close or sync (similar to gdbm's fast mode).
-
-    Input file format is automatically discovered.
-    Output file format is selectable between pickle, json, and csv.
-    All three serialization formats are backed by fast C implementations.
-    """
-
-    def __init__(self, filename, flag='c', mode=None, file_format='pickle'):
-        self.flag = flag  # r=readonly, c=create, or n=new
-        self.mode = mode  # None or an octal triple like 0644
-        self.file_format = file_format  # 'csv', 'json', or 'pickle'
-        self.filename = filename
-        if flag != 'n' and os.access(filename, os.R_OK):
-            log.debug('Reading %s storage from disk at "%s"',
-                      self.file_format, self.filename)
-            fileobj = open(filename, 'rb' if file_format == 'pickle' else 'r')
-            with fileobj:
-                self.load(fileobj)
-
-    def sync(self):
-        """Write the dict to disk"""
-        if self.flag == 'r':
-            return
-        filename = self.filename
-        tempname = filename + '.tmp'
-        fileobj = open(tempname, 'wb' if self.file_format == 'pickle' else 'w')
-        try:
-            self.dump(fileobj)
-        except Exception:
-            os.remove(tempname)
-            raise
-        finally:
-            fileobj.close()
-        shutil.move(tempname, self.filename)  # atomic commit
-        if self.mode is not None:
-            os.chmod(self.filename, self.mode)
-
-    def close(self):
-        """Calls sync"""
-        self.sync()
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, *exc_info):
-        self.close()
-
-    def dump(self, fileobj):
-        """Handles the writing of the dict to the file object"""
-        if self.file_format == 'csv':
-            csv.writer(fileobj).writerows(self.raw_dict().items())
-        elif self.file_format == 'json':
-            json.dump(self.raw_dict(), fileobj, separators=(',', ':'))
-        elif self.file_format == 'pickle':
-            pickle.dump(dict(self.raw_dict()), fileobj, 2)
-        else:
-            raise NotImplementedError('Unknown format: ' +
-                                      repr(self.file_format))
-
-    def load(self, fileobj):
-        """Load the dict from the file object"""
-        # try formats from most restrictive to least restrictive
-        for loader in (pickle.load, json.load, csv.reader):
-            fileobj.seek(0)
-            try:
-                return self.initial_update(loader(fileobj))
-            except Exception:
-                pass
-        raise ValueError('File not in a supported format')
-
-    def raw_dict(self):
-        """Returns the underlying dict"""
-        raise NotImplementedError
+class UnknownFormat(Exception):
+    pass
 
 
-class _Storage(collections.MutableMapping, _persistentdictmixin):
-    """Storage that acts like a dict but also can persist to disk.
+class Formats(object):
+    PICKLE = 'pickle'
+    JSON = 'json'
 
-    :param filename: An absolute filepath to reprsent the storage on disk. The
-                     storage will loaded from this file if it already exists,
-                     otherwise the file will be created.
-    :param file_format: 'pickle', 'json' or 'csv'. pickle is the default. Be
-                        aware that json and csv have limited support for python
-                        objets.
 
-    .. warning:: Currently there are no limitations on the size of the storage.
-                 Please be sure to call :meth:`~kodiswift._Storage.clear`
-                 periodically.
-    """
-
-    def __init__(self, filename, file_format='pickle'):
-        """Acceptable formats are 'csv', 'json' and 'pickle'."""
-        self._items = {}
-        _persistentdictmixin.__init__(self, filename, file_format=file_format)
-
-    def __setitem__(self, key, val):
-        self._items.__setitem__(key, val)
+class PersistentStorage(collections.MutableMapping):
+    def __init__(self, file_path, file_format=Formats.PICKLE):
+        """
+        Args:
+            file_path (str):
+            file_format (Optional[kodiswift.Formats]):
+        """
+        super(PersistentStorage, self).__init__()
+        self.file_path = file_path
+        self.file_format = file_format
+        self._store = {}
+        self._loaded = False
 
     def __getitem__(self, key):
-        return self._items.__getitem__(key)
+        return self._store[key]
+
+    def __setitem__(self, key, value):
+        self._store[key] = value
 
     def __delitem__(self, key):
-        self._items.__delitem__(key)
+        del self._store[key]
 
     def __iter__(self):
-        return iter(self._items)
+        return iter(self._store)
 
     def __len__(self):
-        return self._items.__len__
+        return len(self._store)
 
-    def raw_dict(self):
-        """Returns the wrapped dict"""
-        return self._items
+    def __enter__(self):
+        self.load()
+        self.sync()
+        return self
 
-    initial_update = collections.MutableMapping.update
-
-    def clear(self):
-        super(_Storage, self).clear()
+    def __exit__(self, exc_type, exc_val, exc_tb):
         self.sync()
 
+    def __repr__(self):
+        return '%s(%r)' % (self.__class__.__name__, self._store)
 
-class TimedStorage(_Storage):
+    def items(self):
+        return self._store.items()
+
+    def load(self):
+        """Load the file from disk.
+
+        Returns:
+            bool: True if successfully loaded, False if the file
+                doesn't exist.
+
+        Raises:
+            UnknownFormat: When the file exists but couldn't be loaded.
+        """
+
+        if not self._loaded and os.path.exists(self.file_path):
+            with open(self.file_path, 'rb') as f:
+                for loader in (pickle.load, json.load):
+                    try:
+                        f.seek(0)
+                        self._store = loader(f)
+                        self._loaded = True
+                        break
+                    except pickle.UnpicklingError:
+                        pass
+            # If the file exists and wasn't able to be loaded, raise an error.
+            if not self._loaded:
+                raise UnknownFormat('Failed to load file')
+        return self._loaded
+
+    def close(self):
+        self.sync()
+
+    def sync(self):
+        temp_file = self.file_path + '.tmp'
+        try:
+            with open(temp_file, 'wb') as f:
+                if self.file_format == Formats.PICKLE:
+                    pickle.dump(self._store, f, 2)
+                elif self.file_format == Formats.JSON:
+                    json.dump(self._store, f, separators=(',', ':'))
+                else:
+                    raise NotImplementedError(
+                        'Unknown file format ' + repr(self.file_format))
+        except Exception:
+            if os.path.exists(temp_file):
+                os.remove(temp_file)
+            raise
+        os.rename(temp_file, self.file_path)
+
+
+class TimedStorage(PersistentStorage):
     """A dict with the ability to persist to disk and TTL for items."""
 
-    def __init__(self, filename, file_format='pickle', ttl=None):
-        """TTL if provided should be a datetime.timedelta. Any entries
-        older than the provided TTL will be removed upon load and upon item
-        access.
+    def __init__(self, file_path, ttl=None, **kwargs):
         """
-        self.TTL = ttl
-        _Storage.__init__(self, filename, file_format=file_format)
+        Args:
+            file_path (str):
+            ttl (Optional[int]):
+        """
+        super(TimedStorage, self).__init__(file_path, **kwargs)
+        self.ttl = ttl
 
-    def __setitem__(self, key, val, raw=False):
-        if raw:
-            self._items[key] = val
-        else:
-            self._items[key] = (val, time.time())
+    def __setitem__(self, key, value):
+        self._store[key] = (value, time.time())
 
-    def __getitem__(self, key):
-        val, timestamp = self._items[key]
+    def __getitem__(self, item):
+        val, timestamp = self._store[item]
         ttl_diff = datetime.utcnow() - datetime.utcfromtimestamp(timestamp)
-        if self.TTL and ttl_diff > self.TTL:
-            del self._items[key]
-            return self._items[key][0]  # Will raise KeyError
+        if self.ttl and ttl_diff > self.ttl:
+            del self._store[item]
+            raise KeyError
         return val
 
-    def initial_update(self, mapping):
-        """Initially fills the underlying dictionary with keys, values and
-        timestamps.
-        """
-        for key, val in mapping.items():
-            _, timestamp = val
-            ttl_diff = datetime.utcnow() - datetime.utcfromtimestamp(timestamp)
-            if not self.TTL or ttl_diff < self.TTL:
-                self.__setitem__(key, val, raw=True)
+    def __repr__(self):
+        return '%s(%r)' % (self.__class__.__name__,
+                           dict((k, v[0]) for k, v in self._store.items()))
 
-    def dump(self, fileobj):
-        pass
+    def items(self):
+        items = []
+        for k in self._store.keys():
+            try:
+                items.append((k, self[k]))
+            except KeyError:
+                pass
+        return items
+
+    def sync(self):
+        super(TimedStorage, self).sync()

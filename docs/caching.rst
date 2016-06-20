@@ -45,7 +45,7 @@ since it can store Python objects. However, you can also pass 'csv' or 'json'
 for the ``file_format`` keyword arg to the get_storage call.
 
 
-Expirations
+Expiration's
 ------------
 
 Caches also offer an optional argument, ``TTL``, which is the max lifetime for

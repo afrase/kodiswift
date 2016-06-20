@@ -1,8 +1,10 @@
-from unittest import TestCase
+# -*- coding: utf-8 -*-
+import unittest
+
 from kodiswift.common import kodi_url, clean_dict, pickle_dict, unpickle_dict
 
 
-class TestXBMCUrl(TestCase):
+class TestXBMCUrl(unittest.TestCase):
     def test_xbmc_url(self):
         known_values = (
             # url, options_dict, expected_value
@@ -16,14 +18,14 @@ class TestXBMCUrl(TestCase):
             self.assertEqual(expected, kodi_url(url, **options))
 
 
-class TestCleanDict(TestCase):
+class TestCleanDict(unittest.TestCase):
     def test_clean_dict(self):
-        items = {'foo': 'foo', 'bar': None, 'baz': False, 'age': 0,}
-        expected = {'foo': 'foo', 'baz': False, 'age': 0,}
+        items = {'foo': 'foo', 'bar': None, 'baz': False, 'age': 0}
+        expected = {'foo': 'foo', 'baz': False, 'age': 0}
         self.assertEqual(expected, clean_dict(items))
 
 
-class TestPickleDict(TestCase):
+class TestPickleDict(unittest.TestCase):
     def test_pickle_dict(self):
         items = {
             'name': u'jon',
@@ -52,6 +54,6 @@ class TestPickleDict(TestCase):
         self.assertEqual(unpickle_dict(pickle_dict(items)), items)
 
 
-class TestDownloadPage(TestCase):
+class TestDownloadPage(unittest.TestCase):
     def test_download_page(self):
         pass

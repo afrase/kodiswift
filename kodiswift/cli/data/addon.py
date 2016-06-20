@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from kodiswift import Plugin
 
 
@@ -8,7 +9,7 @@ plugin = Plugin()
 def index():
     item = {
         'label': 'Hello Kodi!',
-        'path': 'http://s3.amazonaws.com/KA-youtube-converted/JwO_25S_eWE.mp4/JwO_25S_eWE.mp4',
+        'path': 'http://example.com/video.mp4',
         'is_playable': True
     }
     return [item]

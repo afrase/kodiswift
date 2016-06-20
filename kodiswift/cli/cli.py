@@ -1,19 +1,21 @@
+# -*- coding: utf-8 -*-
 """
-    kodiswift.cli.cli
-    ------------------
+kodiswift.cli.cli
+------------------
 
-    The main entry point for the kodiswift console script. CLI commands can be
-    registered in this module.
+The main entry point for the kodiswift console script. CLI commands can be
+registered in this module.
 
-    :copyright: (c) 2012 by Jonathan Beluch
-    :license: GPLv3, see LICENSE for more details.
+:copyright: (c) 2012 by Jonathan Beluch
+:license: GPLv3, see LICENSE for more details.
 """
+from __future__ import absolute_import
+
 import sys
 from optparse import OptionParser
 
 from kodiswift.cli.app import RunCommand
 from kodiswift.cli.create import CreateCommand
-
 
 # TODO: Make an ABC for Command
 COMMANDS = {

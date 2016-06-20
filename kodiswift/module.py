@@ -1,14 +1,19 @@
+# -*- coding: utf-8 -*-
 """
-    kodiswift.module
-    -----------------
+kodiswift.module
+-----------------
 
-    This module contains the Module Class.
+This module contains the Module Class.
 
-    :copyright: (c) 2012 by Jonathan Beluch
-    :license: GPLv3, see LICENSE for more details.
+:copyright: (c) 2012 by Jonathan Beluch
+:license: GPLv3, see LICENSE for more details.
 """
-from xbmcmixin import XBMCMixin
+from __future__ import absolute_import
+
 from kodiswift import setup_log
+from kodiswift.xbmcmixin import XBMCMixin
+
+__all__ = ['Module']
 
 
 class Module(XBMCMixin):
@@ -24,25 +29,31 @@ class Module(XBMCMixin):
         self._register_funcs = []
         self._plugin = None
         self._url_prefix = None
-        # TODO: Think of a better log name
         self._log = setup_log(namespace)
 
-    # TODO: add setter for plugin during registration
     @property
     def plugin(self):
-        """Returns the plugin this module is registered to, or raises a
-        RuntimeError if not registered.
+        """Returns the plugin this module is registered to, or
+
+        Returns:
+            kodiswift.Plugin:
+
+        Raises:
+            RuntimeError: If not registered
         """
         if self._plugin is None:
-            # TODO: print called method in the error message
             raise RuntimeError('Module must be registered in order to call'
                                'this method.')
         return self._plugin
 
+    @plugin.setter
+    def plugin(self, value):
+        self._plugin = value
+
     @property
     def cache_path(self):
         """Returns the module's cache_path."""
-        return self.plugin.cache_path
+        return self.plugin.storage_path
 
     @property
     def addon(self):
@@ -75,12 +86,25 @@ class Module(XBMCMixin):
 
         Raises an Exception if this module is not registered with a
         Plugin.
+
+        Returns:
+            str:
+
+        Raises:
+            RuntimeError:
         """
         if self._url_prefix is None:
-            # TODO: print called method in the error message
-            raise RuntimeError('Module must be registered in order to call'
-                               'this method.')
+            raise RuntimeError(
+                'Module must be registered in order to call this method.')
         return self._url_prefix
+
+    @url_prefix.setter
+    def url_prefix(self, value):
+        self._url_prefix = value
+
+    @property
+    def register_funcs(self):
+        return self._register_funcs
 
     def route(self, url_rule, name=None, options=None):
         """A decorator to add a route to a view. name is used to
@@ -104,7 +128,7 @@ class Module(XBMCMixin):
         # TODO: Enable items to be passed with keywords of other var names
         #       such as endpoing and explicit
         # TODO: Figure out how to handle the case where a module wants to
-        # call a parent plugin view.
+        #       call a parent plugin view.
         if not explicit and not endpoint.startswith(self._namespace):
             endpoint = '%s.%s' % (self._namespace, endpoint)
         return self._plugin.url_for(endpoint, **items)
@@ -129,8 +153,3 @@ class Module(XBMCMixin):
         # Delay actual registration of the url rule until this module is
         # registered with a plugin
         self._register_funcs.append(register_rule)
-
-    def redirect(self, url):
-        """Used when you need to redirect to another view, and you only
-        have the final plugin:// url."""
-        return self._plugin._fake_run(url)

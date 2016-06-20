@@ -1,9 +1,10 @@
+# -*- coding: utf-8 -*-
 import unittest
+
 from kodiswift import SortMethod
 
 
 class TestSortMethod(unittest.TestCase):
-
     def test_from_string(self):
         known_values = [
             ('title', 9),

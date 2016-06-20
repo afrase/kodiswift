@@ -34,7 +34,7 @@ files and folders for you. So we'll do just that::
         Done.
 
 If you ``cd`` into the created directory, you should see the familiar addon
-structure, including ``addon.py``, ``addon.xml``, ``resourcres`` directory,
+structure, including ``plugin.py``, ``addon.xml``, ``resourcres`` directory,
 etc.
 
 Setup for this Tutorial
@@ -74,7 +74,7 @@ the command line.::
     $ pip install BeautifulSoup
 
 
-Creating our Addon's Main Menu
+Creating our Plugin's Main Menu
 ------------------------------
 
 Let's modify the the index function, to look like this:
@@ -167,7 +167,7 @@ The last step we need to take before running our addon is to stub out the
     def show_subject_info(url):
         pass
 
-Note that since we are passing a url argument to ``url_for1``, we need to
+Note that since we are passing a url argument to ``url_for``, we need to
 ensure our view can handle the argument. This involves creating a placeholder
 in the url, ``<url>`` and then ensuring our view takes a single argument,
 ``url``. kodiswift will attempt to match incoming URLs against the list of

@@ -1,6 +1,6 @@
 
 Welcome to kodiswift's documentation!
-======================================
+=====================================
 
 Welcome to the documentation for kodiswift. kodiswift is a small framework to
 ease development of Kodi addons. Whether you are an experienced addon

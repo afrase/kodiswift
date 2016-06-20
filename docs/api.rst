@@ -52,7 +52,7 @@ Module
 
 
 TimedStorage
-``````````
+````````````
 
 .. autoclass:: TimedStorage
     :members:

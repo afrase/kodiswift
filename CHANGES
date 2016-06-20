@@ -1,73 +1,8 @@
-0.3
-===
-
-- Allow ints to be passed to plugin.url_for() and str() them.
-- plugin.set_resolved_url() now takes an item dict instead of a URL. (The URL
-  is still allowed for backwards compatibility but is decprecated).
-- Ability to replace the context menu items by setting 'replace_context_menu'
-  to True in an item dict.
-- pluign.get_setting() now requires an extra paramter, *converter*, which
-  converts the item from XML to a python type specified by converter.
-- Major bug fix to accomodate handles > 0 in Kodi Frodo.
-- Auto-call plugin.finish(succeeded=False) if a view returns None.
-- Kodi now decides the default player when using plugin.play_video().
-- Storages now call sync() when clear() is called.
-- Added plugin.clear_function_cache() which clears the storage behind the
-  @cached and @cached_route decorators.
-- Add ability to set stream info for list items. Also, devs can now add
-  stream_info to item dicts.
-- Added the actions module. Contains actions.background() and
-  actions.update_view() which are convenience wrappers for RunPlugin() and
-  Container.Update().
-- Allow passing of functions to url_for.
-- 'properties' key in an item dict should now be a dictionary. A list of tuples
-  is still allowed for backwards compatibility.
-- Addon user is now prompted and storage automatically cleared if it becomes
-  corrupted.
-- Added subtitles support. A 'subtitles' parameter was added to
-  plugin.set_resolved_url().
-- kodiswift URLs and routing code is now indifferent to a trailing slash.
-- Bug fixes. See https://github.com/jbeluch/kodiswift/issues?milestone=3.
-
-
-0.2.2
+0.0.1
 =====
 
-Released on December 16th, 2012
-
-* Bug fixes
-
-
-0.2.1
-=====
-
-Released on November 25th, 2012.
-
-* Update usages of pickle to use cPickle if available.
-* Allow settings to be specified as environment variables when running in CLI
-  mode. e.g. to set a username, the environment variable will be
-  XBMCSWIFT2_USERNAME.
-* Add new keyboard helper method available on a plugin instance.
-* Allow TTL to be specified as an arg to the cached_route decorator.
-
-
-0.2
-===
-
-* Addon name, id and filepath are now no longer necessary for Plugin(). They
-  will be discovered automatically.
-* Plugin() now creates the storage folder
-* Plugin.set_info now supports different info types
-* Sort methods can be passed as strings to plugin.finish()
-* Plugin caching has been renamed to storage and now works properly
-
-0.1.1
-=====
-
-* Fix package data bug. `kodiswift create` should work properly now.
-
-
-0.1
-===
-
-* Initial release
+- Initial fork of xbmcswift2
+- Code cleanup
+- Added art property to ListItem
+- Deprecated non-pythonic ListItem properties in favor of more pythonic ones
+- Re-wrote PersistentStorage and TimedStorage

@@ -1,16 +1,21 @@
+# -*- coding: utf-8 -*-
 """
-    kodiswift.listitem
-    ------------------
+kodiswift.listitem
+------------------
 
-    This module contains the ListItem class, which acts as a wrapper
-    for xbmcgui.ListItem.
+This module contains the ListItem class, which acts as a wrapper
+for xbmcgui.ListItem.
 
-    :copyright: (c) 2012 by Jonathan Beluch
-    :license: GPLv3, see LICENSE for more details.
+:copyright: (c) 2012 by Jonathan Beluch
+:license: GPLv3, see LICENSE for more details.
 """
+from __future__ import absolute_import
+
 import warnings
 
 from kodiswift import xbmcgui
+
+__all__ = ['ListItem']
 
 
 class ListItem(object):
@@ -23,23 +28,17 @@ class ListItem(object):
         """Defaults are an emtpy string since xbmcgui.ListItem will not
         accept None.
         """
-        # kwargs = {
-        #     'label': label,
-        #     'label2': label2,
-        #     'path': path,
-        # }
-        # kwargs = {k: v for k, v in kwargs.items() if v is not None}
         self._listitem = xbmcgui.ListItem(label, label2, path)
 
-        # kodi doesn't make getters available for these properties so we'll
-        # keep track on our own
-        self._art = {}
+        # The docs have the thumbnail property set as thumb
+        # http://mirrors.kodi.tv/docs/python-docs/16.x-jarvis/xbmcgui.html#ListItem-setArt
+        self._art = {'icon': icon, 'thumb': thumbnail}
         self._icon = icon
         self._path = path
         self._thumbnail = thumbnail
         self._context_menu_items = []
-        self.is_folder = True
         self._played = False
+        self.is_folder = True
 
     def get_context_menu_items(self):
         """Returns the list of currently set context_menu items."""
@@ -59,10 +58,18 @@ class ListItem(object):
 
     @property
     def label(self):
+        """
+        Returns:
+            str:
+        """
         return self._listitem.getLabel()
 
     @label.setter
     def label(self, value):
+        """
+        Args:
+            value (str):
+        """
         self._listitem.setLabel(value)
 
     def get_label(self):
@@ -111,22 +118,6 @@ class ListItem(object):
                       DeprecationWarning)
         return self._listitem.select(selected_status)
 
-    def set_info(self, info_type, info_labels):
-        """Sets the listitems info"""
-        return self._listitem.setInfo(info_type, info_labels)
-
-    def get_property(self, key):
-        """Returns the property associated with the given key"""
-        return self._listitem.getProperty(key)
-
-    def set_property(self, key, value):
-        """Sets a property for the given key and value"""
-        return self._listitem.setProperty(key, value)
-
-    def add_stream_info(self, stream_type, stream_values):
-        """Adds stream details"""
-        return self._listitem.addStreamInfo(stream_type, stream_values)
-
     @property
     def icon(self):
         return self._art.get('icon')
@@ -139,33 +130,42 @@ class ListItem(object):
     def get_icon(self):
         warnings.warn('get_icon is deprecated, use icon property',
                       DeprecationWarning)
-        return self._icon
+        return self.icon
 
     def set_icon(self, icon):
         warnings.warn('set_icon is deprecated, use icon property',
                       DeprecationWarning)
-        self._icon = icon
-        return self._listitem.setIconImage(icon)
+        self.icon = icon
+        return self.icon
 
     @property
     def thumbnail(self):
-        return self._art.get('thumbnail')
+        return self._art.get('thumb')
 
     @thumbnail.setter
     def thumbnail(self, value):
-        self._art['thumbnail'] = value
+        self._art['thumb'] = value
         self._listitem.setArt(self._art)
 
     def get_thumbnail(self):
         warnings.warn('get_thumbnail is deprecated, use thumbnail property',
                       DeprecationWarning)
-        return self._thumbnail
+        return self.thumbnail
 
     def set_thumbnail(self, thumbnail):
         warnings.warn('set_thumbnail is deprecated, use thumbnail property',
                       DeprecationWarning)
-        self._thumbnail = thumbnail
-        return self._listitem.setThumbnailImage(thumbnail)
+        self.thumbnail = thumbnail
+        return self.thumbnail
+
+    @property
+    def poster(self):
+        return self._art.get('poster')
+
+    @poster.setter
+    def poster(self, value):
+        self._art['poster'] = value
+        self._listitem.setArt(self._art)
 
     @property
     def path(self):
@@ -220,8 +220,9 @@ class ListItem(object):
         self._played = value
 
     def set_played(self, was_played):
-        """Sets the played status of the listitem. Used to
-        differentiate between a resolved video versus a playable item.
+        """Sets the played status of the listitem.
+
+        Used to differentiate between a resolved video versus a playable item.
         Has no effect on Kodi, it is strictly used for kodiswift.
         """
         warnings.warn('set_played is deprecated, use played property',
@@ -246,6 +247,22 @@ class ListItem(object):
         self._art = value
         self._listitem.setArt(value)
 
+    def set_info(self, info_type, info_labels):
+        """Sets the listitem's info"""
+        return self._listitem.setInfo(info_type, info_labels)
+
+    def get_property(self, key):
+        """Returns the property associated with the given key"""
+        return self._listitem.getProperty(key)
+
+    def set_property(self, key, value):
+        """Sets a property for the given key and value"""
+        return self._listitem.setProperty(key, value)
+
+    def add_stream_info(self, stream_type, stream_values):
+        """Adds stream details"""
+        return self._listitem.addStreamInfo(stream_type, stream_values)
+
     def as_tuple(self):
         """Returns a tuple of list item properties:
             (path, the wrapped xbmcgui.ListItem, is_folder)
@@ -260,22 +277,32 @@ class ListItem(object):
     def from_dict(cls, label=None, label2=None, icon=None, thumbnail=None,
                   path=None, selected=None, info=None, properties=None,
                   context_menu=None, replace_context_menu=False,
-                  is_playable=None, info_type='video', stream_info=None):
+                  is_playable=None, info_type='video', stream_info=None,
+                  **kwargs):
         """A ListItem constructor for setting a lot of properties not
         available in the regular __init__ method. Useful to collect all
         the properties in a dict and then use the **dct to call this
         method.
         """
-        listitem = cls(label, label2, icon, thumbnail, path)
+        # TODO(Sinap): Should this just use **kwargs? or should art be a dict?
+        listitem = cls(label, label2, path=path)
+        listitem.art = {
+            'icon': icon,
+            'thumb': thumbnail,
+            'poster': kwargs.get('poster'),
+            'banner': kwargs.get('banner'),
+            'fanart': kwargs.get('fanart'),
+            'landscape': kwargs.get('landscape'),
+        }
 
         if selected is not None:
-            listitem.select(selected)
+            listitem.selected = selected
 
         if info:
             listitem.set_info(info_type, info)
 
         if is_playable:
-            listitem.set_is_playable(True)
+            listitem.playable = True
 
         if properties:
             # Need to support existing tuples, but prefer to have a dict for
@@ -293,6 +320,15 @@ class ListItem(object):
             listitem.add_context_menu_items(context_menu, replace_context_menu)
 
         return listitem
+
+    def __eq__(self, other):
+        if not isinstance(other, ListItem):
+            raise NotImplementedError
+        self_props = (self.label, self.label2, self.art, self.path,
+                      self.playable, self.selected, self.played,)
+        other_props = (other.label, other.label2, other.art, other.path,
+                       other.playable, other.selected, other.played,)
+        return self_props == other_props
 
     def __str__(self):
         return ('%s (%s)' % (self.label, self.path)).encode('utf-8')

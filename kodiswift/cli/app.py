@@ -1,22 +1,29 @@
+# -*- coding: utf-8 -*-
 """
-    kodiswift.cli.app
-    ----------------
+kodiswift.cli.app
+----------------
 
-    This package contains the code which runs plugins from the command line.
+This package contains the code which runs plugins from the command line.
 
-    :copyright: (c) 2012 by Jonathan Beluch
-    :license: GPLv3, see LICENSE for more details.
+:copyright: (c) 2012 by Jonathan Beluch
+:license: GPLv3, see LICENSE for more details.
 """
+from __future__ import absolute_import
+
+import logging
 import os
 import sys
-import logging
 from xml.etree import ElementTree as Et
 
 from kodiswift import Plugin, ListItem, logger
-from kodiswift.common import Modes
 from kodiswift.cli import Option
 from kodiswift.cli.console import (display_listitems, continue_or_quit,
                                    get_user_choice)
+from kodiswift.common import Modes
+
+__all__ = ['get_addon_module_name', 'crawl', 'RunCommand', 'PluginManager',
+           'setup_options', 'patch_sysargv', 'patch_plugin', 'once',
+           'interactive']
 
 
 class RunCommand(object):

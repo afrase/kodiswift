@@ -1,12 +1,15 @@
+# -*- coding: utf-8 -*-
 """
-    kodiswift.actions
-    ------------------
+kodiswift.actions
+------------------
 
-    This module contains wrapper functions for Kodi built-in functions.
+This module contains wrapper functions for Kodi built-in functions.
 
-    :copyright: (c) 2012 by Jonathan Beluch
-    :license: GPLv3, see LICENSE for more details.
+:copyright: (c) 2012 by Jonathan Beluch
+:license: GPLv3, see LICENSE for more details.
 """
+
+__all__ = ['background', 'update_view']
 
 
 def background(url):

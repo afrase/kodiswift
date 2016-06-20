@@ -1,0 +1,21 @@
+doc-warnings: no
+test-warnings: no
+strictness: veryhigh
+autodetect: yes
+ignore-paths:
+    - docs
+ignore-patterns:
+    - (^|/)docs(/|$)
+    - setup\.py
+    - fabfile\.py
+    - polib\.py
+    - _compat\.py
+python-targets:
+    - 2
+pyflakes:
+  disable:
+    - F401
+pylint:
+  disable:
+    - too-few-public-methods
+    - too-many-instance-attributes

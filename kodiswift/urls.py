@@ -1,18 +1,23 @@
+# -*- coding: utf-8 -*-
 """
-    kodiswift.urls
-    ---------------
+kodiswift.urls
+---------------
 
-    This module contains URLRule class for dealing with url patterns.
+This module contains URLRule class for dealing with url patterns.
 
-    :copyright: (c) 2012 by Jonathan Beluch
-    :license: GPLv3, see LICENSE for more details.
+:copyright: (c) 2012 by Jonathan Beluch
+:license: GPLv3, see LICENSE for more details.
 """
+from __future__ import absolute_import
+
 import re
 from urllib import urlencode, unquote_plus, quote_plus
+
 from kodiswift.common import pickle_dict, unpickle_dict
 
+__all__ = ['UrlRule', 'AmbiguousUrlException', 'NotFoundException']
 
-# TODO: Use regular Exceptions
+
 class AmbiguousUrlException(Exception):
     pass
 
@@ -22,24 +27,29 @@ class NotFoundException(Exception):
 
 
 class UrlRule(object):
-    """This object stores the various properties related to a routing URL rule.
-    It also provides a few methods to create URLs from the rule or to match a
-    given URL against a rule.
-
-    :param url_rule: The relative url pattern for the rule. It may include
-                     <var_name> to denote where dynamic variables should be
-                     matched.
-    :param view_func: The function that should be bound to this rule. This
-                      should be an actual function object.
-
-                      .. warning:: The function signature should match any
-                                   variable names in the provided url_rule.
-    :param name: The name of the url rule. This is used in the reverse process
-                 of creating urls for a given rule.
-    :param options: A dict containing any default values for the url rule.
+    """A class the encapsulates a URL
     """
 
     def __init__(self, url_rule, view_func, name, options):
+        """Stores the various properties related to a routing URL rule.
+
+        It also provides a few methods to create URLs from the rule or to
+        match a given URL against a rule.
+
+        Args:
+            url_rule: The relative url pattern for the rule.
+                It may include <var_name> to denote where dynamic variables
+                should be matched.
+            view_func: The function that should be bound to this rule.
+                This should be an actual function object.
+            name: The name of the url rule. This is used in the reverse
+                process of creating urls for a given rule.
+            options: A dict containing any default values for the url rule.
+
+        Warnings:
+            view_func: The function signature should match any variable
+                names in the provided url_rule.
+        """
         self._name = name
         self._url_rule = url_rule
         self._view_func = view_func
@@ -64,22 +74,30 @@ class UrlRule(object):
                              'brackets: "<" or ">"')
 
     def __eq__(self, other):
-        return (
-            (self._name, self._url_rule, self._view_func, self._options) ==
-            (other._name, other._url_rule, other._view_func, other._options)
-        )
+        if isinstance(other, UrlRule):
+            return (
+                (self._name, self._url_rule, self._view_func, self._options) ==
+                (other._name, other._url_rule, other._view_func, other._options)
+            )
+        else:
+            raise NotImplementedError
 
     def __ne__(self, other):
-        return not self.__eq__(other)
+        return not self == other
 
     def match(self, path):
-        """Attempts to match a url to the given path. If successful, a tuple is
-        returned. The first item is the matchd function and the second item is
-        a dictionary containing items to be passed to the function parsed from
-        the provided path.
+        """Attempts to match a url to the given path.
 
-        If the provided path does not match this url rule then a
-        NotFoundException is raised.
+        If successful, a tuple is returned. The first item is the matched
+        function and the second item is a dictionary containing items to be
+        passed to the function parsed from the provided path.
+
+        Args:
+            path (str): The URL path.
+
+        Raises:
+            NotFoundException: If the provided path does not match this
+                url rule.
         """
         m = self._regex.search(path)
         if not m:
@@ -105,8 +123,8 @@ class UrlRule(object):
         """
         for key, val in items.items():
             if not isinstance(val, basestring):
-                raise TypeError, ('Value "%s" for key "%s" must be an instance'
-                                  ' of basestring' % (val, key))
+                raise TypeError('Value "%s" for key "%s" must be an instance'
+                                ' of basestring' % (val, key))
             items[key] = quote_plus(val)
 
         try:

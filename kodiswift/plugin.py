@@ -1,28 +1,28 @@
+# -*- coding: utf-8 -*-
 """
-    kodiswift.plugin
-    -----------------
+kodiswift.plugin
+-----------------
 
-    This module contains the Plugin class. This class handles all of the url
-    routing and interaction with Kodi for a plugin.
+This module contains the Plugin class. This class handles all of the url
+routing and interaction with Kodi for a plugin.
 
-    :copyright: (c) 2012 by Jonathan Beluch
-    :license: GPLv3, see LICENSE for more details.
+:copyright: (c) 2012 by Jonathan Beluch
+:license: GPLv3, see LICENSE for more details.
 """
+from __future__ import absolute_import
+
+import collections
+import inspect
 import os
 import sys
 
 import kodiswift
-
-try:
-    from urlparse import parse_qs
-except ImportError:
-    from cgi import parse_qs
-
-from logger import log, setup_log
-from urls import UrlRule, NotFoundException, AmbiguousUrlException
 from kodiswift import xbmc, xbmcaddon, Request
+from kodiswift.logger import log, setup_log
+from kodiswift.urls import UrlRule, NotFoundException, AmbiguousUrlException
+from kodiswift.xbmcmixin import XBMCMixin
 
-from xbmcmixin import XBMCMixin
+__all__ = ['Plugin']
 
 
 class Plugin(XBMCMixin):
@@ -30,44 +30,35 @@ class Plugin(XBMCMixin):
     for running an Kodi plugin. The plugin instance is a central place for
     registering view functions and keeping track of plugin state.
 
-    Usually the plugin instance is created in the main addon.py file for the
+    Usually the plugin instance is created in the main plugin.py file for the
     plugin. Typical creation looks like this::
 
-        from kodiswift import Plugin
-        plugin = Plugin('Hello Kodi')
-
-
-    .. versionchanged:: 0.2
-        The *addon_id* and *filepath* parameters are now optional. They will
-        now default to the correct values.
-
-    :param name: The name of the plugin, e.g. 'Academic Earth'.
-
-    :param addon_id: The Kodi addon ID for the plugin, e.g.
-                     'plugin.video.academicearth'. This parameter is now
-                     optional and is really only useful for testing purposes.
-                     If it is not provided, the correct value will be parsed
-                     from the addon.xml file.
-
-    :param filepath: Optional parameter. If provided, it should be the path to
-                     the addon.py file in the root of the addon directoy. This
-                     only has an effect when kodiswift is running on the
-                     command line. Will default to the current working
-                     directory since kodiswift requires execution in the root
-                     addon directoy anyway. The parameter still exists to ease
-                     testing.
+        >>> from kodiswift import Plugin
+        >>> plugin = Plugin('Hello Kodi')
     """
 
-    def __init__(self, name=None, addon_id=None, filepath=None, info_type=None):
+    def __init__(self, name=None, addon_id=None, plugin_file=None,
+                 info_type=None):
+        """
+        Args:
+            name (Optional[str]): The name of the plugin, e.g. 'Hello Kodi'.
+            addon_id (Optional[str): The Kodi addon ID for the plugin,
+                e.g. 'plugin.video.hellokodi'. This parameter is now optional
+                and is really only useful for testing purposes. If it is not
+                provided, the correct value will be parsed from the
+                addon.xml file.
+            plugin_file (Optional[str]): If provided, it should be the path
+                to the plugin.py file in the root of the addon directory.
+                This only has an effect when kodiswift is running on the
+                command line. Will default to the current working directory
+                since kodiswift requires execution in the root addon directory
+                anyway. The parameter still exists to ease testing.
+            info_type (Optional[str):
+        """
         self._name = name
         self._routes = []
         self._view_functions = {}
-
-        # addon_id is no longer required as it can be parsed from addon.xml
-        if addon_id:
-            self._addon = xbmcaddon.Addon(id=addon_id)
-        else:
-            self._addon = xbmcaddon.Addon()
+        self._addon = xbmcaddon.Addon()
 
         self._addon_id = addon_id or self._addon.getAddonInfo('id')
         self._name = name or self._addon.getAddonInfo('name')
@@ -103,17 +94,17 @@ class Plugin(XBMCMixin):
         if not os.path.isdir(self._storage_path):
             os.makedirs(self._storage_path)
 
-        # If we are runing in CLI, we need to load the strings.xml manually
+        # If we are running in CLI, we need to load the strings.xml manually
         # Since kodiswift currently relies on execution from an addon's root
         # directly, we can rely on cwd for now...
         if kodiswift.CLI_MODE:
             from kodiswift.mockxbmc import utils
-            if filepath:
-                addon_dir = os.path.dirname(filepath)
+            if plugin_file:
+                plugin_dir = os.path.dirname(plugin_file)
             else:
-                addon_dir = os.getcwd()
-            strings_fn = os.path.join(addon_dir, 'resources', 'language',
-                                      'English', 'strings.xml')
+                plugin_dir = os.getcwd()
+            strings_fn = os.path.join(
+                plugin_dir, 'resources', 'language', 'English', 'strings.po')
             utils.load_addon_strings(self._addon, strings_fn)
 
     @property
@@ -122,30 +113,38 @@ class Plugin(XBMCMixin):
 
     @property
     def log(self):
-        """The log instance for the plugin. Returns an instance of the
-        stdlib's ``logging.Logger``. This log will print to STDOUT when running
-        in CLI mode and will forward messages to Kodi's log when running in
-        Kodi. Some examples::
+        """The log instance for the plugin.
 
-            plugin.log.debug('Debug message')
-            plugin.log.warning('Warning message')
-            plugin.log.error('Error message')
+        Returns an instance of the stdlib's ``logging.Logger``.
+        This log will print to STDOUT when running in CLI mode and will
+        forward messages to Kodi's log when running in Kodi.
+
+        Examples:
+            ``plugin.log.debug('Debug message')``
+            ``plugin.log.warning('Warning message')``
+            ``plugin.log.error('Error message')``
+
+        Returns:
+            logging.Logger:
         """
         return self._log
 
     @property
     def id(self):
-        """The id for the addon instance."""
+        """The id for the addon instance.
+        """
         return self._addon_id
 
     @property
     def storage_path(self):
-        """A full path to the storage folder for this plugin's addon data."""
+        """A full path to the storage folder for this plugin's addon data.
+        """
         return self._storage_path
 
     @property
     def addon(self):
-        """This plugin's wrapped instance of xbmcaddon.Addon."""
+        """This addon's wrapped instance of xbmcaddon.Plugin.
+        """
         return self._addon
 
     @property
@@ -157,21 +156,22 @@ class Plugin(XBMCMixin):
         """
         return self._current_items
 
-    def clear_added_items(self):
-        # TODO: This shouldn't be exposed probably...
-        self._current_items = []
-
     @property
     def handle(self):
-        """The current plugin's handle. Equal to ``plugin.request.handle``."""
+        """The current plugin's handle. Equal to ``plugin.request.handle``.
+        """
         return self.request.handle
 
     @property
     def request(self):
         """The current :class:`~kodiswift.Request`.
 
-        Raises an Exception if the request hasn't been initialized yet via
-        :meth:`~kodiswift.Plugin.run()`.
+        Raises:
+            Exception: if the request hasn't been initialized yet via
+                :meth:`~kodiswift.Plugin.run()`.
+
+        Returns:
+            kodiswift.Request:
         """
         if self._request is None:
             raise Exception('It seems the current request has not been '
@@ -182,48 +182,39 @@ class Plugin(XBMCMixin):
 
     @property
     def name(self):
-        """The addon's name"""
+        """The addon's name.
+
+        Returns:
+            str:
+        """
         return self._name
 
-    def _parse_request(self, url=None, handle=None):
-        """Handles setup of the plugin state, including request
-        arguments, handle, mode.
-
-        This method never needs to be called directly. For testing, see
-        plugin.test()
-        """
-        # To accommodate self.redirect, we need to be able to parse a full
-        # url as well
-        if url is None:
-            url = sys.argv[0]
-            if len(sys.argv) == 3:
-                url += sys.argv[2]
-        if handle is None:
-            handle = sys.argv[1]
-        return Request(url, handle)
+    def clear_added_items(self):
+        self._current_items = []
 
     def register_module(self, module, url_prefix):
-        """Registers a module with a plugin. Requires a url_prefix that
-        will then enable calls to url_for.
+        """Registers a module with a plugin. Requires a url_prefix that will
+        then enable calls to url_for.
 
-        :param module: Should be an instance `kodiswift.Module`.
-        :param url_prefix: A url prefix to use for all module urls,
-                           e.g. '/mymodule'
+        Args:
+            module (kodiswift.Module):
+            url_prefix (str): A url prefix to use for all module urls,
+                e.g. '/mymodule'
         """
-        module._plugin = self
-        module._url_prefix = url_prefix
-        for func in module._register_funcs:
+        module.plugin = self
+        module.url_prefix = url_prefix
+        for func in module.register_funcs:
             func(self, url_prefix)
 
-    def cached_route(self, url_rule, name=None, options=None, TTL=None):
+    def cached_route(self, url_rule, name=None, options=None, ttl=None):
         """A decorator to add a route to a view and also apply caching. The
         url_rule, name and options arguments are the same arguments for the
         route function. The TTL argument if given will passed along to the
         caching decorator.
         """
         route_decorator = self.route(url_rule, name=name, options=options)
-        if TTL:
-            cache_decorator = self.cached(TTL)
+        if ttl:
+            cache_decorator = self.cached(ttl)
         else:
             cache_decorator = self.cached()
 
@@ -232,14 +223,22 @@ class Plugin(XBMCMixin):
 
         return new_decorator
 
-    def route(self, url_rule, name=None, options=None):
+    def route(self, url_rule=None, name=None, root=False, options=None):
         """A decorator to add a route to a view. name is used to
         differentiate when there are multiple routes for a given view."""
 
-        # TODO: change options kwarg to defaults
         def decorator(f):
             view_name = name or f.__name__
-            self.add_url_rule(url_rule, f, name=view_name, options=options)
+            if root:
+                url = '/'
+            elif not url_rule:
+                url = '/' + view_name + '/'
+                args = inspect.getargspec(f)[0]
+                if args:
+                    url += '/'.join('%s/<%s>' % (p, p) for p in args)
+            else:
+                url = url_rule
+            self.add_url_rule(url, f, name=view_name, options=options)
             return f
 
         return decorator
@@ -290,30 +289,8 @@ class Plugin(XBMCMixin):
             # TODO: Make this a regular exception
             raise AmbiguousUrlException
 
-        pathqs = rule.make_path_qs(items)
-        return 'plugin://%s%s' % (self._addon_id, pathqs)
-
-    def _dispatch(self, path):
-        for rule in self._routes:
-            try:
-                view_func, items = rule.match(path)
-            except NotFoundException:
-                continue
-            log.info('Request for "%s" matches rule for function "%s"',
-                     path, view_func.__name__)
-            listitems = view_func(**items)
-
-            # Only call self.finish() for UI container listing calls to plugin
-            # (handle will be >= 0). Do not call self.finish() when called via
-            # RunPlugin() (handle will be -1).
-            if not self._end_of_directory and self.handle >= 0:
-                if listitems is None:
-                    self.finish(succeeded=False)
-                else:
-                    listitems = self.finish(listitems)
-
-            return listitems
-        raise NotFoundException('No matching view found for %s' % path)
+        path_qs = rule.make_path_qs(items)
+        return 'plugin://%s%s' % (self._addon_id, path_qs)
 
     def redirect(self, url):
         """Used when you need to redirect to another view, and you only
@@ -323,17 +300,57 @@ class Plugin(XBMCMixin):
         log.debug('Redirecting %s to %s', self.request.path, new_request.path)
         return self._dispatch(new_request.path)
 
-    def run(self, test=False):
+    def run(self):
         """The main entry point for a plugin."""
         self._request = self._parse_request()
         log.debug('Handling incoming request for %s', self.request.path)
         items = self._dispatch(self.request.path)
 
         # Close any open storages which will persist them to disk
-        if hasattr(self, '_unsynced_storages'):
-            for storage in self._unsynced_storages.values():
+        if hasattr(self, '_unsynced_storage'):
+            for storage in self._unsynced_storage.values():
                 log.debug('Saving a %s storage to disk at "%s"',
-                          storage.file_format, storage.filename)
+                          storage.file_format, storage.file_path)
                 storage.close()
 
         return items
+
+    def _dispatch(self, path):
+        for rule in self._routes:
+            try:
+                view_func, items = rule.match(path)
+            except NotFoundException:
+                continue
+            log.info('Request for "%s" matches rule for function "%s"',
+                     path, view_func.__name__)
+            resp = view_func(**items)
+
+            # Only call self.finish() for UI container listing calls to plugin
+            # (handle will be >= 0). Do not call self.finish() when called via
+            # RunPlugin() (handle will be -1).
+            if not self._end_of_directory and self.handle >= 0:
+                if isinstance(resp, dict):
+                    resp['items'] = self.finish(**resp)
+                elif isinstance(resp, collections.Iterable):
+                    resp = self.finish(items=resp)
+            return resp
+
+        raise NotFoundException('No matching view found for %s' % path)
+
+    @staticmethod
+    def _parse_request(url=None, handle=None):
+        """Handles setup of the plugin state, including request
+        arguments, handle, mode.
+
+        This method never needs to be called directly. For testing, see
+        plugin.test()
+        """
+        # To accommodate self.redirect, we need to be able to parse a full
+        # url as well
+        if url is None:
+            url = sys.argv[0]
+            if len(sys.argv) == 3:
+                url += sys.argv[2]
+        if handle is None:
+            handle = sys.argv[1]
+        return Request(url, handle)

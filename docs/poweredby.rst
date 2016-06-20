@@ -2,13 +2,13 @@
 
 
 Addons Powered by kodiswift
-============================ 
+===========================
 
 Want your addon included here? Send me an email at web@jonathanbeluch.com with
 your addon name and a link to a repository (Kodi's git repo is fine).
 
 ========================    =============================================================
-Addon                       Source
+Plugin                       Source
 ========================    =============================================================
 `Academic Earth`_           https://github.com/jbeluch/xbmc-academic-earth
 `Documentary.net`_          https://github.com/jbeluch/plugin.video.documentary.net

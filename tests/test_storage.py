@@ -1,116 +1,106 @@
-import os
-import pickle
-from kodiswift.storage import _Storage, TimedStorage
-from unittest import TestCase
-from datetime import timedelta
+# -*- coding: utf-8 -*-
 import time
+import unittest
+from datetime import timedelta
+from tempfile import NamedTemporaryFile
+
+from kodiswift.storage import TimedStorage, PersistentStorage, Formats
 
 
-def remove(filename):
-    try:
-        os.remove(filename)
-    except OSError:
+class TestCache(unittest.TestCase):
+
+    def test_pickle(self):
+        with NamedTemporaryFile() as temp:
+            storage = PersistentStorage(temp.name, Formats.PICKLE)
+
+            storage['name'] = 'jon'
+            storage.update({'answer': 42})
+            storage.close()
+
+            storage2 = PersistentStorage(temp.name, Formats.PICKLE)
+            storage2.load()
+            self.assertEqual(storage, storage2)
+            self.assertEqual(2, len(storage2.items()))
+            self.assertTrue('name' in storage2.keys())
+            self.assertTrue('answer' in storage2.keys())
+            self.assertEqual('jon', storage2.pop('name'))
+            self.assertEqual(42, storage2['answer'])
+
+    def test_json(self):
+        with NamedTemporaryFile() as temp:
+            storage = PersistentStorage(temp.name, file_format='json')
+
+            storage['name'] = 'jon'
+            storage.update({'answer': '42'})
+            storage.close()
+
+            storage2 = PersistentStorage(temp.name, file_format='json')
+            storage2.load()
+            self.assertEqual(sorted(storage.items()), sorted(storage2.items()))
+            self.assertEqual(2, len(storage2.items()))
+            self.assertTrue('name' in storage2.keys())
+            self.assertTrue('answer' in storage2.keys())
+            self.assertEqual('jon', storage2.pop('name'))
+            self.assertEqual('42', storage2['answer'])
+
+    def test_load_raise_on_corrupt_file(self):
+        pass
+
+    def test_load_non_existing_file(self):
+        pass
+
+    def test_load_existing_file(self):
         pass
 
 
-class TestCache(TestCase):
+class TestTimedStorage(unittest.TestCase):
 
-    def test_pickle(self):
-        filename = '/tmp/testdict.pickle'
-        remove(filename)
-        storage = _Storage(filename, file_format='pickle')
-
+    def test_timed_pickle(self):
+        with NamedTemporaryFile() as temp:
+            storage = TimedStorage(temp.name, timedelta(hours=1),
+                                   file_format=Formats.PICKLE)
         storage['name'] = 'jon'
         storage.update({'answer': 42})
         storage.close()
 
-        storage2 = _Storage(filename, file_format='pickle')
-        self.assertEqual(storage, storage2)
-        self.assertEqual(2, len(storage2.items()))
-        self.assertTrue('name' in storage2.keys())
-        self.assertTrue('answer' in storage2.keys())
-        self.assertEqual('jon', storage2.pop('name'))
-        self.assertEqual(42, storage2['answer'])
-
-        remove(filename)
-
-    def test_csv(self):
-        filename = '/tmp/testdict.csv'
-        remove(filename)
-        storage = _Storage(filename, file_format='csv')
-
-        storage['name'] = 'jon'
-        storage.update({'answer': '42'})
-        storage.close()
-
-        storage2 = _Storage(filename, file_format='csv')
-        self.assertEqual(sorted(storage.items()), sorted(storage2.items()))
-        self.assertEqual(2, len(storage2.items()))
-        self.assertTrue('name' in storage2.keys())
-        self.assertTrue('answer' in storage2.keys())
-        self.assertEqual('jon', storage2.pop('name'))
-        self.assertEqual('42', storage2['answer'])
-
-        remove(filename)
-
-    def test_json(self):
-        filename = '/tmp/testdict.json'
-        remove(filename)
-        storage = _Storage(filename, file_format='json')
-
-        storage['name'] = 'jon'
-        storage.update({'answer': '42'})
-        storage.close()
-
-        storage2 = _Storage(filename, file_format='json')
-        self.assertEqual(sorted(storage.items()), sorted(storage2.items()))
-        self.assertEqual(2, len(storage2.items()))
-        self.assertTrue('name' in storage2.keys())
-        self.assertTrue('answer' in storage2.keys())
-        self.assertEqual('jon', storage2.pop('name'))
-        self.assertEqual('42', storage2['answer'])
-
-        remove(filename)
-
-
-class TestTimedStorage(TestCase):
-
-    def test_pickle(self):
-        filename = '/tmp/testdict.pickle'
-        remove(filename)
-        storage = TimedStorage(filename, file_format='pickle', ttl=timedelta(hours=1))
-        storage['name'] = 'jon'
-        storage.update({'answer': 42})
-        storage.close()
-
-        # Reopen
-        storage2 = TimedStorage(filename, file_format='pickle', ttl=timedelta(hours=1))
+        storage2 = TimedStorage(temp.name, timedelta(hours=1),
+                                file_format=Formats.PICKLE)
+        storage2.load()
         self.assertEqual(sorted(storage.items()), sorted(storage2.items()))
 
-        # Reopen again but with a one second TTL which will be expired
         time.sleep(2)
-        storage3 = TimedStorage(filename, file_format='pickle', ttl=timedelta(seconds=1))
+        storage3 = TimedStorage(temp.name, timedelta(seconds=2),
+                                file_format=Formats.PICKLE)
+        storage3.load()
         self.assertEqual([], sorted(storage3.items()))
         storage3.close()
 
-        # Ensure the expired dict was synced
-        storage4 = TimedStorage(filename, file_format='pickle', ttl=timedelta(hours=1))
+        storage4 = TimedStorage(temp.name, timedelta(hours=1),
+                                file_format=Formats.PICKLE)
+        storage4.load()
         self.assertEqual(sorted(storage3.items()), sorted(storage4.items()))
 
-
-class Test_Storage(TestCase):
-
-    def test_clear(self):
-        filename = '/tmp/testclear.json'
-        storage = _Storage(filename, file_format='json')
+    def test_timed_json(self):
+        with NamedTemporaryFile() as temp:
+            storage = TimedStorage(temp.name, timedelta(hours=1),
+                                   file_format=Formats.JSON)
         storage['name'] = 'jon'
-        storage.sync()
+        storage.update({'answer': 42})
+        storage.close()
 
-        # dict with single value is now saved to disk
-        with open(filename) as inp:
-            self.assertEqual(inp.read(), '{"name":"jon"}')
+        storage2 = TimedStorage(temp.name, timedelta(hours=1),
+                                file_format=Formats.JSON)
+        storage2.load()
+        self.assertEqual(sorted(storage.items()), sorted(storage2.items()))
 
-        # now clear the dict, it should sync to disk.
-        storage.clear()
-        with open(filename) as inp:
-            self.assertEqual(inp.read(), '{}')
+        time.sleep(2)
+        storage3 = TimedStorage(temp.name, timedelta(seconds=2),
+                                file_format=Formats.JSON)
+        storage3.load()
+        self.assertEqual([], sorted(storage3.items()))
+        storage3.close()
+
+        storage4 = TimedStorage(temp.name, timedelta(hours=1),
+                                file_format=Formats.JSON)
+        storage4.load()
+        self.assertEqual(sorted(storage3.items()), sorted(storage4.items()))

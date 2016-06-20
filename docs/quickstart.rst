@@ -1,7 +1,7 @@
 .. _quickstart:
 
 Quickstart
-============
+==========
 
 If you haven't already installed kodiswift, head over to the `installation`
 page.
@@ -64,7 +64,7 @@ Hello Kodi
 ----------
 
 If you navigate to the newly created folder ``plugin.video.helloxbmc``, you'll
-find an ``addon.py`` exactly like the one below.
+find an ``plugin.py`` exactly like the one below.
 
 .. sourcecode:: python
 
@@ -211,7 +211,7 @@ Let's run our plugin interactively now to explore::
     ----------------------------------------------
     Choose an item or "q" to quit: q
 
-    $ python addon.py interactive
+    $ python plugin.py interactive
     --
     [0] Hola Kodi! (plugin://plugin.video.helloxbmc/labels/spanish/)
     [1] Bonjour Kodi! (plugin://plugin.video.helloxbmc/labels/french/)

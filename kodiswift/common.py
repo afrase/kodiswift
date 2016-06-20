@@ -1,27 +1,30 @@
+# -*- coding: utf-8 -*-
 """
-    kodiswift.common
-    -----------------
+kodiswift.common
+-----------------
 
-    This module contains some common helpful functions.
+This module contains some common helpful functions.
 
-    :copyright: (c) 2012 by Jonathan Beluch
-    :license: GPLv3, see LICENSE for more details.
+:copyright: (c) 2012 by Jonathan Beluch
+:license: GPLv3, see LICENSE for more details.
 """
+from __future__ import absolute_import
+
 import urllib
-import urllib2
 
 try:
     import cPickle as pickle
 except ImportError:
     import pickle
 
+__all__ = ['clean_dict', 'kodi_url', 'unpickle_args', 'pickle_dict',
+           'unpickle_dict', 'download_page', 'Modes']
+
 
 class Modes(object):
     ONCE = 'ONCE'
     CRAWL = 'CRAWL'
     INTERACTIVE = 'INTERACTIVE'
-# TODO(Sinap): This doesn't appear to be used for anything
-DEBUG_MODES = [Modes.ONCE, Modes.CRAWL, Modes.INTERACTIVE]
 
 
 def kodi_url(url, **options):
@@ -51,7 +54,7 @@ def clean_dict(data):
     Returns:
         dict:
     """
-    return {k: v for k, v in data.items() if v is not None}
+    return dict((k, v) for k, v in data.items() if v is not None)
 
 
 def pickle_dict(items):
@@ -138,7 +141,7 @@ def download_page(url, data=None):
     Returns:
         str: The results of requesting the URL.
     """
-    conn = urllib2.urlopen(url, data)
+    conn = urllib.urlopen(url, data)
     resp = conn.read()
     conn.close()
     return resp

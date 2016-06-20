@@ -1,29 +1,31 @@
+# -*- coding: utf-8 -*-
 """
-    kodiswift.cli.create
-    ---------------------
+kodiswift.cli.create
+---------------------
 
-    This module contains the code to initialize a new Kodi addon project.
+This module contains the code to initialize a new Kodi addon project.
 
-    :copyright: (c) 2012 by Jonathan Beluch
-    :license: GPLv3, see LICENSE for more details.
+:copyright: (c) 2012 by Jonathan Beluch
+:license: GPLv3, see LICENSE for more details.
 """
-from __future__ import print_function
+from __future__ import print_function, absolute_import
+
 import os
-import string
 import readline
-from os import getcwd
-from xml.sax import saxutils
-from optparse import OptionParser
-from shutil import copytree, ignore_patterns
+import string
 from getpass import getpass
+from optparse import OptionParser
+from os import getcwd
+from shutil import copytree, ignore_patterns
+from xml.sax import saxutils
 
 
 class CreateCommand(object):
     """A CLI command to initialize a new Kodi addon project."""
-
     command = 'create'
     usage = '%prog create'
 
+    # noinspection PyUnusedLocal
     @staticmethod
     def run(opts, args):
         """Required run function for the 'create' CLI command."""
@@ -59,8 +61,8 @@ def validate_nonblank(value):
 
 @error_msg('** Value must contain only letters or underscores.')
 def validate_pluginid(value):
-    """Returns True if the provided value is a valid pluglin id"""
-    valid = string.ascii_letters + string.digits + '.'
+    """Returns True if the provided value is a valid plugin id"""
+    valid = string.ascii_letters + string.digits + '.' + '_'
     return all(c in valid for c in value)
 
 
@@ -134,7 +136,7 @@ def update_file(filename, items):
 
 
 def create_new_project():
-    """Creates a new Kodi Addon directory based on user input"""
+    """Creates a new Kodi Plugin directory based on user input"""
     readline.parse_and_bind('tab: complete')
 
     print("""
@@ -144,12 +146,13 @@ def create_new_project():
 """)
     print('I\'m going to ask you a few questions to get this project started.')
 
-    opts = {
-        'plugin_name': get_valid_value(
-            'What is your plugin name?', validate_nonblank)
-    }
+    opts = {}
 
     # Plugin Name
+    opts['plugin_name'] = get_valid_value(
+        'What is your plugin name?',
+        validate_nonblank
+    )
 
     # Plugin ID
     opts['plugin_id'] = get_valid_value(
@@ -164,6 +167,8 @@ def create_new_project():
         validate_isfolder,
         getcwd()
     )
+
+    # Parent Directory
     opts['plugin_dir'] = os.path.join(opts['parent_dir'], opts['plugin_id'])
     assert not os.path.isdir(opts['plugin_dir']), \
         'A folder named %s already exists in %s.' % (opts['plugin_id'],
@@ -179,7 +184,7 @@ def create_new_project():
     copytree(SKEL, opts['plugin_dir'], ignore=ignore_patterns('*.pyc'))
 
     # Walk through all the new files and fill in with out options
-    for root, dirs, files in os.walk(opts['plugin_dir']):
+    for root, _, files in os.walk(opts['plugin_dir']):
         for filename in files:
             update_file(os.path.join(root, filename), opts)
 
