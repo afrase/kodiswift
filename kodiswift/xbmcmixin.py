@@ -233,8 +233,8 @@ class XBMCMixin(object):
                             ' or tuple.')
 
     def set_setting(self, key, val):
-        # TODO: STUB THIS OUT ON CLI
-        return self.addon.setSetting(key=key, value=val)
+        # TODO: STUB THIS OUT ON CLI - setSetting takes id=x, value=x throws an error otherwise
+        return self.addon.setSetting(id=key, value=val)
 
     def open_settings(self):
         """Opens the settings dialog within Kodi"""
