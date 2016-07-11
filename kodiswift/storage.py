@@ -14,6 +14,7 @@ import collections
 import json
 import os
 import time
+import shutil
 from datetime import datetime
 
 try:
@@ -119,7 +120,7 @@ class PersistentStorage(collections.MutableMapping):
             if os.path.exists(temp_file):
                 os.remove(temp_file)
             raise
-        os.rename(temp_file, self.file_path)
+        shutil.move(temp_file, self.file_path)
 
 
 class TimedStorage(PersistentStorage):
