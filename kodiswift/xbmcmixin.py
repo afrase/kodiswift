@@ -501,7 +501,7 @@ class XBMCMixin(object):
 
         # Create ListItems for anything that is not already an instance of
         # ListItem
-        if not hasattr(item, 'as_tuple'):
+        if not hasattr(item, 'as_tuple') and hasattr(item, 'keys'):
             if 'info_type' not in item:
                 item['info_type'] = info_type
             item = kodiswift.ListItem.from_dict(**item)
