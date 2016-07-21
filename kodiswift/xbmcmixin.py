@@ -306,7 +306,7 @@ class XBMCMixin(object):
             log.warning('Empty message for notification dialog')
         if title is None:
             title = self.addon.getAddonInfo('name')
-        xbmc.executebuiltin('Kodi.Notification("%s", "%s", "%s", "%s")' %
+        xbmc.executebuiltin('Notification("%s", "%s", "%s", "%s")' %
                             (msg, title, delay, image))
 
     def set_resolved_url(self, item=None, subtitles=None):
