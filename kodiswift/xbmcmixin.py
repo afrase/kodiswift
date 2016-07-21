@@ -306,7 +306,7 @@ class XBMCMixin(object):
             log.warning('Empty message for notification dialog')
         if title is None:
             title = self.addon.getAddonInfo('name')
-        xbmc.executebuiltin('Kodi.Notification("%s", "%s", "%s", "%s")' %
+        xbmc.executebuiltin('Notification("%s", "%s", "%s", "%s")' %
                             (msg, title, delay, image))
 
     def set_resolved_url(self, item=None, subtitles=None):
@@ -501,7 +501,7 @@ class XBMCMixin(object):
 
         # Create ListItems for anything that is not already an instance of
         # ListItem
-        if not hasattr(item, 'as_tuple'):
+        if not hasattr(item, 'as_tuple') and hasattr(item, 'keys'):
             if 'info_type' not in item:
                 item['info_type'] = info_type
             item = kodiswift.ListItem.from_dict(**item)

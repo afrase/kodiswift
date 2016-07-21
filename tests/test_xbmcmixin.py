@@ -173,7 +173,7 @@ class TestXBMCMixin(unittest.TestCase):
                           return_value='Academic Earth'):
             plugin.notify('Hello World!')
         mock_executebuiltin.assert_called_with(
-            'Kodi.Notification("Hello World!", "Academic Earth", "5000", "")'
+            'Notification("Hello World!", "Academic Earth", "5000", "")'
         )
 
     @patch('kodiswift.xbmc.executebuiltin')
@@ -184,7 +184,7 @@ class TestXBMCMixin(unittest.TestCase):
             plugin.notify('Hello World!', 'My Title', 3000,
                           'http://example.com/image.png')
         mock_executebuiltin.assert_called_with(
-            'Kodi.Notification("Hello World!", "My Title", "3000", '
+            'Notification("Hello World!", "My Title", "3000", '
             '"http://example.com/image.png")')
 
     @patch('kodiswift.xbmc.Keyboard')
