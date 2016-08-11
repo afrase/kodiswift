@@ -16,5 +16,10 @@ def delete(target):
         return os.unlink(target)
     return False
 
+
 def mkdir(target):
     os.mkdir(target)
+
+
+def listdir(target):
+    return os.listdir(target)
