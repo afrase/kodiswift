@@ -327,6 +327,7 @@ class TestResolvedUrl(TestCase):
 
         # Check Wrapper ListItem
         self.assertEqual(item.path, 'http://example.org/get/1.mkv')
+        self.assertEqual(item.played, True)
         self.assertEqual(item.label, None)
 
         # Check Mock ListItem
