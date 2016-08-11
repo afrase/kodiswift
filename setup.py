@@ -46,7 +46,7 @@ setup(
     license='GPL3',
     keywords='example documentation tutorial',
     url='https://github.com/Sinap/kodiswift',
-    packages=find_packages(),
+    packages=find_packages(exclude=["tests", "tests.*"]),
     include_package_data=True,
     long_description=__doc__,
     classifiers=[
