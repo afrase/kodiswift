@@ -15,13 +15,15 @@ def _get_env_setting(name):
 
 # noinspection PyPep8Naming
 class Addon(object):
-    def __init__(self, addon_id=None):
+    def __init__(self, id=None):
         # In CLI mode, kodiswift must be run from the root of the addon
         # directory, so we can rely on getcwd() being correct.
         addon_xml = os.path.join(os.getcwd(), 'addon.xml')
-        _id = utils.get_addon_id(addon_xml)
+        _id = None
+        if os.path.exists(addon_xml):
+            _id = utils.get_addon_id(addon_xml)
         self._info = {
-            'id': addon_id or _id,
+            'id': id or _id,
             'name': utils.get_addon_name(addon_xml),
             'profile': 'special://profile/addon_data/%s/' % _id,
             'path': 'special://home/addons/%s' % _id

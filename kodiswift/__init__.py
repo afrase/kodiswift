@@ -66,6 +66,9 @@ except ImportError:
     xbmcplugin = _Module(xbmcplugin)
     xbmcaddon = _Module(xbmcaddon)
     xbmcvfs = _Module(xbmcvfs)
+    for m in (xbmc, xbmcgui, xbmcplugin, xbmcaddon, xbmcvfs):
+        name = reversed(m.__name__.rsplit('.', 1)).next()
+        sys.modules[name] = m
 
 from kodiswift.storage import TimedStorage
 from kodiswift.request import Request
