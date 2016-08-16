@@ -4,9 +4,9 @@ from __future__ import print_function, absolute_import
 import errno
 import os
 import tempfile
+from getpass import getpass
 
 import kodiswift
-from kodiswift.cli.create import get_value
 
 TEMP_DIR = os.path.join(tempfile.gettempdir(), 'kodiswift_debug')
 kodiswift.log.info('Using temp directory %s', TEMP_DIR)
@@ -61,6 +61,22 @@ def translatePath(path):
     _create_dir(os.path.join(TEMP_DIR, parts[0]))
 
     return os.path.join(TEMP_DIR, *parts)
+
+
+def get_value(prompt, default=None, hidden=False):
+    _prompt = '%s : ' % prompt
+    if default:
+        _prompt = '%s [%s]: ' % (prompt, default)
+
+    if hidden:
+        ans = getpass(_prompt)
+    else:
+        ans = raw_input(_prompt)
+
+    # If user hit Enter and there is a default value
+    if not ans and default:
+        ans = default
+    return ans
 
 
 # noinspection PyPep8Naming

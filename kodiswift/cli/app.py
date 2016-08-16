@@ -16,47 +16,12 @@ import sys
 from xml.etree import ElementTree as Et
 
 from kodiswift import Plugin, ListItem, logger
-from kodiswift.cli import Option
 from kodiswift.cli.console import (display_listitems, continue_or_quit,
                                    get_user_choice)
-from kodiswift.common import Modes
 
 __all__ = ['get_addon_module_name', 'crawl', 'RunCommand', 'PluginManager',
            'setup_options', 'patch_sysargv', 'patch_plugin', 'once',
            'interactive']
-
-
-class RunCommand(object):
-    """A CLI command to run a plugin."""
-
-    command = 'run'
-    usage = '%prog run [once|interactive|crawl] [url]'
-    option_list = (
-        Option('-q', '--quiet', action='store_true',
-               help='set logging level to quiet'),
-        Option('-v', '--verbose', action='store_true',
-               help='set logging level to verbose'),
-    )
-
-    @staticmethod
-    def run(opts, args):
-        """The run method for the 'run' command. Executes a plugin from the
-        command line.
-        """
-        setup_options(opts)
-
-        mode = Modes.ONCE
-        if len(args) > 0 and hasattr(Modes, args[0].upper()):
-            _mode = args.pop(0).upper()
-            mode = getattr(Modes, _mode)
-
-        url = None
-        if len(args) > 0:
-            # A url was specified
-            url = args.pop(0)
-
-        plugin_mgr = PluginManager.load_plugin_from_addon_xml(mode, url)
-        plugin_mgr.run()
 
 
 def setup_options(opts):
@@ -96,6 +61,11 @@ class PluginManager(object):
     before calling plugin.run().
     """
 
+    def __init__(self, plugin, mode, url):
+        self.plugin = plugin
+        self.mode = mode
+        self.url = url
+
     @classmethod
     def load_plugin_from_addon_xml(cls, mode, url):
         """Attempts to import a plugin's source code and find an instance of
@@ -116,20 +86,15 @@ class PluginManager(object):
 
         return cls(plugin, mode, url)
 
-    def __init__(self, plugin, mode, url):
-        self.plugin = plugin
-        self.mode = mode
-        self.url = url
-
     def run(self):
         """This method runs the the plugin in the appropriate mode parsed from
         the command line options.
         """
         handle = 0
         handlers = {
-            Modes.ONCE: once,
-            Modes.CRAWL: crawl,
-            Modes.INTERACTIVE: interactive,
+            'once': once,
+            'crawl': crawl,
+            'interactive': interactive,
         }
         handler = handlers[self.mode]
         patch_sysargv(self.url or 'plugin://%s/' % self.plugin.id, handle)
@@ -214,3 +179,16 @@ def crawl(plugin):
         # urls_tovisit
         paths_to_visit.update(path for path in new_paths
                               if path not in paths_visited)
+
+
+def run_command(args):
+    if args.quiet:
+        logger.log.setLevel(logging.WARNING)
+        logger.GLOBAL_LOG_LEVEL = logging.WARNING
+
+    if args.verbose:
+        logger.log.setLevel(logging.DEBUG)
+        logger.GLOBAL_LOG_LEVEL = logging.DEBUG
+
+    plugin_mgr = PluginManager.load_plugin_from_addon_xml(args.mode, args.url)
+    plugin_mgr.run()

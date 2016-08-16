@@ -11,9 +11,12 @@ registered in this module.
 """
 from __future__ import absolute_import
 
-import os
 import argparse
+import os
 import string
+
+from kodiswift.cli.app import run_command
+from kodiswift.cli.create import create_new_project
 
 # The `type' argument of `add_argument' is the only way to manipulate the
 # final results of parsing the command line arguments. Unfortunately 'type' is
@@ -104,47 +107,65 @@ def is_existing_folder(value):
 
 
 def build_parser():
-    parser = argparse.ArgumentParser()
-    subparsers = parser.add_subparsers()
+    parser = argparse.ArgumentParser()  # type: argparse.ArgumentParser
+    parent_parser = argparse.ArgumentParser(add_help=False)
+    cmd_subparsers = parser.add_subparsers()
 
-    create_sub = subparsers.add_parser('create')
-    create_sub.add_argument(
+    parent_parser.add_argument(
+        '-v', '--verbose',
+        action='store_true',
+        help='verbose logging')
+    parent_parser.add_argument(
+        '-q', '--quiet',
+        action='store_true',
+        help='limit logging')
+
+    create_parser = cmd_subparsers.add_parser(
+        'create', parents=[parent_parser])
+    create_parser.set_defaults(run_command=create_new_project)
+    create_parser.add_argument(
         '-n', '--plugin-name',
         action=InteractiveAction,
         type=InteractiveType('What is your plugin name?', non_blank_answer),
         help='The name of the plugin')
-    create_sub.add_argument(
+    create_parser.add_argument(
         '-d', '--project-dir',
         action=InteractiveAction,
         type=InteractiveType('Where to create the project?',
                              is_existing_folder, os.getcwd()),
         help='The project directory')
-    create_sub.add_argument(
+    create_parser.add_argument(
         '-u', '--provider-name',
         action=InteractiveAction,
         type=InteractiveType('Enter provider name', non_blank_answer),
         help='The provider name (your name)')
-    create_sub.add_argument(
+    create_parser.add_argument(
         '-i', '--plugin-id',
         action=InteractiveAction,
         type=InteractiveType('Enter your plugin id', valid_plugin_id,
                              example='plugin.video.example'),
         help='The plugins ID')
 
-    run_sub = subparsers.add_parser('run')
-    run_sub.add_argument(
-        '-v', '--verbose',
-        help='verbose logging')
-    run_sub.add_argument(
-        '-q', '--quite',
-        help='limit logging')
+    run_parser = cmd_subparsers.add_parser(
+        'run', parents=[parent_parser])
+    run_parser.set_defaults(run_command=run_command)
+    run_parser.add_argument(
+        'mode',
+        default='interactive', nargs='?',
+        choices=['once', 'interactive', 'crawl'], metavar='',
+        help='once interactive crawl')
+    run_parser.add_argument(
+        'url',
+        nargs='?',
+        help='Optional URL')
 
     return parser
 
 
 def main():
     parser = build_parser()
-    print(parser.parse_args())
+    args = parser.parse_args(['run'])
+    args.run_command(args)
 
 
 if __name__ == '__main__':
