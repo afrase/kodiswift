@@ -309,8 +309,8 @@ class TestUnsyncedCaches(TestCase):
         synced = pickle.load(open(fn, 'rb'))
         self.assertEqual(synced.keys(), ['foo'])
 
-        # Since storage's store the timestamp as well, we just check our actual
-        # value since we can't guess the timestamp
+        # Since storage's store the timestamp as well, we just check our
+        # actual value since we can't guess the timestamp
         self.assertEqual(synced['foo'][0], 'bar')
 
 
@@ -320,9 +320,13 @@ class TestResolvedUrl(TestCase):
 
         @plugin.route('/play/<href>')
         def call_play_route(href):
-            return plugin.set_resolved_url(href + '.mkv')
+            return plugin.set_resolved_url({
+                'path': href + '.mkv',
+                'is_playable': True,
+            })
 
-        sys.argv = ['plugin://plugin.video.hellokodi/', '1', 'play/http%3A%2F%2Fexample.org%2Fget%2F1']
+        sys.argv = ['plugin://plugin.video.hellokodi/', '1',
+                    'play/http%3A%2F%2Fexample.org%2Fget%2F1']
         item = plugin.run()[0]
 
         # Check Wrapper ListItem
@@ -331,6 +335,8 @@ class TestResolvedUrl(TestCase):
         self.assertEqual(item.label, None)
 
         # Check Mock ListItem
-        self.assertEqual(item.as_xbmc_listitem().path, 'http://example.org/get/1.mkv')
+        self.assertEqual(item.as_xbmc_listitem().path,
+                         'http://example.org/get/1.mkv')
         self.assertEqual(item.as_xbmc_listitem().getLabel(), None)
-        self.assertEqual(item.as_xbmc_listitem().getProperty('isPlayable'), 'true')
+        self.assertEqual(item.as_xbmc_listitem().getProperty('isPlayable'),
+                         'true')
