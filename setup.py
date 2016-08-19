@@ -39,14 +39,14 @@ from setuptools import setup, find_packages
 
 setup(
     name='kodiswift',
-    version='0.0.4',
+    version='0.0.5',
     author='Aaron Frase',
     author_email='afrase91@gmail.com',
     description='A micro framework for rapid development of Kodi plugins.',
     license='GPL3',
     keywords='example documentation tutorial',
     url='https://github.com/Sinap/kodiswift',
-    packages=find_packages(),
+    packages=find_packages(exclude=["tests", "tests.*"]),
     include_package_data=True,
     long_description=__doc__,
     classifiers=[

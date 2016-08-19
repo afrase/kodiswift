@@ -62,3 +62,6 @@ class ListItem(object):
 
     def setArt(self, values):
         self.art = values
+
+class WindowXMLDialog:
+    pass
