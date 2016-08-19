@@ -39,7 +39,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='kodiswift',
-    version='0.0.4',
+    version='0.0.5',
     author='Aaron Frase',
     author_email='afrase91@gmail.com',
     description='A micro framework for rapid development of Kodi plugins.',
