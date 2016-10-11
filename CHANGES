@@ -1,3 +1,8 @@
+0.0.6
+=====
+
+- Make sure list item has 'as_tuple' method
+
 0.0.5
 =====
 
