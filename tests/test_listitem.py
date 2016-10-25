@@ -230,7 +230,8 @@ class TestFromDict(unittest.TestCase):
         self.assertEqual(item.get_property('StartOffset'), '256.4')
         self.assertEqual(item.get_context_menu_items(), [('label', 'action')])
         self.assertEqual(item.get_property('isPlayable'), 'true')
-        self.assertEqual(item.is_folder, False)
+        self.assertEqual(item.playable, True)
+        self.assertEqual(item.is_folder, True)
 
     def test_from_dict_info_default_info_type(self):
         dct = {'info': {'title': 'My title'}}
