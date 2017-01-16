@@ -37,7 +37,7 @@ def display_listitems(items, url):
             output.append('[%s] %s (%s)' % (
                 str(i).rjust(num_width),
                 item.label.ljust(label_width),
-                item.label))
+                item.path))
 
         line_width = get_max_len(output)
         output.append('-' * line_width)
