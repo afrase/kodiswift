@@ -29,7 +29,7 @@ run
 ~~~
 
 When running an addon on the command line, there are three different run modes
-available, once_, interactive_, and crawl_. 
+available, once_, interactive_, and crawl_.
 
 There is also a second positional argument, ``url``, which is optional. By
 default, kodiswift will run the root URL of your addon (a path of '/'), e.g.

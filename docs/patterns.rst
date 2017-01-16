@@ -101,7 +101,7 @@ Some example code:
 
         return plugin.finish(items, update_listing=True)
 
-The first thing to notice about our view, is that it takes a page number as a 
+The first thing to notice about our view, is that it takes a page number as a
 URL parameter. We then pass the page number to the API call, get_videos(), to
 return the correct data based on the current page. Then we create our own
 previous/next list items depending on the current page. Lastly, we are
@@ -141,7 +141,7 @@ Adding sort methods
 
 Sort methods enable the user to sort a directory listing in different ways. You
 can see the available sort methods `here
-<http://mirrors.xbmc.org/docs/python-docs/xbmcplugin.html#-addSortMethod>`_, or
+<http://mirrors.kodi.tv/docs/python-docs/16.x-jarvis/xbmcplugin.html#-addSortMethod>`_, or
 by doing ``dir(kodiswift.SortMethod)``. The simplest way to add sort methods to
 your views is to call plugin.finish() with a sort_methods argument and return
 the result from your view (this is what kodiswift does behind the scenes
@@ -197,10 +197,10 @@ the *context_menu* key in an item dict. The value should be a list of 2-tuples.
 Each tuple corresponds to a context menu item, and should be of the format
 (display_string, action) where action is a string corresponding to one of
 Kodi's `built-in functions`_. See `Kodi's documentation
-<http://mirrors.xbmc.org/docs/python-docs/xbmcgui.html#ListItem-addContextMenuItems>`_
+<http://mirrors.kodi.tv/docs/python-docs/16.x-jarvis/xbmcgui.html#ListItem-addContextMenuItems>`_
 for more information.
 
-.. _`built-in functions`: http://wiki.xbmc.org/?title=List_of_Built_In_Functions
+.. _`built-in functions`: http://kodi.wiki/view/List_of_Built_In_Functions
 
 The most common actions are `Kodi.RunPlugin()` and `Kodi.Container.Update()`.
 RunPlugin takes a single argument, a URL for a plugin (you can create a URL
@@ -220,7 +220,7 @@ Here is a quick example of updating the context menu.
     from kodiswift import actions
 
     @plugin.url('/favorites/add/<url>')
-    def add_to_favs(url):
+    def add_to_favorites(url):
         # this is a background view
         ...
 
