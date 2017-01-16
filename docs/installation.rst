@@ -17,7 +17,7 @@ The easiest way to get the most recent version of kodiswift for Kodi is to
 install an addon that requires kodiswift. You can find a list of such addons
 on the :ref:`poweredby` page. The other options is download the current Kodi
 distribution from https://github.com/jbeluch/kodiswift-xbmc-dist/tags and
-unpack it into your addons folder.  
+unpack it into your addons folder.
 
 Now, on to installing kodiswift for use on the command line.
 
