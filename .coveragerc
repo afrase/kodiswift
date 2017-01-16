@@ -1,0 +1,6 @@
+[run]
+omit =
+  fabfile.py
+  setup.py
+  tests/**/*.py
+  tests/*.py
