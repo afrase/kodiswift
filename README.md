@@ -1,9 +1,9 @@
 kodiswift
 =========
 
-[![Build Status](https://travis-ci.org/Sinap/kodiswift.svg?branch=master)](https://travis-ci.org/Sinap/kodiswift)
-[![codecov](https://codecov.io/gh/Sinap/kodiswift/branch/master/graph/badge.svg)](https://codecov.io/gh/Sinap/kodiswift)
-[![Code Health](https://landscape.io/github/Sinap/kodiswift/master/landscape.svg?style=flat)](https://landscape.io/github/Sinap/kodiswift/master)
+[![Build Status](https://travis-ci.org/afrase/kodiswift.svg?branch=master)](https://travis-ci.org/Sinap/kodiswift)
+[![codecov](https://codecov.io/gh/afrase/kodiswift/branch/master/graph/badge.svg)](https://codecov.io/gh/Sinap/kodiswift)
+[![Code Health](https://landscape.io/github/afrase/kodiswift/master/landscape.svg?style=flat)](https://landscape.io/github/Sinap/kodiswift/master)
 
 A micro framework to enable rapid development of Kodi plugins.
 
