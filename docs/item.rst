@@ -75,7 +75,7 @@ info
 
 A dictionary of key/values of metadata information about the item. See the
 `Kodi docs
-<http://mirrors.xbmc.org/docs/python-docs/xbmcgui.html#ListItem-setInfo>`_ for
+<http://mirrors.kodi.tv/docs/python-docs/16.x-jarvis/xbmcgui.html#ListItem-setInfo>`_ for
 a list of valid info items. Keys are always strings but values should be the
 correct type required by Kodi.
 
@@ -86,7 +86,7 @@ properties
 ----------
 
 A dict of properties, similar to info-labels. See
-http://mirrors.xbmc.org/docs/python-docs/xbmcgui.html#ListItem-setProperty for
+`ListItem documentation <http://mirrors.kodi.tv/docs/python-docs/16.x-jarvis/xbmcgui.html#ListItem-setProperty>`_ for
 more information.
 
 
@@ -96,7 +96,7 @@ context_menu
 A list of tuples, where each tuple is of length 2. The tuple should be (label,
 action) where action is a string representing a built-in Kodi function. See the
 `Kodi documentation
-<http://mirrors.xbmc.org/docs/python-docs/xbmcgui.html#ListItem-addContextMenuItems>`_
+<http://mirrors.kodi.tv/docs/python-docs/16.x-jarvis/xbmcgui.html#ListItem-addContextMenuItems>`_
 for more details and `Using the Context Menu` for some example code.
 
 
@@ -122,7 +122,7 @@ info_type
 
 Used in conjunction with `info`. The default value is usually configured
 automatically from your addon.xml. See
-http://mirrors.xbmc.org/docs/python-docs/xbmcgui.html#ListItem-setInfo for
+`setInfo documentation <http://mirrors.kodi.tv/docs/python-docs/16.x-jarvis/xbmcgui.html#ListItem-setInfo>`_ for
 valid values.
 
 
@@ -131,5 +131,5 @@ stream_info
 
 A dict where each key is a stream type and each value is another dict of stream
 values. See
-http://mirrors.xbmc.org/docs/python-docs/xbmcgui.html#ListItem-addStreamInfo
+`addStreamInfo documentation <http://mirrors.kodi.tv/docs/python-docs/16.x-jarvis/xbmcgui.html#ListItem-addStreamInfo>`_
 for more information.

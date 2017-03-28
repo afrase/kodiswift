@@ -70,6 +70,37 @@ class TestListItem(unittest.TestCase):
         self.assertEqual(item.path, 'baz')
         self.assertEqual(item.get_path(), 'baz')
 
+    def test_poster(self):
+        item = ListItem()
+        self.assertIsNone(item.poster)
+
+        item.poster = 'bar'
+        self.assertEqual(item.poster, 'bar')
+        item.poster = 'baz'
+        self.assertEqual(item.poster, 'baz')
+
+    def test_played(self):
+        item = ListItem()
+        self.assertEqual(item.played, False)
+
+        item.played = True
+        self.assertEqual(item.played, True)
+        item.played = False
+        self.assertEqual(item.played, False)
+
+    def test_art(self):
+        item = ListItem()
+        art = {'thumb': None, 'icon': None}
+        self.assertEqual(item.art, art)
+
+        art2 = {'thumb': 'something', 'icon': 'else'}
+        item.art = art2
+        self.assertEqual(item.art, art2)
+
+        item.set_art(art)
+        self.assertEqual(item.art, art)
+
+
     def test_context_menu(self):
         menu_items = [('label1', 'foo'), ('label2', 'bar')]
         item = ListItem()
@@ -80,6 +111,10 @@ class TestListItem(unittest.TestCase):
         menu_items.append(extra_menu_item)
         item.add_context_menu_items([extra_menu_item])
         self.assertEqual(item.get_context_menu_items(), menu_items)
+
+        # Verify replace_items branch gets executed and works.
+        item.add_context_menu_items([extra_menu_item], True)
+        self.assertEqual(item.get_context_menu_items(), [extra_menu_item])
 
     def test_set_info(self):
         # noinspection PyUnresolvedReferences
@@ -164,6 +199,13 @@ class TestListItem(unittest.TestCase):
         self.assertEqual(item.as_tuple(), (None, item._listitem, True))
 
 
+    def test___str__(self):
+        item = ListItem()
+        item.path = "somePath"
+        item.label = "sameLabel"
+        self.assertEqual(item.__str__(), u"sameLabel (somePath)")
+        self.assertEqual(str(item), u"sameLabel (somePath)")
+
 class TestListItemAsserts(unittest.TestCase):
     def test_non_basestring_key(self):
         item = ListItem()
@@ -231,7 +273,7 @@ class TestFromDict(unittest.TestCase):
         self.assertEqual(item.get_context_menu_items(), [('label', 'action')])
         self.assertEqual(item.get_property('isPlayable'), 'true')
         self.assertEqual(item.playable, True)
-        self.assertEqual(item.is_folder, True)
+        self.assertEqual(item.is_folder, False)
 
     def test_from_dict_info_default_info_type(self):
         dct = {'info': {'title': 'My title'}}

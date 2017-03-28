@@ -32,7 +32,7 @@ Before going any further, you should already be familiar with the general file
 structure and necessary files for an Kodi addon. If not, please spend a few
 minutes reading about addons in the Kodi wiki_.
 
-.. _wiki: http://wiki.xbmc.org/index.php?title=Add-on_development
+.. _wiki: http://kodi.wiki/view/Add-on_development
 
 
 Creating the Plugin Skeleton
@@ -54,7 +54,7 @@ Below is an example session::
     I'm going to ask you a few questions to get this project started.
     What is your plugin name? : Hello Kodi
     Enter your plugin id. [plugin.video.helloxbmc]:
-    Enter parent folder (where to create project) [/private/tmp]: 
+    Enter parent folder (where to create project) [/private/tmp]:
     Enter provider name : Jonathan Beluch (jbel)
     Projects successfully created in /private/tmp/plugin.video.helloxbmc.
     Done.
@@ -300,7 +300,7 @@ versions of these modules.
 
 Going further
 -------------
- 
+
 This should be enough to get started with your first simple Kodi addon. If
 you'd like more information, please check out the detailed :ref:`tutorial` and
 also review common :ref:`patterns`.

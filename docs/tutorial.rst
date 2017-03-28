@@ -27,8 +27,8 @@ files and folders for you. So we'll do just that::
 
         I'm going to ask you a few questions to get this project started.
         What is your plugin name? : Academic Earth Tutorial
-        Enter your plugin id. [plugin.video.academicearthtutorial]: 
-        Enter parent folder (where to create project) [/tmp]: 
+        Enter your plugin id. [plugin.video.academicearthtutorial]:
+        Enter parent folder (where to create project) [/tmp]:
         Enter provider name : Jonathan Beluch (jbel)
         Projects successfully created in /tmp/plugin.video.academicearthtutorial.
         Done.
@@ -60,7 +60,7 @@ If you open the addon.xml file, you'll notice that kodiswift is already in your 
 .. sourcecode:: xml
 
     <import addon="xbmc.python" version="2.0" />
-    <import addon="script.module.kodiswift" version="1.1.1" />
+    <import addon="script.module.kodiswift" version="0.0.7" />
 
 We'll add BeautifulSoup right after those lines:
 

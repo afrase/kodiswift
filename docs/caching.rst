@@ -9,7 +9,7 @@ user experience of your addon. swift offers a simple storage mechanism that
 allows you to store arbitraty python objects to use between requests.
 
 .. warning::
-    
+
     The current implementation of kodiswift's storage is very basic and is not
     thread safe. If your addon does background calls via the context menu and
     manipulates storages in these backgound threads, you might run into some
@@ -30,7 +30,7 @@ get a cache, simply call the ``get_storage`` method.
     people.update({'dave': 'accountant'})
 
     people.items()
-    # [('jon', 'deveoper'), ('dave', 'accountant')]
+    # [('jon', 'developer'), ('dave', 'accountant')]
 
 Caches are automatically persisted to disk each time an addon finishes
 execution. If you would like to sync the cache to disk manually, you can call
